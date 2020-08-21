@@ -46,7 +46,7 @@ final class CsrfMiddleware implements MiddlewareInterface
             return $response;
         }
 
-        $this->csrfToken->setToken(TokenMask::apply($token));
+        $this->csrfToken->setValue(TokenMask::apply($token));
 
         return $handler->handle($request);
     }

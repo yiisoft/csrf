@@ -11,12 +11,12 @@ final class CsrfToken
 
     private ?string $token = null;
 
-    public function getToken(): ?string
+    public function getValue(): ?string
     {
         return $this->token;
     }
 
-    public function setToken(string $token): void
+    public function setValue(string $token): void
     {
         if ($this->token !== null) {
             throw new LogicException('The CSRF token is already set.');
