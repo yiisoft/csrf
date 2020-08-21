@@ -7,7 +7,7 @@ namespace Yiisoft\Csrf\Tests;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\CsrfToken;
 
-class CsrfTokenTest extends TestCase
+final class CsrfTokenTest extends TestCase
 {
 
     private CsrfToken $csrfToken;
