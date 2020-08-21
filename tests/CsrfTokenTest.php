@@ -32,7 +32,6 @@ final class CsrfTokenTest extends TestCase
 
     public function testEarlyGet(): void
     {
-        $this->expectExceptionMessage('The CSRF token is not set.');
-        $this->csrfToken->getToken();
+        $this->assertNull($this->csrfToken->getToken());
     }
 }
