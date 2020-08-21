@@ -1,18 +1,18 @@
 {
-    "name": "yiisoft/_____",
+    "name": "yiisoft/csrf",
     "type": "library",
-    "description": "_____",
+    "description": "Yii CSRF Library",
     "keywords": [
-        "_____"
+        "csrf"
     ],
     "homepage": "https://www.yiiframework.com/",
     "license": "BSD-3-Clause",
     "support": {
-        "issues": "https://github.com/yiisoft/_____/issues?state=open",
+        "issues": "https://github.com/yiisoft/csrf/issues?state=open",
         "forum": "https://www.yiiframework.com/forum/",
         "wiki": "https://www.yiiframework.com/wiki/",
         "irc": "irc://irc.freenode.net/yii",
-        "source": "https://github.com/yiisoft/_____"
+        "source": "https://github.com/yiisoft/csrf"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Yiisoft\\_____\\": "src"
+            "Yiisoft\\csrf\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\_____\\Tests\\": "tests"
+            "Yiisoft\\csrf\\Tests\\": "tests"
         }
     },
     "extra": {
