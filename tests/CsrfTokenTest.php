@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\csrf\Tests;
+namespace Yiisoft\Csrf\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\csrf\CsrfToken;
+use Yiisoft\Csrf\CsrfToken;
 
 class CsrfTokenTest extends TestCase
 {

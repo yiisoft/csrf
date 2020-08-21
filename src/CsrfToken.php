@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\csrf;
+namespace Yiisoft\Csrf;
 
 use LogicException;
 

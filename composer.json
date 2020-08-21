@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Yiisoft\\csrf\\": "src"
+            "Yiisoft\\Csrf\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\csrf\\Tests\\": "tests"
+            "Yiisoft\\Csrf\\Tests\\": "tests"
         }
     },
     "extra": {
