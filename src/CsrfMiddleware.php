@@ -24,7 +24,7 @@ final class CsrfMiddleware implements MiddlewareInterface
     private string $requestName = self::REQUEST_NAME;
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenStorageInterface $storage;
-    private ?CsrfToken $csrfToken;
+    private ?CsrfTokenInterface $csrfToken;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
