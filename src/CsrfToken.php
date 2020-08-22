@@ -6,7 +6,7 @@ namespace Yiisoft\Csrf;
 
 use LogicException;
 
-final class CsrfToken
+final class CsrfToken implements CsrfTokenInterface
 {
 
     private ?string $token = null;
