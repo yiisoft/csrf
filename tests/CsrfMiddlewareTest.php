@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Csrf\CsrfMiddleware;
-use Yiisoft\Csrf\CsrfToken;
 use Yiisoft\Csrf\CsrfTokenStorageInterface;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
 use Yiisoft\Http\Method;
@@ -22,11 +21,6 @@ final class CsrfMiddlewareTest extends TestCase
 {
 
     private const PARAM_NAME = 'csrf';
-
-    protected function setUp(): void
-    {
-        CsrfTokenHelper::reset();
-    }
 
     public function testValidTokenInBodyPostRequestResultIn200(): void
     {
