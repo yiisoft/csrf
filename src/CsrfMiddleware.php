@@ -24,16 +24,13 @@ final class CsrfMiddleware implements MiddlewareInterface
     private string $requestName = self::REQUEST_NAME;
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenStorageInterface $storage;
-    private ?CsrfTokenInterface $csrfToken;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        CsrfTokenStorageInterface $storage,
-        ?CsrfTokenInterface $csrfToken
+        CsrfTokenStorageInterface $storage
     ) {
         $this->responseFactory = $responseFactory;
         $this->storage = $storage;
-        $this->csrfToken = $csrfToken;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -48,11 +45,7 @@ final class CsrfMiddleware implements MiddlewareInterface
             return $response;
         }
 
-        if ($this->csrfToken === null) {
-            $request = $request->withAttribute($this->requestName, TokenMask::apply($token));
-        } else {
-            $this->csrfToken->setValue(TokenMask::apply($token));
-        }
+        CsrfToken::setValue(TokenMask::apply($token));
 
         return $handler->handle($request);
     }

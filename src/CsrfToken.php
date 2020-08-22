@@ -6,21 +6,21 @@ namespace Yiisoft\Csrf;
 
 use LogicException;
 
-final class CsrfToken implements CsrfTokenInterface
+final class CsrfToken
 {
 
-    private ?string $token = null;
+    private static ?string $token = null;
 
-    public function getValue(): ?string
+    public static function getValue(): ?string
     {
-        return $this->token;
+        return static::$token;
     }
 
-    public function setValue(string $token): void
+    public static function setValue(string $token): void
     {
-        if ($this->token !== null) {
+        if (static::$token !== null) {
             throw new LogicException('The CSRF token is already set.');
         }
-        $this->token = $token;
+        static::$token = $token;
     }
 }

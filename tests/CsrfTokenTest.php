@@ -10,28 +10,26 @@ use Yiisoft\Csrf\CsrfToken;
 final class CsrfTokenTest extends TestCase
 {
 
-    private CsrfToken $csrfToken;
-
     protected function setUp(): void
     {
-        $this->csrfToken = new CsrfToken();
+        CsrfTokenHelper::reset();
     }
 
     public function testBase(): void
     {
-        $this->csrfToken->setValue('test_token');
-        $this->assertSame('test_token', $this->csrfToken->getValue());
+        CsrfToken::setValue('test_token');
+        $this->assertSame('test_token', CsrfToken::getValue());
     }
 
     public function testRepeatedSet(): void
     {
-        $this->csrfToken->setValue('test_token');
+        CsrfToken::setValue('test_token');
         $this->expectExceptionMessage('The CSRF token is already set.');
-        $this->csrfToken->setValue('test_token');
+        CsrfToken::setValue('test_token');
     }
 
     public function testEarlyGet(): void
     {
-        $this->assertNull($this->csrfToken->getValue());
+        $this->assertNull(CsrfToken::getValue());
     }
 }

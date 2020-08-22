@@ -12,7 +12,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Csrf\CsrfMiddleware;
 use Yiisoft\Csrf\CsrfToken;
-use Yiisoft\Csrf\CsrfTokenInterface;
 use Yiisoft\Csrf\CsrfTokenStorageInterface;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
 use Yiisoft\Http\Method;
@@ -23,6 +22,11 @@ final class CsrfMiddlewareTest extends TestCase
 {
 
     private const PARAM_NAME = 'csrf';
+
+    protected function setUp(): void
+    {
+        CsrfTokenHelper::reset();
+    }
 
     public function testValidTokenInBodyPostRequestResultIn200(): void
     {
@@ -73,19 +77,6 @@ final class CsrfMiddlewareTest extends TestCase
         $middleware = $this->createCsrfMiddlewareWithToken('');
         $response = $middleware->process($this->createServerRequest(Method::GET), $this->createRequestHandler());
         $this->assertEquals(200, $response->getStatusCode());
-    }
-
-    public function testValidTokenWithCsrfToken(): void
-    {
-        $token = $this->generateToken();
-        $csrfToken = new CsrfToken();
-        $middleware = $this->createCsrfMiddlewareWithToken($token, $csrfToken);
-        $response = $middleware->process(
-            $this->createPostServerRequestWithBodyToken($token),
-            $this->createRequestHandler()
-        );
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertIsString($csrfToken->getValue());
     }
 
     public function testInvalidTokenResultIn422(): void
@@ -170,13 +161,9 @@ final class CsrfMiddlewareTest extends TestCase
         return $mock;
     }
 
-    private function createCsrfMiddlewareWithToken(string $token, CsrfTokenInterface $csrfToken = null): CsrfMiddleware
+    private function createCsrfMiddlewareWithToken(string $token): CsrfMiddleware
     {
-        $middleware = new CsrfMiddleware(
-            new Psr17Factory(),
-            $this->createStorageMock($token),
-            $csrfToken
-        );
+        $middleware = new CsrfMiddleware(new Psr17Factory(), $this->createStorageMock($token));
 
         return $middleware->withName(self::PARAM_NAME);
     }
