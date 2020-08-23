@@ -1,9 +1,11 @@
 {
     "name": "yiisoft/csrf",
     "type": "library",
-    "description": "Yii CSRF Library",
+    "description": "CSRF Protection Library",
     "keywords": [
-        "csrf"
+        "csrf",
+        "psr-15",
+        "middleware"
     ],
     "homepage": "https://www.yiiframework.com/",
     "license": "BSD-3-Clause",
