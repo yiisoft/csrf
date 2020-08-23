@@ -18,10 +18,8 @@ final class CsrfMiddleware implements MiddlewareInterface
 {
     private const NAME = '_csrf';
     public const HEADER_NAME = 'X-CSRF-Token';
-    public const REQUEST_NAME = 'csrf_token';
 
     private string $name = self::NAME;
-    private string $requestName = self::REQUEST_NAME;
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenStorageInterface $storage;
 
@@ -54,13 +52,6 @@ final class CsrfMiddleware implements MiddlewareInterface
     {
         $new = clone $this;
         $new->name = $name;
-        return $new;
-    }
-
-    public function withRequestName(string $name): self
-    {
-        $new = clone $this;
-        $new->requestName = $name;
         return $new;
     }
 
