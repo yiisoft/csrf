@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Csrf\Tests\TokenStorage;
 
 use PHPUnit\Framework\MockObject\MockObject;
