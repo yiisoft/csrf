@@ -16,10 +16,13 @@ use Yiisoft\Security\TokenMask;
 
 final class CsrfMiddleware implements MiddlewareInterface
 {
+
     public const PARAMETER_NAME = '_csrf';
     public const HEADER_NAME = 'X-CSRF-Token';
 
     private string $parameterName = self::PARAMETER_NAME;
+    private string $headerName = self::HEADER_NAME;
+
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenStorageInterface $storage;
 
@@ -55,6 +58,13 @@ final class CsrfMiddleware implements MiddlewareInterface
         return $new;
     }
 
+    public function withHeaderName(string $name): self
+    {
+        $new = clone $this;
+        $new->headerName = $name;
+        return $new;
+    }
+
     private function getToken(): ?string
     {
         $token = $this->storage->get();
@@ -85,7 +95,7 @@ final class CsrfMiddleware implements MiddlewareInterface
 
         $token = $parsedBody[$this->parameterName] ?? null;
         if (empty($token)) {
-            $headers = $request->getHeader(self::HEADER_NAME);
+            $headers = $request->getHeader($this->headerName);
             $token = \reset($headers);
         }
 
