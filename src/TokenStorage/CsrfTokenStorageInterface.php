@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf;
+namespace Yiisoft\Csrf\TokenStorage;
 
 interface CsrfTokenStorageInterface
 {
