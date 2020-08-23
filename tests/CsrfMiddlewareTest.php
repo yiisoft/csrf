@@ -158,7 +158,7 @@ final class CsrfMiddlewareTest extends TestCase
     {
         $middleware = new CsrfMiddleware(new Psr17Factory(), $this->createStorageMock($token));
 
-        return $middleware->withName(self::PARAM_NAME);
+        return $middleware->withParameterName(self::PARAM_NAME);
     }
 
     private function generateToken(): string
