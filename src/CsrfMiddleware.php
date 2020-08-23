@@ -65,7 +65,7 @@ final class CsrfMiddleware implements MiddlewareInterface
         return $new;
     }
 
-    private function getToken(): ?string
+    private function getToken(): string
     {
         $token = $this->storage->get();
         if (empty($token)) {
@@ -76,7 +76,7 @@ final class CsrfMiddleware implements MiddlewareInterface
         return $token;
     }
 
-    private function validateCsrfToken(ServerRequestInterface $request, ?string $trueToken): bool
+    private function validateCsrfToken(ServerRequestInterface $request, string $trueToken): bool
     {
         $method = $request->getMethod();
 
