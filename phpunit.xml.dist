@@ -16,7 +16,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="Yii _____ tests">
+        <testsuite name="CSRF Protection Library tests">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
