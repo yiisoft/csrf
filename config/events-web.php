@@ -7,8 +7,8 @@ use Yiisoft\Yii\Web\Event\BeforeRequest;
 
 return [
     BeforeRequest::class => [
-        // Initialize static class CsrfToken for reset token when use an alternative way of running
-        // an application. For example, RoadRunner or Swoole.
+        // Resets the token. It is relevant when requests are handled in a loop.
+        // I. e. with RoadRunner, Swoole, Codeception.
         fn () => CsrfToken::initialize(),
     ],
 ];
