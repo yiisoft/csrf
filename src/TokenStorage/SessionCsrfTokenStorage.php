@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Csrf\TokenStorage;
 
-use Yiisoft\Yii\Web\Session\SessionInterface;
+use Yiisoft\Session\SessionInterface;
 
 class SessionCsrfTokenStorage implements CsrfTokenStorageInterface
 {
