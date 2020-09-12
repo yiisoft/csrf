@@ -27,7 +27,7 @@
         "psr/http-server-middleware": "^1.0",
         "yiisoft/http": "^1.0@dev",
         "yiisoft/security": "^3.0@dev",
-        "yiisoft/yii-web": "^3.0@dev"
+        "yiisoft/session": "^3.0@dev"
     },
     "require-dev": {
         "infection/infection": "^0.16.3",
