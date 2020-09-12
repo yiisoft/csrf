@@ -65,6 +65,22 @@ final class CsrfMiddlewareTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
+    public function testValidTokenInCustomHeaderResultIn200()
+    {
+        $token = $this->generateToken();
+        $headerName = 'CUSTOM-CSRF';
+
+        $middleware = $this
+            ->createCsrfMiddlewareWithToken($token)
+            ->withHeaderName($headerName);
+        $response = $middleware->process(
+            $this->createPostServerRequestWithHeaderToken($token, $headerName),
+            $this->createRequestHandler()
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
     public function testGetIsAlwaysAllowed(): void
     {
         $middleware = $this->createCsrfMiddlewareWithToken('');
@@ -125,10 +141,12 @@ final class CsrfMiddlewareTest extends TestCase
         return $this->createServerRequest(Method::DELETE, $this->getBodyRequestParamsByToken($token));
     }
 
-    private function createPostServerRequestWithHeaderToken(string $token): ServerRequestInterface
-    {
+    private function createPostServerRequestWithHeaderToken(
+        string $token,
+        string $headerName = CsrfMiddleware::HEADER_NAME
+    ): ServerRequestInterface {
         return $this->createServerRequest(Method::POST, [], [
-            CsrfMiddleware::HEADER_NAME => TokenMask::apply($token),
+            $headerName => TokenMask::apply($token),
         ]);
     }
 
