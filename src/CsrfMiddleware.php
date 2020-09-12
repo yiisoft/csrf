@@ -9,11 +9,11 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Yiisoft\Csrf\TokenMaskService\TokenMaskServiceInterface;
 use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
 use Yiisoft\Security\Random;
-use Yiisoft\Security\TokenMask;
 
 final class CsrfMiddleware implements MiddlewareInterface
 {
@@ -26,13 +26,16 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenStorageInterface $storage;
+    private TokenMaskServiceInterface $tokenMaskService;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        CsrfTokenStorageInterface $storage
+        CsrfTokenStorageInterface $storage,
+        TokenMaskServiceInterface $tokenMaskService
     ) {
         $this->responseFactory = $responseFactory;
         $this->storage = $storage;
+        $this->tokenMaskService = $tokenMaskService;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -98,6 +101,6 @@ final class CsrfMiddleware implements MiddlewareInterface
             $token = \reset($headers);
         }
 
-        return is_string($token) ? TokenMask::remove($token) : null;
+        return is_string($token) ? $this->tokenMaskService->remove($token) : null;
     }
 }
