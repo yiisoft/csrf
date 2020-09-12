@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\TokenMaskService;
+namespace Yiisoft\Csrf\TokenMask;
 
-interface TokenMaskServiceInterface
+interface CsrfTokenMaskInterface
 {
 
     public function apply(string $token): string;
