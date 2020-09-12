@@ -9,7 +9,7 @@ use LogicException;
 /**
  * Class should be singleton
  */
-final class SingletonCsrfToken implements CsrfTokenInterface
+final class CsrfToken implements CsrfTokenInterface
 {
 
     private ?string $value = null;
