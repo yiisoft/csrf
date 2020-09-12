@@ -9,7 +9,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Yiisoft\Csrf\Token\CsrfTokenInterface;
 use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
@@ -27,16 +26,13 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenStorageInterface $storage;
-    private CsrfTokenInterface $token;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        CsrfTokenStorageInterface $storage,
-        CsrfTokenInterface $token
+        CsrfTokenStorageInterface $storage
     ) {
         $this->responseFactory = $responseFactory;
         $this->storage = $storage;
-        $this->token = $token;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -50,8 +46,6 @@ final class CsrfMiddleware implements MiddlewareInterface
             $response->getBody()->write(Status::TEXTS[Status::UNPROCESSABLE_ENTITY]);
             return $response;
         }
-
-        $this->token->setValue(TokenMask::apply($token));
 
         return $handler->handle($request);
     }
