@@ -50,7 +50,7 @@
             "dev-master": "3.0.x-dev"
         },
         "config-plugin": {
-            "events-web": "config/events-web.php"
+            "web": "config/web.php"
         }
     },
     "config": {
