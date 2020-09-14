@@ -5,21 +5,17 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf;
 
 use LogicException;
-use Yiisoft\Csrf\TokenMask\CsrfTokenMaskInterface;
 use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
+use Yiisoft\Security\TokenMask;
 
 final class CsrfToken
 {
 
     private CsrfTokenStorageInterface $storage;
-    private CsrfTokenMaskInterface $tokenMask;
 
-    public function __construct(
-        CsrfTokenStorageInterface $storage,
-        CsrfTokenMaskInterface $tokenMask
-    ) {
+    public function __construct(CsrfTokenStorageInterface $storage)
+    {
         $this->storage = $storage;
-        $this->tokenMask = $tokenMask;
     }
 
     /**
@@ -32,6 +28,6 @@ final class CsrfToken
         if (empty($token)) {
             throw new LogicException('CSRF token is not defined.');
         }
-        return $this->tokenMask->apply($token);
+        return TokenMask::apply($token);
     }
 }

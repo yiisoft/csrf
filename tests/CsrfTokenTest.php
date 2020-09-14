@@ -8,22 +8,15 @@ use LogicException;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\CsrfToken;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
-use Yiisoft\Csrf\TokenMask\CsrfTokenMask;
+use Yiisoft\Security\TokenMask;
 
 final class CsrfTokenTest extends TestCase
 {
 
-    private CsrfTokenMask $tokenMask;
-
-    protected function setUp(): void
-    {
-        $this->tokenMask = new CsrfTokenMask();
-    }
-
     public function testBase(): void
     {
         $csrfToken = $this->createCsrfToken('test_token');
-        $this->assertSame('test_token', $this->tokenMask->remove($csrfToken->getValue()));
+        $this->assertSame('test_token', TokenMask::remove($csrfToken->getValue()));
     }
 
     public function testEarlyGet(): void
@@ -44,6 +37,6 @@ final class CsrfTokenTest extends TestCase
                 ->method('get')
                 ->willReturn($token);
         }
-        return new CsrfToken($mock, $this->tokenMask);
+        return new CsrfToken($mock);
     }
 }
