@@ -4,26 +4,39 @@ declare(strict_types=1);
 
 namespace Yiisoft\Csrf\Tests;
 
+use LogicException;
+use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\CsrfToken;
+use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
+use Yiisoft\Security\TokenMask;
 
 final class CsrfTokenTest extends TestCase
 {
 
     public function testBase(): void
     {
-        CsrfToken::setValue('test_token');
-        $this->assertSame('test_token', CsrfToken::getValue());
-    }
-
-    public function testRepeatedSet(): void
-    {
-        CsrfToken::setValue('test_token');
-        $this->expectExceptionMessage('The CSRF token is already set.');
-        CsrfToken::setValue('test_token');
+        $csrfToken = $this->createCsrfToken('test_token');
+        $this->assertSame('test_token', TokenMask::remove($csrfToken->getValue()));
     }
 
     public function testEarlyGet(): void
     {
-        $this->assertNull(CsrfToken::getValue());
+        $csrfToken = $this->createCsrfToken();
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('CSRF token is not defined.');
+        $csrfToken->getValue();
+    }
+
+    private function createCsrfToken(string $token = null): CsrfToken
+    {
+        $mock = $this->createMock(MockCsrfTokenStorage::class);
+        if ($token !== null) {
+            $mock
+                ->expects($this->once())
+                ->method('get')
+                ->willReturn($token);
+        }
+        return new CsrfToken($mock);
     }
 }

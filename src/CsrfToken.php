@@ -5,27 +5,29 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf;
 
 use LogicException;
+use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
+use Yiisoft\Security\TokenMask;
 
 final class CsrfToken
 {
 
-    private static ?string $token = null;
+    private CsrfTokenStorageInterface $storage;
 
-    public static function initialize(): void
+    public function __construct(CsrfTokenStorageInterface $storage)
     {
-        static::$token = null;
+        $this->storage = $storage;
     }
 
-    public static function getValue(): ?string
+    /**
+     * @return string
+     * @throws LogicException when CSRF token is not defined
+     */
+    public function getValue(): string
     {
-        return static::$token;
-    }
-
-    public static function setValue(string $token): void
-    {
-        if (static::$token !== null) {
-            throw new LogicException('The CSRF token is already set.');
+        $token = $this->storage->get();
+        if (empty($token)) {
+            throw new LogicException('CSRF token is not defined.');
         }
-        static::$token = $token;
+        return TokenMask::apply($token);
     }
 }
