@@ -21,7 +21,7 @@ The package ...
 The package could be installed with composer:
 
 ```
-composer install yiisoft/csrf
+composer require yiisoft/csrf
 ```
 
 ## General usage
