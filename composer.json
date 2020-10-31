@@ -26,7 +26,7 @@
         "psr/http-message-implementation": "1.0",
         "psr/http-server-middleware": "^1.0",
         "yiisoft/http": "^1.0@dev",
-        "yiisoft/security": "^3.0@dev",
+        "yiisoft/security": "^1.0",
         "yiisoft/session": "^3.0@dev"
     },
     "require-dev": {
