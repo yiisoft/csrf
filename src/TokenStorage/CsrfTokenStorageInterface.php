@@ -6,7 +6,6 @@ namespace Yiisoft\Csrf\TokenStorage;
 
 interface CsrfTokenStorageInterface
 {
-
     /**
      * Read CSRF token from storage
      */
@@ -14,6 +13,7 @@ interface CsrfTokenStorageInterface
 
     /**
      * Write CSRF token into storage
+     *
      * @param string $token
      */
     public function set(string $token): void;

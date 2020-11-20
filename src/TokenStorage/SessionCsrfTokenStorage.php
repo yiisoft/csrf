@@ -8,7 +8,6 @@ use Yiisoft\Session\SessionInterface;
 
 class SessionCsrfTokenStorage implements CsrfTokenStorageInterface
 {
-
     public const KEY = '_csrf';
 
     private string $key;

@@ -11,15 +11,14 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Csrf\CsrfMiddleware;
-use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
+use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Security\Random;
 use Yiisoft\Security\TokenMask;
 
 final class CsrfMiddlewareTest extends TestCase
 {
-
     private const PARAM_NAME = 'csrf';
 
     public function testValidTokenInBodyPostRequestResultIn200(): void

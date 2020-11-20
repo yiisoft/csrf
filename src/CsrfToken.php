@@ -10,7 +10,6 @@ use Yiisoft\Security\TokenMask;
 
 final class CsrfToken
 {
-
     private CsrfTokenStorageInterface $storage;
 
     public function __construct(CsrfTokenStorageInterface $storage)
@@ -19,8 +18,9 @@ final class CsrfToken
     }
 
     /**
-     * @return string
      * @throws LogicException when CSRF token is not defined
+     *
+     * @return string
      */
     public function getValue(): string
     {

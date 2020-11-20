@@ -17,7 +17,6 @@ use Yiisoft\Security\TokenMask;
 
 final class CsrfMiddleware implements MiddlewareInterface
 {
-
     public const PARAMETER_NAME = '_csrf';
     public const HEADER_NAME = 'X-CSRF-Token';
 

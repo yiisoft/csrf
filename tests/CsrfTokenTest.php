@@ -12,7 +12,6 @@ use Yiisoft\Security\TokenMask;
 
 final class CsrfTokenTest extends TestCase
 {
-
     public function testBase(): void
     {
         $csrfToken = $this->createCsrfToken('test_token');

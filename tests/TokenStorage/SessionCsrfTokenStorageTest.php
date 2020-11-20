@@ -11,10 +11,9 @@ use Yiisoft\Session\SessionInterface;
 
 class SessionCsrfTokenStorageTest extends TestCase
 {
-
     public function testGet()
     {
-        /** @var SessionInterface|MockObject $sessionMock */
+        /** @var MockObject|SessionInterface $sessionMock */
         $sessionMock = $this->createMock(SessionInterface::class);
         $sessionMock
             ->expects($this->once())
@@ -28,7 +27,7 @@ class SessionCsrfTokenStorageTest extends TestCase
 
     public function testSet()
     {
-        /** @var SessionInterface|MockObject $sessionMock */
+        /** @var MockObject|SessionInterface $sessionMock */
         $sessionMock = $this->createMock(SessionInterface::class);
         $sessionMock
             ->expects($this->once())
@@ -41,7 +40,7 @@ class SessionCsrfTokenStorageTest extends TestCase
 
     public function testRemove()
     {
-        /** @var SessionInterface|MockObject $sessionMock */
+        /** @var MockObject|SessionInterface $sessionMock */
         $sessionMock = $this->createMock(SessionInterface::class);
         $sessionMock
             ->expects($this->once())
