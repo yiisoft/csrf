@@ -9,9 +9,9 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\TokenStorage\SessionCsrfTokenStorage;
 use Yiisoft\Session\SessionInterface;
 
-class SessionCsrfTokenStorageTest extends TestCase
+final class SessionCsrfTokenStorageTest extends TestCase
 {
-    public function testGet()
+    public function testGet(): void
     {
         /** @var MockObject|SessionInterface $sessionMock */
         $sessionMock = $this->createMock(SessionInterface::class);
@@ -25,7 +25,7 @@ class SessionCsrfTokenStorageTest extends TestCase
         $this->assertSame('token', $storage->get());
     }
 
-    public function testSet()
+    public function testSet(): void
     {
         /** @var MockObject|SessionInterface $sessionMock */
         $sessionMock = $this->createMock(SessionInterface::class);
@@ -38,7 +38,7 @@ class SessionCsrfTokenStorageTest extends TestCase
         $storage->set('token');
     }
 
-    public function testRemove()
+    public function testRemove(): void
     {
         /** @var MockObject|SessionInterface $sessionMock */
         $sessionMock = $this->createMock(SessionInterface::class);

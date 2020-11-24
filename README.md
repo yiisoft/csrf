@@ -6,7 +6,7 @@
     <br>
 </p>
 
-The package ...
+The package provides PSR-15 implementation for CSRF protection.
 
 [![Latest Stable Version](https://poser.pugx.org/yiisoft/csrf/v/stable.png)](https://packagist.org/packages/yiisoft/csrf)
 [![Total Downloads](https://poser.pugx.org/yiisoft/csrf/downloads.png)](https://packagist.org/packages/yiisoft/csrf)
