@@ -6,7 +6,7 @@ namespace Yiisoft\Csrf\Tests\Mock;
 
 use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
 
-final class MockCsrfTokenStorage implements CsrfTokenStorageInterface
+class MockCsrfTokenStorage implements CsrfTokenStorageInterface
 {
     private ?string $token = null;
 
