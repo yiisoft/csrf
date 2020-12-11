@@ -5,48 +5,70 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf;
 
 use LogicException;
-use Yiisoft\Csrf\TokenGenerator\CsrfTokenGeneratorInterface;
+use Yiisoft\Csrf\Token\CsrfTokenInterface;
+use Yiisoft\Csrf\Token\StateCsrfTokenInterface;
 use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
 use Yiisoft\Security\TokenMask;
 
 final class CsrfTokenService
 {
-    private CsrfTokenGeneratorInterface $generator;
-    private CsrfTokenStorageInterface $storage;
-    private bool $autoGenerate;
+    private CsrfTokenInterface $token;
+    private ?CsrfTokenStorageInterface $storage;
 
     public function __construct(
-        CsrfTokenGeneratorInterface $generator,
-        CsrfTokenStorageInterface $storage,
-        bool $autoGenerate = true
+        CsrfTokenInterface $token,
+        ?CsrfTokenStorageInterface $storage = null
     ) {
-        $this->generator = $generator;
+        $this->token = $token;
         $this->storage = $storage;
-        $this->autoGenerate = $autoGenerate;
     }
 
     /**
-     * @throws LogicException when CSRF token is not defined
+     * @throws LogicException when CSRF token storage is not defined for tokens with state
      *
      * @return string
      */
     public function getValue(): string
     {
-        $token = $this->storage->get();
-        if (empty($token)) {
-            if ($this->autoGenerate) {
-                $token = $this->generator->generate();
-                $this->storage->set($token);
-            } else {
-                throw new LogicException('CSRF token is not defined.');
-            }
-        }
-        return TokenMask::apply($token);
+        return TokenMask::apply(
+            $this->getTokenValue()
+        );
     }
 
     public function validate(string $token): bool
     {
-        $trueToken = $this->storage->get();
-        return $trueToken !== null && hash_equals($trueToken, TokenMask::remove($token));
+        return hash_equals($this->getTokenValue(), TokenMask::remove($token));
+    }
+
+    private function getTokenValue(): string
+    {
+        return $this->token instanceof StateCsrfTokenInterface
+            ? $this->getStateTokenValue()
+            : $this->getStatelessTokenValue();
+    }
+
+    private function getStatelessTokenValue(): string
+    {
+        return $this->token->generate();
+    }
+
+    /**
+     * @throws LogicException when CSRF token storage is not defined
+     *
+     * @return string
+     */
+    private function getStateTokenValue(): string
+    {
+        if ($this->storage === null) {
+            throw new LogicException('CSRF token storage is not defined.');
+        }
+
+        $token = $this->storage->get();
+        if (empty($token)) {
+            $token = $this->token->generate();
+            $this->storage->set($token);
+        }
+
+        return $token;
     }
 }

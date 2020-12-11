@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\TokenGenerator;
+namespace Yiisoft\Csrf\Token;
 
-interface CsrfTokenGeneratorInterface
+interface CsrfTokenInterface
 {
     public function generate(): string;
 }
