@@ -6,7 +6,7 @@ namespace Yiisoft\Csrf\Tests;
 
 use LogicException;
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Csrf\CsrfToken;
+use Yiisoft\Csrf\CsrfTokenService;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
 use Yiisoft\Csrf\TokenGenerator\RandomCsrfTokenGenerator;
 use Yiisoft\Security\TokenMask;
@@ -28,7 +28,7 @@ final class CsrfTokenTest extends TestCase
         $csrfToken->getValue();
     }
 
-    private function createCsrfToken(string $token = null, bool $autoGenerate = true): CsrfToken
+    private function createCsrfToken(string $token = null, bool $autoGenerate = true): CsrfTokenService
     {
         $mock = $this->createMock(MockCsrfTokenStorage::class);
         if ($token !== null) {
@@ -37,6 +37,6 @@ final class CsrfTokenTest extends TestCase
                 ->method('get')
                 ->willReturn($token);
         }
-        return new CsrfToken(new RandomCsrfTokenGenerator(), $mock, $autoGenerate);
+        return new CsrfTokenService(new RandomCsrfTokenGenerator(), $mock, $autoGenerate);
     }
 }

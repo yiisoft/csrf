@@ -9,7 +9,7 @@ use Yiisoft\Csrf\TokenGenerator\CsrfTokenGeneratorInterface;
 use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
 use Yiisoft\Security\TokenMask;
 
-final class CsrfToken
+final class CsrfTokenService
 {
     private CsrfTokenGeneratorInterface $generator;
     private CsrfTokenStorageInterface $storage;

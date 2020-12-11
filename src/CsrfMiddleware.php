@@ -23,14 +23,14 @@ final class CsrfMiddleware implements MiddlewareInterface
     private string $headerName = self::HEADER_NAME;
 
     private ResponseFactoryInterface $responseFactory;
-    private CsrfToken $token;
+    private CsrfTokenService $tokenService;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        CsrfToken $token
+        CsrfTokenService $tokenService
     ) {
         $this->responseFactory = $responseFactory;
-        $this->token = $token;
+        $this->tokenService = $tokenService;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -68,7 +68,7 @@ final class CsrfMiddleware implements MiddlewareInterface
 
         $token = $this->getTokenFromRequest($request);
 
-        return !empty($token) && $this->token->validate($token);
+        return !empty($token) && $this->tokenService->validate($token);
     }
 
     private function getTokenFromRequest(ServerRequestInterface $request): ?string
