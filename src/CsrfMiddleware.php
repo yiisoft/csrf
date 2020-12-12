@@ -71,7 +71,7 @@ final class CsrfMiddleware implements MiddlewareInterface
         $token = $this->getTokenFromRequest($request);
 
         return !empty($token) &&
-            hash_equals($this->tokenFetcher->getValue(), TokenMask::remove($token));
+            hash_equals($this->tokenFetcher->getValue(), $token);
     }
 
     private function getTokenFromRequest(ServerRequestInterface $request): ?string
@@ -84,6 +84,6 @@ final class CsrfMiddleware implements MiddlewareInterface
             $token = reset($headers);
         }
 
-        return is_string($token) ? $token : null;
+        return is_string($token) ? TokenMask::remove($token) : null;
     }
 }
