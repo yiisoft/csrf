@@ -9,8 +9,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Yiisoft\Csrf\TokenFetcher\CsrfTokenFetcherInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
+use Yiisoft\Security\TokenMask;
 
 use function in_array;
 
@@ -23,14 +25,14 @@ final class CsrfMiddleware implements MiddlewareInterface
     private string $headerName = self::HEADER_NAME;
 
     private ResponseFactoryInterface $responseFactory;
-    private CsrfTokenService $tokenService;
+    private CsrfTokenFetcherInterface $tokenFetcher;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        CsrfTokenService $tokenService
+        CsrfTokenFetcherInterface $tokenFetcher
     ) {
         $this->responseFactory = $responseFactory;
-        $this->tokenService = $tokenService;
+        $this->tokenFetcher = $tokenFetcher;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -68,7 +70,8 @@ final class CsrfMiddleware implements MiddlewareInterface
 
         $token = $this->getTokenFromRequest($request);
 
-        return !empty($token) && $this->tokenService->validate($token);
+        return !empty($token) &&
+            hash_equals($this->tokenFetcher->getValue(), TokenMask::remove($token));
     }
 
     private function getTokenFromRequest(ServerRequestInterface $request): ?string

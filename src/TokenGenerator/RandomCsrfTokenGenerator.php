@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Token;
+namespace Yiisoft\Csrf\TokenGenerator;
 
 use Yiisoft\Security\Random;
 
-final class RandomCsrfToken implements StateCsrfTokenInterface
+final class RandomCsrfTokenGenerator implements CsrfTokenGeneratorInterface
 {
     private int $length;
 

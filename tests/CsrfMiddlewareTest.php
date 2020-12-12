@@ -14,6 +14,8 @@ use Yiisoft\Csrf\CsrfMiddleware;
 use Yiisoft\Csrf\CsrfTokenService;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
 use Yiisoft\Csrf\Token\RandomCsrfToken;
+use Yiisoft\Csrf\TokenFetcher\StateCsrfTokenFetcher;
+use Yiisoft\Csrf\TokenGenerator\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Security\Random;
@@ -177,7 +179,7 @@ final class CsrfMiddlewareTest extends TestCase
     {
         return new CsrfMiddleware(
             new Psr17Factory(),
-            new CsrfTokenService(new RandomCsrfToken(), new MockCsrfTokenStorage())
+            new StateCsrfTokenFetcher(new RandomCsrfTokenGenerator(), new MockCsrfTokenStorage())
         );
     }
 
@@ -185,7 +187,7 @@ final class CsrfMiddlewareTest extends TestCase
     {
         $middleware = new CsrfMiddleware(
             new Psr17Factory(),
-            new CsrfTokenService(new RandomCsrfToken(), $this->createStorageMock($token))
+            new StateCsrfTokenFetcher(new RandomCsrfTokenGenerator(), $this->createStorageMock($token))
         );
 
         return $middleware->withParameterName(self::PARAM_NAME);
