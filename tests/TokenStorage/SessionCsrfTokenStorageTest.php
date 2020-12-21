@@ -6,7 +6,7 @@ namespace Yiisoft\Csrf\Tests\TokenStorage;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Csrf\TokenStorage\SessionCsrfTokenStorage;
+use Yiisoft\Csrf\Stateful\SessionCsrfTokenStorage;
 use Yiisoft\Session\SessionInterface;
 
 final class SessionCsrfTokenStorageTest extends TestCase

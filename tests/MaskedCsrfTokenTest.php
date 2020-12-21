@@ -6,12 +6,12 @@ namespace Yiisoft\Csrf\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\MaskedCsrfToken;
+use Yiisoft\Csrf\Stateful\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Stateful\StatefulCsrfToken;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
-use Yiisoft\Csrf\TokenFetcher\StateCsrfTokenFetcher;
-use Yiisoft\Csrf\TokenGenerator\RandomCsrfTokenGenerator;
 use Yiisoft\Security\TokenMask;
 
-final class CsrfTokenTest extends TestCase
+final class MaskedCsrfTokenTest extends TestCase
 {
     public function testBase(): void
     {
@@ -29,7 +29,7 @@ final class CsrfTokenTest extends TestCase
                 ->willReturn($token);
         }
         return new MaskedCsrfToken(
-            new StateCsrfTokenFetcher(new RandomCsrfTokenGenerator(), $mock)
+            new StatefulCsrfToken(new RandomCsrfTokenGenerator(), $mock)
         );
     }
 }

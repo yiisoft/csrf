@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Csrf\TokenFetcher\CsrfTokenFetcherInterface;
-use Yiisoft\Csrf\TokenFetcher\StateCsrfTokenFetcher;
-use Yiisoft\Csrf\TokenGenerator\CsrfTokenGeneratorInterface;
-use Yiisoft\Csrf\TokenGenerator\RandomCsrfTokenGenerator;
-use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
-use Yiisoft\Csrf\TokenStorage\SessionCsrfTokenStorage;
+use Yiisoft\Csrf\CsrfTokenGeneratorInterface;
+use Yiisoft\Csrf\CsrfTokenInterface;
+use Yiisoft\Csrf\Stateful\CsrfTokenStorageInterface;
+use Yiisoft\Csrf\Stateful\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Stateful\SessionCsrfTokenStorage;
+use Yiisoft\Csrf\Stateful\StatefulCsrfToken;
 
 return [
-    CsrfTokenFetcherInterface::class => StateCsrfTokenFetcher::class,
+    CsrfTokenInterface::class => StatefulCsrfToken::class,
     CsrfTokenGeneratorInterface::class => RandomCsrfTokenGenerator::class,
     CsrfTokenStorageInterface::class => SessionCsrfTokenStorage::class,
 ];
