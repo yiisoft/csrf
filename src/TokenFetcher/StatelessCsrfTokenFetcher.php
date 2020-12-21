@@ -6,7 +6,7 @@ namespace Yiisoft\Csrf\TokenFetcher;
 
 use Yiisoft\Csrf\TokenGenerator\CsrfTokenGeneratorInterface;
 
-final class StatelessCsrfTokenFetcher
+final class StatelessCsrfTokenFetcher implements CsrfTokenFetcherInterface
 {
     private CsrfTokenGeneratorInterface $generator;
 
