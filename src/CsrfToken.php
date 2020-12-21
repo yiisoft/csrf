@@ -16,6 +16,11 @@ final class CsrfToken
         $this->fetcher = $fetcher;
     }
 
+    /**
+     * @return string The token string valid for the next request with the mask applied. It is safe to render it in the
+     * current HTML page to be later passed to the next request either as a hidden form field or via JavaScript
+     * async request.
+     */
     public function getValue(): string
     {
         return TokenMask::apply(
