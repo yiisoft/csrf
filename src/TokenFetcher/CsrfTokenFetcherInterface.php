@@ -7,7 +7,7 @@ namespace Yiisoft\Csrf\TokenFetcher;
 /**
  * Token fetcher returns currently valid token as string.
  *
- * @internal Do not use directly. See {@see CsrfToken::getValue()}.
+ * Do not use directly. See {@see CsrfToken::getValue()}.
  */
 interface CsrfTokenFetcherInterface
 {
