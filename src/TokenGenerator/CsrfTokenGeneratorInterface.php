@@ -6,6 +6,7 @@ namespace Yiisoft\Csrf\TokenGenerator;
 
 /**
  * Token generator generates a new CSRF token.
+ *
  * @internal Do not use directly.
  */
 interface CsrfTokenGeneratorInterface
