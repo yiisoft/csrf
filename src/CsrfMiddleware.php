@@ -15,6 +15,7 @@ use Yiisoft\Http\Status;
 use Yiisoft\Security\TokenMask;
 
 use function in_array;
+use function is_string;
 
 final class CsrfMiddleware implements MiddlewareInterface
 {
