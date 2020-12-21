@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Yiisoft\Csrf\TokenFetcher\CsrfTokenFetcherInterface;
+use Yiisoft\Csrf\Reader\CsrfTokenReaderInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
 use Yiisoft\Security\TokenMask;
@@ -26,11 +26,11 @@ final class CsrfMiddleware implements MiddlewareInterface
     private string $headerName = self::HEADER_NAME;
 
     private ResponseFactoryInterface $responseFactory;
-    private CsrfTokenFetcherInterface $tokenFetcher;
+    private CsrfTokenReaderInterface $tokenFetcher;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        CsrfTokenFetcherInterface $tokenFetcher
+        CsrfTokenReaderInterface $tokenFetcher
     ) {
         $this->responseFactory = $responseFactory;
         $this->tokenFetcher = $tokenFetcher;

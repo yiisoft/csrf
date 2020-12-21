@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\TokenGenerator;
+namespace Yiisoft\Csrf\Generator;
 
 /**
  * Token generator generates a new CSRF token.

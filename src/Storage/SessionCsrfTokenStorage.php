@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\TokenStorage;
+namespace Yiisoft\Csrf\Storage;
 
 use Yiisoft\Session\SessionInterface;
 

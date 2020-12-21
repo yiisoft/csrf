@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\TokenFetcher;
+namespace Yiisoft\Csrf\Reader;
 
-use Yiisoft\Csrf\TokenGenerator\CsrfTokenGeneratorInterface;
-use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
+use Yiisoft\Csrf\Generator\CsrfTokenGeneratorInterface;
+use Yiisoft\Csrf\Storage\CsrfTokenStorageInterface;
 
-final class StateCsrfTokenFetcher implements CsrfTokenFetcherInterface
+final class StatefulCsrfTokenReader implements CsrfTokenReaderInterface
 {
     private CsrfTokenGeneratorInterface $generator;
     private CsrfTokenStorageInterface $storage;

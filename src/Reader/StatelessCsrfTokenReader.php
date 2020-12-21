@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\TokenFetcher;
+namespace Yiisoft\Csrf\Reader;
 
-use Yiisoft\Csrf\TokenGenerator\CsrfTokenGeneratorInterface;
+use Yiisoft\Csrf\Generator\CsrfTokenGeneratorInterface;
 
-final class StatelessCsrfTokenFetcher implements CsrfTokenFetcherInterface
+final class StatelessCsrfTokenReader implements CsrfTokenReaderInterface
 {
     private CsrfTokenGeneratorInterface $generator;
 

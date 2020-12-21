@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\Csrf;
 
-use Yiisoft\Csrf\TokenFetcher\CsrfTokenFetcherInterface;
+use Yiisoft\Csrf\Reader\CsrfTokenReaderInterface;
 use Yiisoft\Security\TokenMask;
 
 final class CsrfToken
 {
-    private CsrfTokenFetcherInterface $fetcher;
+    private CsrfTokenReaderInterface $reader;
 
-    public function __construct(CsrfTokenFetcherInterface $fetcher)
+    public function __construct(CsrfTokenReaderInterface $reader)
     {
-        $this->fetcher = $fetcher;
+        $this->reader = $reader;
     }
 
     /**
@@ -24,7 +24,7 @@ final class CsrfToken
     public function getValue(): string
     {
         return TokenMask::apply(
-            $this->fetcher->getValue()
+            $this->reader->getValue()
         );
     }
 }
