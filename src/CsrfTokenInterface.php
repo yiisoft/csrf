@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Reader;
+namespace Yiisoft\Csrf;
 
 /**
  * Token reader returns currently valid token as string.
  *
- * Do not use directly. See {@see CsrfToken::getValue()}.
+ * Do not use directly. See {@see MaskedCsrfToken::getValue()}.
  */
-interface CsrfTokenReaderInterface
+interface CsrfTokenInterface
 {
     /**
      * @return string The currently valid token as string.

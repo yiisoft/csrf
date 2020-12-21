@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Storage;
+namespace Yiisoft\Csrf\Stateful;
 
 use Yiisoft\Session\SessionInterface;
 
