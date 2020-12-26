@@ -6,6 +6,9 @@ namespace Yiisoft\Csrf\Stateless;
 
 use Yiisoft\Session\SessionInterface;
 
+/**
+ * Session based CSRF token identification. Returns the same token if the session ID is the same.
+ */
 final class SessionCsrfTokenIdentification implements CsrfTokenIdentificationInterface
 {
     private SessionInterface $session;
