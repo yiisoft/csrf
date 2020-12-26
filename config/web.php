@@ -9,7 +9,7 @@ use Yiisoft\Csrf\Stateful\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\Stateful\SessionCsrfTokenStorage;
 use Yiisoft\Csrf\Stateful\StatefulCsrfToken;
 use Yiisoft\Csrf\Stateless\CsrfTokenIdentificationInterface;
-use Yiisoft\Csrf\Stateless\SessionCsrfTokenCsrfTokenIdentification;
+use Yiisoft\Csrf\Stateless\SessionCsrfTokenIdentification;
 
 return [
     CsrfTokenInterface::class => StatefulCsrfToken::class,
@@ -19,5 +19,5 @@ return [
     CsrfTokenStorageInterface::class => SessionCsrfTokenStorage::class,
 
     // Stateless
-    CsrfTokenIdentificationInterface::class => SessionCsrfTokenCsrfTokenIdentification::class,
+    CsrfTokenIdentificationInterface::class => SessionCsrfTokenIdentification::class,
 ];

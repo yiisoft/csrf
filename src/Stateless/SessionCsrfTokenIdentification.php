@@ -6,7 +6,7 @@ namespace Yiisoft\Csrf\Stateless;
 
 use Yiisoft\Session\SessionInterface;
 
-final class SessionCsrfTokenCsrfTokenIdentification implements CsrfTokenIdentificationInterface
+final class SessionCsrfTokenIdentification implements CsrfTokenIdentificationInterface
 {
     private SessionInterface $session;
 
