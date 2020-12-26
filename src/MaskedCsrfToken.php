@@ -7,7 +7,7 @@ namespace Yiisoft\Csrf;
 use Yiisoft\Security\TokenMask;
 
 /**
- * Masked CSRF token is a decorator that applies masking to a token so it is safe to use it in HTML to be later passed
+ * Masked CSRF token applies masking to a token string so it is safe to use it in HTML to be later passed
  * to the next request either as a hidden form field or via JavaScript async request.
  *
  * @see TokenMask

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf;
 
 /**
- * Token reader returns currently valid token as string.
+ * Token returns currently valid token as string.
  *
  * Do not use directly. See {@see MaskedCsrfToken::getValue()}.
  */
@@ -16,5 +16,9 @@ interface CsrfTokenInterface
      */
     public function getValue(): string;
 
+    /**
+     * @param string $token Token string to validate.
+     * @return bool If token string is valid.
+     */
     public function validate(string $token): bool;
 }

@@ -9,5 +9,10 @@ namespace Yiisoft\Csrf\Stateful;
  */
 interface CsrfTokenGeneratorInterface
 {
+    /**
+     * Generate a new CSRF token.
+     *
+     * @return string CSRF token string.
+     */
     public function generate(): string;
 }
