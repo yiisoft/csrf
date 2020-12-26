@@ -70,8 +70,7 @@ final class CsrfMiddleware implements MiddlewareInterface
 
         $token = $this->getTokenFromRequest($request);
 
-        return !empty($token) &&
-            hash_equals($this->token->getValue(), $token);
+        return !empty($token) && $this->token->validate($token);
     }
 
     private function getTokenFromRequest(ServerRequestInterface $request): ?string

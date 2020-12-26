@@ -15,4 +15,6 @@ interface CsrfTokenInterface
      * @return string The currently valid token as string.
      */
     public function getValue(): string;
+
+    public function validate(string $token): bool;
 }

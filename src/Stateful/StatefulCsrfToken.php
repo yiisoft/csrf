@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Csrf\Stateful;
 
-use Yiisoft\Csrf\CsrfTokenGeneratorInterface;
 use Yiisoft\Csrf\CsrfTokenInterface;
 
 final class StatefulCsrfToken implements CsrfTokenInterface
@@ -29,5 +28,10 @@ final class StatefulCsrfToken implements CsrfTokenInterface
         }
 
         return $token;
+    }
+
+    public function validate(string $token): bool
+    {
+        return hash_equals($this->getValue(), $token);
     }
 }
