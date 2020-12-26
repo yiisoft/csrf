@@ -77,6 +77,7 @@ final class CsrfMiddleware implements MiddlewareInterface
     {
         $parsedBody = $request->getParsedBody();
 
+        /** @var mixed $token */
         $token = $parsedBody[$this->parameterName] ?? null;
         if (empty($token)) {
             $headers = $request->getHeader($this->headerName);
