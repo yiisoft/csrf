@@ -12,7 +12,7 @@ use Yiisoft\Security\TokenMask;
  *
  * @see TokenMask
  */
-final class MaskedCsrfToken
+final class MaskedCsrfToken implements CsrfTokenInterface
 {
     private CsrfTokenInterface $token;
 
@@ -28,6 +28,13 @@ final class MaskedCsrfToken
     {
         return TokenMask::apply(
             $this->token->getValue()
+        );
+    }
+
+    public function validate(string $token): bool
+    {
+        return $this->token->validate(
+            TokenMask::remove($token)
         );
     }
 }

@@ -11,7 +11,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
-use Yiisoft\Security\TokenMask;
 
 use function in_array;
 use function is_string;
@@ -84,6 +83,6 @@ final class CsrfMiddleware implements MiddlewareInterface
             $token = reset($headers);
         }
 
-        return is_string($token) ? TokenMask::remove($token) : null;
+        return is_string($token) ? $token : null;
     }
 }

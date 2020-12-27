@@ -17,7 +17,6 @@ use Yiisoft\Csrf\Stateful\StatefulCsrfToken;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
 use Yiisoft\Http\Method;
 use Yiisoft\Security\Random;
-use Yiisoft\Security\TokenMask;
 
 final class CsrfMiddlewareTest extends TestCase
 {
@@ -148,7 +147,7 @@ final class CsrfMiddlewareTest extends TestCase
         string $headerName = CsrfMiddleware::HEADER_NAME
     ): ServerRequestInterface {
         return $this->createServerRequest(Method::POST, [], [
-            $headerName => TokenMask::apply($token),
+            $headerName => $token,
         ]);
     }
 
@@ -199,7 +198,7 @@ final class CsrfMiddlewareTest extends TestCase
     private function getBodyRequestParamsByToken(string $token): array
     {
         return [
-            self::PARAM_NAME => TokenMask::apply($token),
+            self::PARAM_NAME => $token,
         ];
     }
 }

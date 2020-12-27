@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Csrf\Stateful\CsrfTokenGeneratorInterface;
+/* @var array $params */
+
+use Yiisoft\Csrf\MaskedCsrfToken;
 use Yiisoft\Csrf\CsrfTokenInterface;
-use Yiisoft\Csrf\Stateful\CsrfTokenStorageInterface;
-use Yiisoft\Csrf\Stateful\RandomCsrfTokenGenerator;
-use Yiisoft\Csrf\Stateful\SessionCsrfTokenStorage;
 use Yiisoft\Csrf\Stateful\StatefulCsrfToken;
-use Yiisoft\Csrf\Stateless\CsrfTokenIdentificationInterface;
-use Yiisoft\Csrf\Stateless\SessionCsrfTokenIdentification;
 
 return [
-    CsrfTokenInterface::class => StatefulCsrfToken::class,
-
-    // Stateful
-    CsrfTokenGeneratorInterface::class => RandomCsrfTokenGenerator::class,
-    CsrfTokenStorageInterface::class => SessionCsrfTokenStorage::class,
-
-    // Stateless
-    CsrfTokenIdentificationInterface::class => SessionCsrfTokenIdentification::class,
+    CsrfTokenInterface::class => [
+        '__class' => MaskedCsrfToken::class,
+        '__construct()' => [
+            'token' => static function () use ($params) {
+                return new StatefulCsrfToken(
+                    $params['yiisoft/csrf']['tokenGenerator'],
+                    $params['yiisoft/csrf']['tokenStorage'],
+                );
+            },
+        ],
+    ],
 ];
