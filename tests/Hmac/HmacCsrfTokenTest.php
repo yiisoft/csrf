@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Tests\Stateless;
+namespace Yiisoft\Csrf\Tests\Hmac;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Csrf\Stateless\StatelessCsrfToken;
+use Yiisoft\Csrf\Hmac\HmacCsrfToken;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenIdentityGenerator;
 
-final class StatelessCsrfTokenTest extends TestCase
+final class HmacCsrfTokenTest extends TestCase
 {
     public function testBase(): void
     {
-        $csrfToken = new StatelessCsrfToken(
+        $csrfToken = new HmacCsrfToken(
             new MockCsrfTokenIdentityGenerator('user7'),
             'mySecretKey'
         );

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Stateless;
+namespace Yiisoft\Csrf\Hmac;
 
 use Yiisoft\Session\SessionInterface;
 

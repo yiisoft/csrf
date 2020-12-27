@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Stateful;
+namespace Yiisoft\Csrf\Synchronizer;
 
 use Yiisoft\Csrf\CsrfTokenInterface;
 
@@ -15,7 +15,7 @@ use Yiisoft\Csrf\CsrfTokenInterface;
  *
  * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
  */
-final class StatefulCsrfToken implements CsrfTokenInterface
+final class SynchronizerCsrfToken implements CsrfTokenInterface
 {
     private CsrfTokenGeneratorInterface $generator;
     private CsrfTokenStorageInterface $storage;

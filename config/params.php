@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'yiisoft/csrf' => [
-        'statelessToken' => [
+        'hmacToken' => [
             'secretKey' => '',
             'algorithm' => 'sha256',
             'lifetime' => null,

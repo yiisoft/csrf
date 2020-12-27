@@ -6,34 +6,34 @@ declare(strict_types=1);
 
 use Yiisoft\Csrf\MaskedCsrfToken;
 use Yiisoft\Csrf\CsrfTokenInterface;
-use Yiisoft\Csrf\Stateful\RandomCsrfTokenGenerator;
-use Yiisoft\Csrf\Stateful\SessionCsrfTokenStorage;
-use Yiisoft\Csrf\Stateful\StatefulCsrfToken;
-use Yiisoft\Csrf\Stateless\SessionCsrfTokenIdentityGenerator;
-use Yiisoft\Csrf\Stateless\StatelessCsrfToken;
+use Yiisoft\Csrf\Synchronizer\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Synchronizer\SessionCsrfTokenStorage;
+use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
+use Yiisoft\Csrf\Hmac\SessionCsrfTokenIdentityGenerator;
+use Yiisoft\Csrf\Hmac\HmacCsrfToken;
 use Yiisoft\Factory\Definitions\Reference;
 
 return [
     CsrfTokenInterface::class => [
         '__class' => MaskedCsrfToken::class,
         '__construct()' => [
-            'token' => Reference::to(StatefulCsrfToken::class),
+            'token' => Reference::to(SynchronizerCsrfToken::class),
         ],
     ],
 
-    StatefulCsrfToken::class => [
+    SynchronizerCsrfToken::class => [
         '__construct()' => [
             'generator' => Reference::to(RandomCsrfTokenGenerator::class),
             'storage' => Reference::to(SessionCsrfTokenStorage::class),
         ],
     ],
 
-    StatelessCsrfToken::class => [
+    HmacCsrfToken::class => [
         '__construct()' => [
             'identityGenerator' => Reference::to(SessionCsrfTokenIdentityGenerator::class),
-            'secretKey' => $params['yiisoft/csrf']['statelessToken']['secretKey'],
-            'algorithm' => $params['yiisoft/csrf']['statelessToken']['algorithm'],
-            'lifetime' => $params['yiisoft/csrf']['statelessToken']['lifetime'],
+            'secretKey' => $params['yiisoft/csrf']['hmacToken']['secretKey'],
+            'algorithm' => $params['yiisoft/csrf']['hmacToken']['algorithm'],
+            'lifetime' => $params['yiisoft/csrf']['hmacToken']['lifetime'],
         ],
     ],
 ];

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Tests\Stateful;
+namespace Yiisoft\Csrf\Tests\Synchronizer;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Csrf\Stateful\SessionCsrfTokenStorage;
+use Yiisoft\Csrf\Synchronizer\SessionCsrfTokenStorage;
 use Yiisoft\Session\SessionInterface;
 
 final class SessionCsrfTokenStorageTest extends TestCase

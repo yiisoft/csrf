@@ -6,8 +6,8 @@ namespace Yiisoft\Csrf\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\MaskedCsrfToken;
-use Yiisoft\Csrf\Stateful\RandomCsrfTokenGenerator;
-use Yiisoft\Csrf\Stateful\StatefulCsrfToken;
+use Yiisoft\Csrf\Synchronizer\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
 use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
 use Yiisoft\Security\TokenMask;
 
@@ -29,7 +29,7 @@ final class MaskedCsrfTokenTest extends TestCase
                 ->willReturn($token);
         }
         return new MaskedCsrfToken(
-            new StatefulCsrfToken(new RandomCsrfTokenGenerator(), $mock)
+            new SynchronizerCsrfToken(new RandomCsrfTokenGenerator(), $mock)
         );
     }
 }

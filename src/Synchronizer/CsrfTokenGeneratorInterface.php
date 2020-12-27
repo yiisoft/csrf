@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Stateful;
+namespace Yiisoft\Csrf\Synchronizer;
 
 /**
  * Token generator generates a new CSRF token.
