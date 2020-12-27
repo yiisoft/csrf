@@ -21,7 +21,7 @@ use Yiisoft\Strings\StringHelper;
  */
 final class StatelessCsrfToken implements CsrfTokenInterface
 {
-    private CsrfTokenIdentificationInterface $identification;
+    private CsrfTokenIdentityGeneratorInterface $identityGenerator;
     private Mac $mac;
 
     /**
@@ -35,12 +35,12 @@ final class StatelessCsrfToken implements CsrfTokenInterface
     private ?int $lifetime;
 
     public function __construct(
-        CsrfTokenIdentificationInterface $identification,
+        CsrfTokenIdentityGeneratorInterface $identityGenerator,
         string $secretKey,
         string $algorithm = 'sha256',
         ?int $lifetime = null
     ) {
-        $this->identification = $identification;
+        $this->identityGenerator = $identityGenerator;
         $this->mac = new Mac($algorithm);
         $this->secretKey = $secretKey;
         $this->lifetime = $lifetime;
@@ -56,7 +56,7 @@ final class StatelessCsrfToken implements CsrfTokenInterface
     public function validate(string $token): bool
     {
         try {
-            [$expiration, $identification] = $this->extractData($token);
+            [$expiration, $identity] = $this->extractData($token);
         } catch (DataIsTamperedException $e) {
             return false;
         }
@@ -65,14 +65,14 @@ final class StatelessCsrfToken implements CsrfTokenInterface
             return false;
         }
 
-        return $identification === $this->identification->getString();
+        return $identity === $this->identityGenerator->generate();
     }
 
     private function generateToken(?int $expiration): string
     {
         return StringHelper::base64UrlEncode(
             $this->mac->sign(
-                (string)$expiration . '~' . $this->identification->getString(),
+                (string)$expiration . '~' . $this->identityGenerator->generate(),
                 $this->secretKey,
                 true
             )
@@ -101,8 +101,8 @@ final class StatelessCsrfToken implements CsrfTokenInterface
             }
         }
 
-        $identification = $chunks[1];
+        $identity = $chunks[1];
 
-        return [$expiration, $identification];
+        return [$expiration, $identity];
     }
 }

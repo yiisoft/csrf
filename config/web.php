@@ -9,7 +9,7 @@ use Yiisoft\Csrf\CsrfTokenInterface;
 use Yiisoft\Csrf\Stateful\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\Stateful\SessionCsrfTokenStorage;
 use Yiisoft\Csrf\Stateful\StatefulCsrfToken;
-use Yiisoft\Csrf\Stateless\SessionCsrfTokenIdentification;
+use Yiisoft\Csrf\Stateless\SessionCsrfTokenIdentityGenerator;
 use Yiisoft\Csrf\Stateless\StatelessCsrfToken;
 use Yiisoft\Factory\Definitions\Reference;
 
@@ -30,7 +30,7 @@ return [
 
     StatelessCsrfToken::class => [
         '__construct()' => [
-            'identification' => Reference::to(SessionCsrfTokenIdentification::class),
+            'identityGenerator' => Reference::to(SessionCsrfTokenIdentityGenerator::class),
             'secretKey' => $params['yiisoft/csrf']['statelessToken']['secretKey'],
             'algorithm' => $params['yiisoft/csrf']['statelessToken']['algorithm'],
             'lifetime' => $params['yiisoft/csrf']['statelessToken']['lifetime'],
