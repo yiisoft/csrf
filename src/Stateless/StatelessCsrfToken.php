@@ -15,6 +15,7 @@ use Yiisoft\Strings\StringHelper;
  * less than {@see StatelessCsrfToken::$lifetime}.
  *
  * The algorithm is also known as "HMAC Based Token".
+ *
  * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern
  */
 final class StatelessCsrfToken implements CsrfTokenInterface

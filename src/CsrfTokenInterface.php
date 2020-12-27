@@ -18,6 +18,7 @@ interface CsrfTokenInterface
 
     /**
      * @param string $token Token string to validate.
+     *
      * @return bool If token string is valid.
      */
     public function validate(string $token): bool;

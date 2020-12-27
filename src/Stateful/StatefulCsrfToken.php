@@ -12,6 +12,7 @@ use Yiisoft\Csrf\CsrfTokenInterface;
  * from the form is compared against the token stored.
  *
  * The algorithm is also known as "Synchronizer Token".
+ *
  * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
  */
 final class StatefulCsrfToken implements CsrfTokenInterface
