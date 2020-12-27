@@ -27,7 +27,7 @@
         "psr/http-server-middleware": "^1.0",
         "yiisoft/http": "^1.0",
         "yiisoft/security": "^1.0",
-        "yiisoft/session": "^3.0@dev"
+        "yiisoft/session": "^1.0"
     },
     "require-dev": {
         "nyholm/psr7": "^1.3",
