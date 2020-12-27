@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf\Stateless;
 
 use Yiisoft\Csrf\CsrfTokenInterface;
-use Yiisoft\Security\Random;
+use Yiisoft\Security\DataIsTamperedException;
+use Yiisoft\Security\Mac;
 use Yiisoft\Strings\StringHelper;
 
 /**
@@ -21,11 +22,7 @@ use Yiisoft\Strings\StringHelper;
 final class StatelessCsrfToken implements CsrfTokenInterface
 {
     private CsrfTokenIdentificationInterface $identification;
-
-    /**
-     * @var string Token hashing algorithm.
-     */
-    private string $algorithm;
+    private Mac $mac;
 
     /**
      * @var string Shared secret key used for generating the hash.
@@ -44,58 +41,68 @@ final class StatelessCsrfToken implements CsrfTokenInterface
         ?int $lifetime = null
     ) {
         $this->identification = $identification;
-        $this->algorithm = $algorithm;
+        $this->mac = new Mac($algorithm);
         $this->secretKey = $secretKey;
         $this->lifetime = $lifetime;
     }
 
     public function getValue(): string
     {
-        $salt = Random::string(8);
-        $expiration = $this->lifetime === null ? null : (time() + $this->lifetime);
-
-        return StringHelper::base64UrlEncode(
-            $this->generateHash($salt, $expiration) . '~' . $salt . '~' . (string)$expiration
+        return $this->generateToken(
+            $this->lifetime === null ? null : (time() + $this->lifetime)
         );
     }
 
     public function validate(string $token): bool
     {
-        $chunks = explode('~', StringHelper::base64UrlDecode($token));
-        if (count($chunks) !== 3) {
+        try {
+            [$expiration, $identification] = $this->extractData($token);
+        } catch (DataIsTamperedException $e) {
             return false;
-        }
-
-        [$hash, $salt] = $chunks;
-
-        if ($chunks[2] === '') {
-            $expiration = null;
-        } else {
-            $expiration = (int)$chunks[2];
-            if ((string)$expiration !== $chunks[2]) {
-                return false;
-            }
         }
 
         if ($expiration !== null && time() > $expiration) {
             return false;
         }
 
-        return hash_equals(
-            $hash,
-            $this->generateHash($salt, $expiration)
-        );
+        return $identification === $this->identification->getString();
     }
 
-    private function generateHash(string $salt, ?int $expiration): string
+    private function generateToken(?int $expiration): string
     {
         return StringHelper::base64UrlEncode(
-            hash_hmac(
-                $this->algorithm,
-                $salt . (string)$expiration . $this->identification->getString(),
+            $this->mac->sign(
+                (string)$expiration . '~' . $this->identification->getString(),
                 $this->secretKey,
                 true
             )
         );
+    }
+
+    private function extractData(string $token): array
+    {
+        $raw = $this->mac->getMessage(
+            StringHelper::base64UrlDecode($token),
+            $this->secretKey,
+            true
+        );
+
+        $chunks = explode('~', $raw, 2);
+        if (count($chunks) !== 2) {
+            throw new DataIsTamperedException();
+        }
+
+        if ($chunks[0] === '') {
+            $expiration = null;
+        } else {
+            $expiration = (int)$chunks[0];
+            if ((string)$expiration !== $chunks[0]) {
+                throw new DataIsTamperedException();
+            }
+        }
+
+        $identification = $chunks[1];
+
+        return [$expiration, $identification];
     }
 }
