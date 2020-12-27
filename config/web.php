@@ -6,18 +6,34 @@ declare(strict_types=1);
 
 use Yiisoft\Csrf\MaskedCsrfToken;
 use Yiisoft\Csrf\CsrfTokenInterface;
+use Yiisoft\Csrf\Stateful\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Stateful\SessionCsrfTokenStorage;
 use Yiisoft\Csrf\Stateful\StatefulCsrfToken;
+use Yiisoft\Csrf\Stateless\CsrfTokenIdentificationInterface;
+use Yiisoft\Csrf\Stateless\StatelessCsrfToken;
+use Yiisoft\Factory\Definitions\Reference;
 
 return [
     CsrfTokenInterface::class => [
         '__class' => MaskedCsrfToken::class,
         '__construct()' => [
-            'token' => static function () use ($params) {
-                return new StatefulCsrfToken(
-                    $params['yiisoft/csrf']['tokenGenerator'],
-                    $params['yiisoft/csrf']['tokenStorage'],
-                );
-            },
+            'token' => Reference::to(StatefulCsrfToken::class),
+        ],
+    ],
+
+    StatefulCsrfToken::class => [
+        '__construct()' => [
+            'generator' => Reference::to(RandomCsrfTokenGenerator::class),
+            'storage' => Reference::to(SessionCsrfTokenStorage::class),
+        ],
+    ],
+
+    StatelessCsrfToken::class => [
+        '__construct()' => [
+            'identification' => Reference::to(CsrfTokenIdentificationInterface::class),
+            'secretKey' => $params['yiisoft/csrf']['statelessToken']['secretKey'],
+            'algorithm' => $params['yiisoft/csrf']['statelessToken']['algorithm'],
+            'lifetime' => $params['yiisoft/csrf']['statelessToken']['lifetime'],
         ],
     ],
 ];
