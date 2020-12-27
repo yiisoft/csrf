@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf\Tests\Synchronizer;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Csrf\Synchronizer\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
+use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
 
 final class SynchronizerCsrfTokenTest extends TestCase
 {

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf\Tests\Synchronizer;
 
 use Yiisoft\Csrf\CsrfTokenInterface;
-use Yiisoft\Csrf\Synchronizer\CsrfTokenStorageInterface;
-use Yiisoft\Csrf\Synchronizer\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Synchronizer\Storage\CsrfTokenStorageInterface;
+use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
+use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
 use Yiisoft\Csrf\Tests\TokenCsrfMiddlewareTest;
 use Yiisoft\Security\Random;
 

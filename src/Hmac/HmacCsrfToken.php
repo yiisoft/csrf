@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf\Hmac;
 
 use Yiisoft\Csrf\CsrfTokenInterface;
+use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
 use Yiisoft\Security\DataIsTamperedException;
 use Yiisoft\Security\Mac;
 use Yiisoft\Strings\StringHelper;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Synchronizer;
+namespace Yiisoft\Csrf\Synchronizer\Generator;
 
 use Yiisoft\Security\Random;
 

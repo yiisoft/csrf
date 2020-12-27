@@ -6,9 +6,9 @@ namespace Yiisoft\Csrf\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\MaskedCsrfToken;
-use Yiisoft\Csrf\Synchronizer\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
-use Yiisoft\Csrf\Tests\Synchronizer\MockCsrfTokenStorage;
+use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
 use Yiisoft\Security\TokenMask;
 
 final class MaskedCsrfTokenTest extends TestCase

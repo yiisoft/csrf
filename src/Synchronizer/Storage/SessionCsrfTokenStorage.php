@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Synchronizer;
+namespace Yiisoft\Csrf\Synchronizer\Storage;
 
 use Yiisoft\Session\SessionInterface;
 

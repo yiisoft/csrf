@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Hmac;
+namespace Yiisoft\Csrf\Hmac\IdentityGenerator;
 
 use Yiisoft\Session\SessionInterface;
 

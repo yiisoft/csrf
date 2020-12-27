@@ -7,9 +7,9 @@ namespace Yiisoft\Csrf\Tests;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\CsrfMiddleware;
-use Yiisoft\Csrf\Synchronizer\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
-use Yiisoft\Csrf\Tests\Synchronizer\MockCsrfTokenStorage;
+use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
 
 final class CsrfMiddlewareTest extends TestCase
 {

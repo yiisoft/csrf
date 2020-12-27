@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf\Synchronizer;
 
 use Yiisoft\Csrf\CsrfTokenInterface;
+use Yiisoft\Csrf\Synchronizer\Generator\CsrfTokenGeneratorInterface;
+use Yiisoft\Csrf\Synchronizer\Storage\CsrfTokenStorageInterface;
 
 /**
  * Stateful CSRF token is a unique random string. It is stored it in persistent storage available only for

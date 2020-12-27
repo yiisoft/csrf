@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Tests\Hmac;
+namespace Yiisoft\Csrf\Tests\Hmac\IdentityGenerator;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Csrf\Hmac\SessionCsrfTokenIdentityGenerator;
+use Yiisoft\Csrf\Hmac\IdentityGenerator\SessionCsrfTokenIdentityGenerator;
 use Yiisoft\Session\SessionInterface;
 
 final class SessionCsrfTokenIdentityGeneratorTest extends TestCase

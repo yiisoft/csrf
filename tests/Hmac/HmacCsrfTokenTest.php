@@ -6,6 +6,7 @@ namespace Yiisoft\Csrf\Tests\Hmac;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\Hmac\HmacCsrfToken;
+use Yiisoft\Csrf\Tests\Hmac\IdentityGenerator\MockCsrfTokenIdentityGenerator;
 use Yiisoft\Security\Mac;
 use Yiisoft\Security\Random;
 use Yiisoft\Strings\StringHelper;

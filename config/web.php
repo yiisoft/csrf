@@ -6,10 +6,10 @@ declare(strict_types=1);
 
 use Yiisoft\Csrf\MaskedCsrfToken;
 use Yiisoft\Csrf\CsrfTokenInterface;
-use Yiisoft\Csrf\Synchronizer\RandomCsrfTokenGenerator;
-use Yiisoft\Csrf\Synchronizer\SessionCsrfTokenStorage;
+use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Synchronizer\Storage\SessionCsrfTokenStorage;
 use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
-use Yiisoft\Csrf\Hmac\SessionCsrfTokenIdentityGenerator;
+use Yiisoft\Csrf\Hmac\IdentityGenerator\SessionCsrfTokenIdentityGenerator;
 use Yiisoft\Csrf\Hmac\HmacCsrfToken;
 use Yiisoft\Factory\Definitions\Reference;
 
