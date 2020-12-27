@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Tests\Mock;
+namespace Yiisoft\Csrf\Tests\Hmac;
 
 use Yiisoft\Csrf\Hmac\CsrfTokenIdentityGeneratorInterface;
 

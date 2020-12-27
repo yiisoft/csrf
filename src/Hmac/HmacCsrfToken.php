@@ -55,11 +55,12 @@ final class HmacCsrfToken implements CsrfTokenInterface
 
     public function validate(string $token): bool
     {
-        try {
-            [$expiration, $identity] = $this->extractData($token);
-        } catch (DataIsTamperedException $e) {
+        $data = $this->extractData($token);
+        if ($data === null) {
             return false;
         }
+
+        [$expiration, $identity] = $data;
 
         if ($expiration !== null && time() > $expiration) {
             return false;
@@ -79,17 +80,21 @@ final class HmacCsrfToken implements CsrfTokenInterface
         );
     }
 
-    private function extractData(string $token): array
+    private function extractData(string $token): ?array
     {
-        $raw = $this->mac->getMessage(
-            StringHelper::base64UrlDecode($token),
-            $this->secretKey,
-            true
-        );
+        try {
+            $raw = $this->mac->getMessage(
+                StringHelper::base64UrlDecode($token),
+                $this->secretKey,
+                true
+            );
+        } catch (DataIsTamperedException $e) {
+            return null;
+        }
 
         $chunks = explode('~', $raw, 2);
         if (count($chunks) !== 2) {
-            throw new DataIsTamperedException();
+            return null;
         }
 
         if ($chunks[0] === '') {
@@ -97,7 +102,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
         } else {
             $expiration = (int)$chunks[0];
             if ((string)$expiration !== $chunks[0]) {
-                throw new DataIsTamperedException();
+                return null;
             }
         }
 
