@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Yiisoft\Csrf\Tests;
 
-use LogicException;
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Csrf\CsrfToken;
-use Yiisoft\Csrf\Tests\Mock\MockCsrfTokenStorage;
+use Yiisoft\Csrf\MaskedCsrfToken;
+use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
+use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
+use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
 use Yiisoft\Security\TokenMask;
 
-final class CsrfTokenTest extends TestCase
+final class MaskedCsrfTokenTest extends TestCase
 {
     public function testBase(): void
     {
@@ -18,16 +19,7 @@ final class CsrfTokenTest extends TestCase
         $this->assertSame('test_token', TokenMask::remove($csrfToken->getValue()));
     }
 
-    public function testEarlyGet(): void
-    {
-        $csrfToken = $this->createCsrfToken();
-
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('CSRF token is not defined.');
-        $csrfToken->getValue();
-    }
-
-    private function createCsrfToken(string $token = null): CsrfToken
+    private function createCsrfToken(string $token = null): MaskedCsrfToken
     {
         $mock = $this->createMock(MockCsrfTokenStorage::class);
         if ($token !== null) {
@@ -36,6 +28,8 @@ final class CsrfTokenTest extends TestCase
                 ->method('get')
                 ->willReturn($token);
         }
-        return new CsrfToken($mock);
+        return new MaskedCsrfToken(
+            new SynchronizerCsrfToken(new RandomCsrfTokenGenerator(), $mock)
+        );
     }
 }

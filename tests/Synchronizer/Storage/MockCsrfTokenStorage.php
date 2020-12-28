@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Csrf\Tests\Mock;
+namespace Yiisoft\Csrf\Tests\Synchronizer\Storage;
 
-use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
+use Yiisoft\Csrf\Synchronizer\Storage\CsrfTokenStorageInterface;
 
 class MockCsrfTokenStorage implements CsrfTokenStorageInterface
 {

@@ -9,12 +9,17 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Yiisoft\Csrf\TokenStorage\CsrfTokenStorageInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
-use Yiisoft\Security\Random;
-use Yiisoft\Security\TokenMask;
 
+use function in_array;
+use function is_string;
+
+/**
+ * PSR-15 middleware that takes care of token validation.
+ *
+ * @see https://www.php-fig.org/psr/psr-15/
+ */
 final class CsrfMiddleware implements MiddlewareInterface
 {
     public const PARAMETER_NAME = '_csrf';
@@ -24,23 +29,19 @@ final class CsrfMiddleware implements MiddlewareInterface
     private string $headerName = self::HEADER_NAME;
 
     private ResponseFactoryInterface $responseFactory;
-    private CsrfTokenStorageInterface $storage;
+    private CsrfTokenInterface $token;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        CsrfTokenStorageInterface $storage
+        CsrfTokenInterface $token
     ) {
         $this->responseFactory = $responseFactory;
-        $this->storage = $storage;
+        $this->token = $token;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $token = $this->getToken();
-
-        if (!$this->validateCsrfToken($request, $token)) {
-            $this->storage->remove();
-
+        if (!$this->validateCsrfToken($request)) {
             $response = $this->responseFactory->createResponse(Status::UNPROCESSABLE_ENTITY);
             $response->getBody()->write(Status::TEXTS[Status::UNPROCESSABLE_ENTITY]);
             return $response;
@@ -63,40 +64,28 @@ final class CsrfMiddleware implements MiddlewareInterface
         return $new;
     }
 
-    private function getToken(): string
+    private function validateCsrfToken(ServerRequestInterface $request): bool
     {
-        $token = $this->storage->get();
-        if (empty($token)) {
-            $token = Random::string();
-            $this->storage->set($token);
-        }
-
-        return $token;
-    }
-
-    private function validateCsrfToken(ServerRequestInterface $request, string $trueToken): bool
-    {
-        $method = $request->getMethod();
-
-        if (\in_array($method, [Method::GET, Method::HEAD, Method::OPTIONS], true)) {
+        if (in_array($request->getMethod(), [Method::GET, Method::HEAD, Method::OPTIONS], true)) {
             return true;
         }
 
-        $unmaskedToken = $this->getTokenFromRequest($request);
+        $token = $this->getTokenFromRequest($request);
 
-        return !empty($unmaskedToken) && hash_equals($unmaskedToken, $trueToken);
+        return !empty($token) && $this->token->validate($token);
     }
 
     private function getTokenFromRequest(ServerRequestInterface $request): ?string
     {
         $parsedBody = $request->getParsedBody();
 
+        /** @var mixed $token */
         $token = $parsedBody[$this->parameterName] ?? null;
         if (empty($token)) {
             $headers = $request->getHeader($this->headerName);
-            $token = \reset($headers);
+            $token = reset($headers);
         }
 
-        return is_string($token) ? TokenMask::remove($token) : null;
+        return is_string($token) ? $token : null;
     }
 }
