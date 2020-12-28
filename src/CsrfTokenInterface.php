@@ -6,8 +6,6 @@ namespace Yiisoft\Csrf;
 
 /**
  * Token returns currently valid token as string.
- *
- * Do not use directly. See {@see MaskedCsrfToken::getValue()}.
  */
 interface CsrfTokenInterface
 {

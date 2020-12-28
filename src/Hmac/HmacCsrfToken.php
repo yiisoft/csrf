@@ -11,12 +11,14 @@ use Yiisoft\Security\Mac;
 use Yiisoft\Strings\StringHelper;
 
 /**
- * Stateless CSRF token does not require any storage. The token is a hash from session ID and a timestamp
+ * Stateless CSRF token that does not require any storage. The token is a hash from session ID and a timestamp
  * (to prevent replay attacks). It is added to forms. When the form is submitted, we re-generate the token from
  * the current session ID and a timestamp from the original token. If two hashes match, we check that timestamp is
  * less than {@see HmacCsrfToken::$lifetime}.
  *
  * The algorithm is also known as "HMAC Based Token".
+ *
+ * Do not forget to decorate the token with {@see \Yiisoft\Csrf\MaskedCsrfToken} to prevent BREACH attack.
  *
  * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern
  */
@@ -26,7 +28,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
     private Mac $mac;
 
     /**
-     * @var string Shared secret key used for generating the hash.
+     * @var string Shared secret key used to generate the hash.
      */
     private string $secretKey;
 

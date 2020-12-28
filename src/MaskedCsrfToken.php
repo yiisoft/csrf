@@ -7,8 +7,8 @@ namespace Yiisoft\Csrf;
 use Yiisoft\Security\TokenMask;
 
 /**
- * Masked CSRF token applies masking to a token string so it is safe to use it in HTML to be later passed
- * to the next request either as a hidden form field or via JavaScript async request.
+ * Masked CSRF token applies masking to a token string. It makes BREACH attack impossible so it is safe to use it in HTML
+ * to be later passed to the next request either as a hidden form field or via JavaScript async request.
  *
  * @see TokenMask
  */
@@ -21,9 +21,6 @@ final class MaskedCsrfToken implements CsrfTokenInterface
         $this->token = $token;
     }
 
-    /**
-     * @return string The currently valid token string with the mask applied.
-     */
     public function getValue(): string
     {
         return TokenMask::apply(

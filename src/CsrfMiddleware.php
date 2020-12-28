@@ -15,6 +15,11 @@ use Yiisoft\Http\Status;
 use function in_array;
 use function is_string;
 
+/**
+ * PSR-15 middleware that takes care of token validation.
+ *
+ * @see https://www.php-fig.org/psr/psr-15/
+ */
 final class CsrfMiddleware implements MiddlewareInterface
 {
     public const PARAMETER_NAME = '_csrf';
@@ -61,9 +66,7 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     private function validateCsrfToken(ServerRequestInterface $request): bool
     {
-        $method = $request->getMethod();
-
-        if (in_array($method, [Method::GET, Method::HEAD, Method::OPTIONS], true)) {
+        if (in_array($request->getMethod(), [Method::GET, Method::HEAD, Method::OPTIONS], true)) {
             return true;
         }
 

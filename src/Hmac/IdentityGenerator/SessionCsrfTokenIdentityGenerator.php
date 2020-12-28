@@ -7,7 +7,7 @@ namespace Yiisoft\Csrf\Hmac\IdentityGenerator;
 use Yiisoft\Session\SessionInterface;
 
 /**
- * Session based CSRF token identification. Returns the same token if the session ID is the same.
+ * Session based CSRF token identification.
  */
 final class SessionCsrfTokenIdentityGenerator implements CsrfTokenIdentityGeneratorInterface
 {

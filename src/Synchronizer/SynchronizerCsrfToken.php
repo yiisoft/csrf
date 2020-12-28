@@ -9,11 +9,13 @@ use Yiisoft\Csrf\Synchronizer\Generator\CsrfTokenGeneratorInterface;
 use Yiisoft\Csrf\Synchronizer\Storage\CsrfTokenStorageInterface;
 
 /**
- * Stateful CSRF token is a unique random string. It is stored it in persistent storage available only for
+ * Stateful CSRF token that is a unique random string. It is stored it in persistent storage available only for
  * the currently logged in user. The same token is added to forms. When the form is submitted, token that came
  * from the form is compared against the token stored.
  *
  * The algorithm is also known as "Synchronizer Token".
+ *
+ * Do not forget to decorate the token with {@see \Yiisoft\Csrf\MaskedCsrfToken} to prevent BREACH attack.
  *
  * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
  */
