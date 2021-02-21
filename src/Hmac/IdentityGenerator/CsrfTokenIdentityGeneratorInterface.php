@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf\Hmac\IdentityGenerator;
 
 /**
- * Identity generator returns an ID to be used for the {@see \Yiisoft\Csrf\Hmac\HmacCsrfToken}. For example,
- * using session ID makes the session a token scope.
+ * Identity generator returns an ID to be used for the {@see \Yiisoft\Csrf\Hmac\HmacCsrfToken}.
+ * For example, using session ID makes the session a token scope.
  */
 interface CsrfTokenIdentityGeneratorInterface
 {
