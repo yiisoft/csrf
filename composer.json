@@ -1,7 +1,7 @@
 {
     "name": "yiisoft/csrf",
     "type": "library",
-    "description": "CSRF Protection Library",
+    "description": "Yii CSRF Protection Library",
     "keywords": [
         "csrf",
         "psr-15",
