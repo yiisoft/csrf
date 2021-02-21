@@ -18,7 +18,7 @@ use function is_string;
 /**
  * PSR-15 middleware that takes care of token validation.
  *
- * @see https://www.php-fig.org/psr/psr-15/
+ * @link https://www.php-fig.org/psr/psr-15/
  */
 final class CsrfMiddleware implements MiddlewareInterface
 {
