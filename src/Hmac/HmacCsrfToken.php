@@ -20,7 +20,7 @@ use Yiisoft\Strings\StringHelper;
  *
  * Do not forget to decorate the token with {@see \Yiisoft\Csrf\MaskedCsrfToken} to prevent BREACH attack.
  *
- * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern
+ * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern
  */
 final class HmacCsrfToken implements CsrfTokenInterface
 {

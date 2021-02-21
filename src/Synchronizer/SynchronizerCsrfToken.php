@@ -17,7 +17,7 @@ use Yiisoft\Csrf\Synchronizer\Storage\CsrfTokenStorageInterface;
  *
  * Do not forget to decorate the token with {@see \Yiisoft\Csrf\MaskedCsrfToken} to prevent BREACH attack.
  *
- * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
+ * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
  */
 final class SynchronizerCsrfToken implements CsrfTokenInterface
 {

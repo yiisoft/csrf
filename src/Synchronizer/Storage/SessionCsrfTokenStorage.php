@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf\Synchronizer\Storage;
 
 use Yiisoft\Session\SessionInterface;
+
 use function is_string;
 
 /**
@@ -22,7 +23,6 @@ class SessionCsrfTokenStorage implements CsrfTokenStorageInterface
     private SessionInterface $session;
 
     /**
-     * @param SessionInterface $session
      * @param string $key Session key used to store data. Default is "_csrf".
      */
     public function __construct(SessionInterface $session, string $key = self::KEY)
