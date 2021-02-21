@@ -15,12 +15,12 @@
 [![static analysis](https://github.com/yiisoft/csrf/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/csrf/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/csrf/coverage.svg)](https://shepherd.dev/github/yiisoft/csrf)
 
-The package provides:
+The package provides [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware for CSRF protection:
 
-- PSR-15 implementation middleware for CSRF protection;
-- synchronizer CSRF token that is a unique random string;
-- HMAC based token that does not require any storage;
-- masked CSRF token applies masking to a token string.
+- It supports two algorithms out of the box:
+    - Synchronizer CSRF token with customizable token generation and storage. By default, it uses random data and session.
+    - HMAC based token with customizable identity generation. Uses session by default.
+- It has ability to apply masking to CSRF token string to make [BREACH attack](http://breachattack.com/) impossible.
 
 ## Requirements
 
@@ -36,7 +36,8 @@ composer require yiisoft/csrf --prefer-dist
 
 ## General usage
 
-In order to enable CSRF protection you need to add `CsrfMiddleware` to your main middleware stack. In Yii it is done by configuring `config/web/application.php`:
+In order to enable CSRF protection you need to add `CsrfMiddleware` to your main middleware stack.
+In Yii it is done by configuring `config/web/application.php`:
 
 ```php
 return [
@@ -58,9 +59,9 @@ return [
 ];
 ```
 
-By default, CSRF token getting from parameter `_csrf` or header `X-CSRF-Token` provided in the request body.
+By default, CSRF token is obtained from `_csrf` request body parameter or `X-CSRF-Token` header.
 
-You can access to currently valid token as string throught `CsrfTokenInterface`:
+You can access currently valid token as a string using `CsrfTokenInterface`:
 
 ```php
 /** @var \Yiisoft\Csrf\CsrfTokenInterface $csrfToken */
@@ -71,38 +72,45 @@ $csrf = $csrfToken->getValue();
 
 ### Synchronizer CSRF token
 
-Stateful CSRF token that is a unique random string. It is stored it in persistent storage available only for the currently logged in user. The same token is added to forms. When the form is submitted, token that came from the form is compared against the token stored.
+Synchronizer CSRF token is a stateful CSRF token that is a unique random string. It is saved in persistent storage
+available only to the currently logged-in user. The same token is added to a form. When the form is submitted,
+token that came from the form is compared against the token stored.
 
-`SynchronizerCsrfToken` required implementation of interfaces:
+`SynchronizerCsrfToken` requires implementation of the following interfaces:
 
-- `CsrfTokenGeneratorInterface` for generates a new CSRF token;
-- `CsrfTokenStorageInterface` for persists a token between requests.
+- `CsrfTokenGeneratorInterface` for generating a new CSRF token;
+- `CsrfTokenStorageInterface` for persisting a token between requests.
 
-Package provides `RandomCsrfTokenGenerator` (generates a random token) and
-`SessionCsrfTokenStorage` (persists a token between requests in a user session).
+Package provides `RandomCsrfTokenGenerator` that generates a random token and
+`SessionCsrfTokenStorage` that persists a token between requests in a user session.
 
-See more info about synchronizer token pattern
-[here](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern).
+To learn more about the synchronizer token pattern, 
+[check OWASP CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern).
 
 ### HMAC based token
 
-Stateless CSRF token that does not require any storage. The token is a hash from session ID and a timestamp
-(to prevent replay attacks). It is added to forms. When the form is submitted, we re-generate the token from the current session ID and a timestamp from the original token. If two hashes match, we check that timestamp is less than setted.
+HMAC based token is a stateless CSRF token that does not require any storage. The token is a hash from session ID and
+a timestamp used to prevent replay attacks. The token is added to a form. When the form is submitted, we re-generate
+the token from the current session ID and a timestamp from the original token. If two hashes match, we check that the
+timestamp is less than the token lifetime.
 
-`HmacCsrfToken` required implementation `CsrfTokenIdentityGeneratorInterface` for generate identity. Package provides `SessionCsrfTokenIdentityGenerator` using session ID makes the session a token scope.
+`HmacCsrfToken` requires implementation of `CsrfTokenIdentityGeneratorInterface` for generating an identity.
+The package provides `SessionCsrfTokenIdentityGenerator` that is using session ID thus making the session a token scope.
 
-Parameters set via the `HmacCsrfToken` constructor:
+Parameters set via the `HmacCsrfToken` constructor are:
 
 - `$secretKey` — shared secret key used to generate the hash;
-- `$algorithm` — hash algorithm for message authentication, recommend `sha256`, `sha384` or `sha512`;
+- `$algorithm` — hash algorithm for message authentication. `sha256`, `sha384` or `sha512` are recommended;
 - `$lifetime` — number of seconds that the token is valid for.
 
-See more info about HMAC based token pattern
-[here](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern).
+To learn more about HMAC based token pattern
+[check OWASP CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern).
 
 ### Masked CSRF token
 
-`MaskedCsrfToken` is decorator for `CsrfTokenInterface` applies masking to a token string. It makes BREACH attack impossible so it is safe to use it in HTML to be later passed to the next request either as a hidden form field or via JavaScript async request.
+`MaskedCsrfToken` is a decorator for `CsrfTokenInterface` that applies masking to a token string.
+It makes [BREACH attack](http://breachattack.com/) impossible, so it is safe to use token in HTML to be later passed to
+the next request either as a hidden form field or via JavaScript async request.
 
 It is recommended to always use this decorator.
 

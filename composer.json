@@ -5,7 +5,11 @@
     "keywords": [
         "csrf",
         "psr-15",
-        "middleware"
+        "middleware",
+        "synchronizer",
+        "hmac",
+        "breach",
+        "stateless"
     ],
     "homepage": "https://www.yiiframework.com/",
     "license": "BSD-3-Clause",
