@@ -16,6 +16,7 @@
 [![type-coverage](https://shepherd.dev/github/yiisoft/csrf/coverage.svg)](https://shepherd.dev/github/yiisoft/csrf)
 
 The package provides:
+
 - PSR-15 implementation middleware for CSRF protection;
 - synchronizer CSRF token that is a unique random string;
 - HMAC Based Token that does not require any storage;
@@ -35,7 +36,75 @@ composer require yiisoft/csrf --prefer-dist
 
 ## General usage
 
+In order to enable CSRF protection you need to add `CsrfMiddleware` to your main middleware stack. In Yii it is done by configuring `config/web/application.php`:
 
+```php
+return [
+    Yiisoft\Yii\Web\Application::class => [
+        '__construct()' => [
+            'dispatcher' => static function (Injector $injector) {
+                return ($injector->make(MiddlewareDispatcher::class))
+                    ->withMiddlewares(
+                        [
+                            Router::class,
+                            CsrfMiddleware::class, // <-- this
+                            SessionMiddleware::class,
+                            ErrorCatcher::class,
+                        ]
+                    );
+            },
+        ],
+    ],
+];
+```
+
+By default, CSRF token getting from parameter `_csrf` or header `X-CSRF-Token` provided in the request body.
+
+You can access to currently valid token as string throught `CsrfTokenInterface`:
+
+```php
+/** @var \Yiisoft\Csrf\CsrfTokenInterface $csrfToken */
+$csrf = $csrfToken->getValue();
+```
+
+## CSRF Tokens
+
+### Synchronizer CSRF token
+
+Stateful CSRF token that is a unique random string. It is stored it in persistent storage available only for the currently logged in user. The same token is added to forms. When the form is submitted, token that came from the form is compared against the token stored.
+
+`SynchronizerCsrfToken` required implementation of interfaces:
+
+- `CsrfTokenGeneratorInterface` for generates a new CSRF token;
+- `CsrfTokenStorageInterface` for persists a token between requests.
+
+Package provides `RandomCsrfTokenGenerator` (generates a random token) and
+`SessionCsrfTokenStorage` (persists a token between requests in a user session).
+
+See more info about synchronizer token pattern
+[here](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern).
+
+### HMAC based token
+
+Stateless CSRF token that does not require any storage. The token is a hash from session ID and a timestamp
+(to prevent replay attacks). It is added to forms. When the form is submitted, we re-generate the token from the current session ID and a timestamp from the original token. If two hashes match, we check that timestamp is less than setted.
+
+`HmacCsrfToken` required implementation `CsrfTokenIdentityGeneratorInterface` for generate identity. Package provides `SessionCsrfTokenIdentityGenerator` using session ID makes the session a token scope.
+
+Parameters set via the `HmacCsrfToken` constructor:
+
+- `$secretKey` — shared secret key used to generate the hash;
+- `$algorithm` — hash algorithm for message authentication, recommend `sha256`, `sha384` or `sha512`;
+- `$lifetime` — number of seconds that the token is valid for.
+
+See more info about HMAC based token pattern
+[here](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern).
+
+### Masked CSRF token
+
+`MaskedCsrfToken` is decorator for `CsrfTokenInterface` applies masking to a token string. It makes BREACH attack impossible so it is safe to use it in HTML to be later passed to the next request either as a hidden form field or via JavaScript async request.
+
+It is recommended to always use this decorator.
 
 ## Testing
 
@@ -66,8 +135,7 @@ The code is statically analyzed with [Psalm](https://psalm.dev/). To run static 
 
 ## License
 
-The Yii CSRF Protection Library is free software. It is released under the terms of the BSD License.
-Please see [`LICENSE`](./LICENSE.md) for more information.
+The Yii CSRF Protection Library is free software. It is released under the terms of the BSD License. Please see [`LICENSE`](./LICENSE.md) for more information.
 
 Maintained by [Yii Software](https://www.yiiframework.com/).
 
