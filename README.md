@@ -19,7 +19,7 @@ The package provides:
 
 - PSR-15 implementation middleware for CSRF protection;
 - synchronizer CSRF token that is a unique random string;
-- HMAC Based Token that does not require any storage;
+- HMAC based token that does not require any storage;
 - masked CSRF token applies masking to a token string.
 
 ## Requirements
