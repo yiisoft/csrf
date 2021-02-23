@@ -63,7 +63,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testValidTokenInCustomHeaderResultIn200()
+    public function testValidTokenInCustomHeaderResultIn200(): void
     {
         $headerName = 'CUSTOM-CSRF';
 
