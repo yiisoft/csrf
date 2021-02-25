@@ -70,7 +70,7 @@ $csrf = $csrfToken->getValue();
 
 ## CSRF Tokens
 
-Package is [configured](./config/web.php) by default with synchronizer token and masked decorator. You can change that easily, depending on your needs.
+In case Yii framework is used along with config plugin, the package is [configured](./config/web.php) automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
 ### Synchronizer CSRF token
 
