@@ -70,6 +70,8 @@ $csrf = $csrfToken->getValue();
 
 ## CSRF Tokens
 
+In case Yii framework is used along with config plugin, the package is [configured](./config/web.php) automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
+
 ### Synchronizer CSRF token
 
 Synchronizer CSRF token is a stateful CSRF token that is a unique random string. It is saved in persistent storage
