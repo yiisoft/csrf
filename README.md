@@ -70,6 +70,8 @@ $csrf = $csrfToken->getValue();
 
 ## CSRF Tokens
 
+Package is configured by default [with](https://github.com/yiisoft/csrf/blob/master/config/web.php) Synchronizer token and Masked decorator. You can change that easily, depending on your needs.
+
 ### Synchronizer CSRF token
 
 Synchronizer CSRF token is a stateful CSRF token that is a unique random string. It is saved in persistent storage
