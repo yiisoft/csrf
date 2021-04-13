@@ -1,7 +1,7 @@
 # Yii CSRF Protection Library Change Log
 
 
-## 1.0.2 under development
+## 1.0.2 April 13, 2021
 
 - Chg: Adjust config for yiisoft/factory changes (vjik, samdark)
 
