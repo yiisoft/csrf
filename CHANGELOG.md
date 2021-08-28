@@ -2,7 +2,7 @@
 
 ## 1.0.3 under development
 
-- Chg #45: Use definitions from `yiisoft/definitions` in configuration (vjik)
+- Chg #28: Use definitions from `yiisoft/definitions` in configuration (vjik)
 
 ## 1.0.2 April 13, 2021
 
