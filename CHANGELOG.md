@@ -1,5 +1,10 @@
 # Yii CSRF Protection Library Change Log
 
+
+## 1.0.4 under development
+
+- no changes in this release.
+
 ## 1.0.3 August 30, 2021
 
 - Chg #28: Use definitions from `yiisoft/definitions` in configuration (vjik)
