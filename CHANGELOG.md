@@ -1,9 +1,8 @@
 # Yii CSRF Protection Library Change Log
 
-
 ## 1.0.4 under development
 
-- no changes in this release.
+- New #29: Add methods `CsrfMiddleware::getParameterName()` and `CsrfMiddleware::getHeaderName()` (vjik)
 
 ## 1.0.3 August 30, 2021
 
