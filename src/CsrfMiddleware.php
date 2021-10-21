@@ -64,6 +64,16 @@ final class CsrfMiddleware implements MiddlewareInterface
         return $new;
     }
 
+    public function getParameterName(): string
+    {
+        return $this->parameterName;
+    }
+
+    public function getHeaderName(): string
+    {
+        return $this->headerName;
+    }
+
     private function validateCsrfToken(ServerRequestInterface $request): bool
     {
         if (in_array($request->getMethod(), [Method::GET, Method::HEAD, Method::OPTIONS], true)) {

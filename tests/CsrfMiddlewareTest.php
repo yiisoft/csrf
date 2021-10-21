@@ -13,17 +13,45 @@ use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
 
 final class CsrfMiddlewareTest extends TestCase
 {
+    public function testDefaultParameterName(): void
+    {
+        $middleware = $this->createMiddleware();
+        $this->assertSame(CsrfMiddleware::PARAMETER_NAME, $middleware->getParameterName());
+    }
+
+    public function testGetParameterName(): void
+    {
+        $middleware = $this->createMiddleware()->withParameterName('my-csrf');
+        $this->assertSame('my-csrf', $middleware->getParameterName());
+    }
+
+    public function testDefaultHeaderName(): void
+    {
+        $middleware = $this->createMiddleware();
+        $this->assertSame(CsrfMiddleware::HEADER_NAME, $middleware->getHeaderName());
+    }
+
+    public function testGetHeaderName(): void
+    {
+        $middleware = $this->createMiddleware()->withHeaderName('MY-CSRF');
+        $this->assertSame('MY-CSRF', $middleware->getHeaderName());
+    }
+
     public function testImmutability(): void
     {
-        $original = new CsrfMiddleware(
+        $original = $this->createMiddleware();
+        $this->assertNotSame($original, $original->withHeaderName('csrf'));
+        $this->assertNotSame($original, $original->withParameterName('csrf'));
+    }
+
+    private function createMiddleware(): CsrfMiddleware
+    {
+        return new CsrfMiddleware(
             new Psr17Factory(),
             new SynchronizerCsrfToken(
                 new RandomCsrfTokenGenerator(),
                 new MockCsrfTokenStorage()
             )
         );
-
-        $this->assertNotSame($original, $original->withHeaderName('csrf'));
-        $this->assertNotSame($original, $original->withParameterName('csrf'));
     }
 }
