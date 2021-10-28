@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Csrf\Tests;
 
+use Closure;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
@@ -98,6 +99,25 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
 
+    public function testInvalidTokenResultWithCustomFailureHandler(): void
+    {
+        $failureHandler = function () {
+            $response = new Response(Status::BAD_REQUEST);
+            $response->getBody()->write(Status::TEXTS[Status::BAD_REQUEST]);
+            return $response;
+        };
+
+        $middleware = $this->createCsrfMiddleware(null, $failureHandler);
+
+        $response = $middleware->process(
+            $this->createPostServerRequestWithBodyToken(Random::string()),
+            $this->createRequestHandler()
+        );
+
+        $this->assertEquals(Status::TEXTS[Status::BAD_REQUEST], $response->getBody());
+        $this->assertEquals(Status::BAD_REQUEST, $response->getStatusCode());
+    }
+
     public function testEmptyTokenInRequestResultIn422(): void
     {
         $middleware = $this->createCsrfMiddleware();
@@ -155,12 +175,15 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
         ];
     }
 
-    protected function createCsrfMiddleware(?CsrfTokenInterface $csrfToken = null): CsrfMiddleware
-    {
+    protected function createCsrfMiddleware(
+        ?CsrfTokenInterface $csrfToken = null,
+        ?Closure $failureHandler = null
+    ): CsrfMiddleware {
+
         $csrfToken = new MaskedCsrfToken($csrfToken ?? $this->createCsrfToken());
         $this->token = $csrfToken->getValue();
 
-        $middleware = new CsrfMiddleware(new Psr17Factory(), $csrfToken);
+        $middleware = new CsrfMiddleware(new Psr17Factory(), $csrfToken, $failureHandler);
 
         return $middleware->withParameterName(self::PARAM_NAME);
     }
