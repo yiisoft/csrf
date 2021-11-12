@@ -41,19 +41,19 @@ In Yii it is done by configuring `config/web/application.php`:
 
 ```php
 return [
-    Yiisoft\Yii\Web\Application::class => [
+    Yiisoft\Yii\Http\Application::class => [
         '__construct()' => [
-            'dispatcher' => static function (Injector $injector) {
+            'dispatcher' => DynamicReference::to(static function (Injector $injector) {
                 return ($injector->make(MiddlewareDispatcher::class))
                     ->withMiddlewares(
                         [
-                            Router::class,
-                            CsrfMiddleware::class, // <-- this
-                            SessionMiddleware::class,
                             ErrorCatcher::class,
+                            SessionMiddleware::class, // <-- add this
+                            CsrfMiddleware::class,
+                            Router::class,
                         ]
                     );
-            },
+            }),
         ],
     ],
 ];
