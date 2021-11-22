@@ -30,24 +30,31 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenInterface $token;
+    private ?RequestHandlerInterface $failureHandler;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        CsrfTokenInterface $token
+        CsrfTokenInterface $token,
+        RequestHandlerInterface $failureHandler = null
     ) {
         $this->responseFactory = $responseFactory;
         $this->token = $token;
+        $this->failureHandler = $failureHandler;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!$this->validateCsrfToken($request)) {
-            $response = $this->responseFactory->createResponse(Status::UNPROCESSABLE_ENTITY);
-            $response->getBody()->write(Status::TEXTS[Status::UNPROCESSABLE_ENTITY]);
-            return $response;
+        if ($this->validateCsrfToken($request)) {
+            return $handler->handle($request);
         }
 
-        return $handler->handle($request);
+        if ($this->failureHandler !== null) {
+            return $this->failureHandler->handle($request);
+        }
+
+        $response = $this->responseFactory->createResponse(Status::UNPROCESSABLE_ENTITY);
+        $response->getBody()->write(Status::TEXTS[Status::UNPROCESSABLE_ENTITY]);
+        return $response;
     }
 
     public function withParameterName(string $name): self

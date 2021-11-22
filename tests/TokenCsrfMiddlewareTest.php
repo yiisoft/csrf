@@ -8,6 +8,7 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Csrf\CsrfMiddleware;
@@ -98,6 +99,28 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
 
+    public function testInvalidTokenResultWithCustomFailureHandler(): void
+    {
+        $failureHandler = new class () implements RequestHandlerInterface {
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $response = new Response(Status::BAD_REQUEST);
+                $response->getBody()->write(Status::TEXTS[Status::BAD_REQUEST]);
+                return $response;
+            }
+        };
+
+        $middleware = $this->createCsrfMiddleware(null, $failureHandler);
+
+        $response = $middleware->process(
+            $this->createPostServerRequestWithBodyToken(Random::string()),
+            $this->createRequestHandler(),
+        );
+
+        $this->assertEquals(Status::TEXTS[Status::BAD_REQUEST], $response->getBody());
+        $this->assertEquals(Status::BAD_REQUEST, $response->getStatusCode());
+    }
+
     public function testEmptyTokenInRequestResultIn422(): void
     {
         $middleware = $this->createCsrfMiddleware();
@@ -155,12 +178,14 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
         ];
     }
 
-    protected function createCsrfMiddleware(?CsrfTokenInterface $csrfToken = null): CsrfMiddleware
-    {
+    protected function createCsrfMiddleware(
+        ?CsrfTokenInterface $csrfToken = null,
+        RequestHandlerInterface $failureHandler = null
+    ): CsrfMiddleware {
         $csrfToken = new MaskedCsrfToken($csrfToken ?? $this->createCsrfToken());
         $this->token = $csrfToken->getValue();
 
-        $middleware = new CsrfMiddleware(new Psr17Factory(), $csrfToken);
+        $middleware = new CsrfMiddleware(new Psr17Factory(), $csrfToken, $failureHandler);
 
         return $middleware->withParameterName(self::PARAM_NAME);
     }

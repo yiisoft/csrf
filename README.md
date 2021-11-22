@@ -48,8 +48,8 @@ return [
                     ->withMiddlewares(
                         [
                             ErrorCatcher::class,
-                            SessionMiddleware::class, // <-- add this
-                            CsrfMiddleware::class,
+                            SessionMiddleware::class,
+                            CsrfMiddleware::class, // <-- add this
                             Router::class,
                         ]
                     );
@@ -64,13 +64,47 @@ By default, CSRF token is obtained from `_csrf` request body parameter or `X-CSR
 You can access currently valid token as a string using `CsrfTokenInterface`:
 
 ```php
-/** @var \Yiisoft\Csrf\CsrfTokenInterface $csrfToken */
+/** @var Yiisoft\Csrf\CsrfTokenInterface $csrfToken */
 $csrf = $csrfToken->getValue();
+```
+
+If the token does not pass validation, the response `422 Unprocessable Entity` will be returned.
+You can change this behavior by implementing your own request handler:
+
+```php
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Yiisoft\Csrf\CsrfMiddleware;
+
+/**
+ * @var Psr\Http\Message\ResponseFactoryInterface $responseFactory
+ * @var Yiisoft\Csrf\CsrfTokenInterface $csrfToken
+ */
+ 
+$failureHandler = new class ($responseFactory) implements RequestHandlerInterface {
+    private ResponseFactoryInterface $responseFactory;
+    
+    public function __construct(ResponseFactoryInterface $responseFactory)
+    {
+        $this->responseFactory = $responseFactory;
+    }
+
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $response = $this->responseFactory->createResponse(400);
+        $response->getBody()->write('Bad request.');
+        return $response;
+    }
+};
+
+$middleware = new CsrfMiddleware($responseFactory, $csrfToken, $failureHandler);
 ```
 
 ## CSRF Tokens
 
-In case Yii framework is used along with config plugin, the package is [configured](./config/web.php) automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
+In case Yii framework is used along with config plugin, the package is [configured](./config/web.php)
+automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
 ### Synchronizer CSRF token
 
