@@ -101,7 +101,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
 
     public function testInvalidTokenResultWithCustomFailureHandler(): void
     {
-        $failureHandler = new class() implements RequestHandlerInterface {
+        $failureHandler = new class () implements RequestHandlerInterface {
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $response = new Response(Status::BAD_REQUEST);
