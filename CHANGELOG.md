@@ -3,6 +3,7 @@
 ## 1.2.0 under development
 
 - Enh #30: Add a custom failure handler feature to `CsrfMiddleware` (solventt)
+- Chg #31: Update `yiisoft/http` dependency (devanych)
 
 ## 1.1.0 October 21, 2021
 
