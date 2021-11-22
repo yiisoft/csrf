@@ -1,9 +1,9 @@
 # Yii CSRF Protection Library Change Log
 
-## 1.2.0 under development
+## 1.2.0 November 22, 2021
 
-- Enh #30: Add a custom failure handler feature to `CsrfMiddleware` (solventt, devanych)
 - Chg #31: Update `yiisoft/http` dependency (devanych)
+- Enh #30: Add a custom failure handler feature to `CsrfMiddleware` (solventt, devanych)
 
 ## 1.1.0 October 21, 2021
 
