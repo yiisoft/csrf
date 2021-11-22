@@ -1,5 +1,9 @@
 # Yii CSRF Protection Library Change Log
 
+## 1.2.1 under development
+
+- no changes in this release.
+
 ## 1.2.0 November 22, 2021
 
 - Chg #31: Update `yiisoft/http` dependency (devanych)
