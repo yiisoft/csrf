@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Csrf;
 
-use Closure;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,12 +30,12 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenInterface $token;
-    private ?Closure $failureHandler;
+    private ?RequestHandlerInterface $failureHandler;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
         CsrfTokenInterface $token,
-        ?Closure $failureHandler = null
+        RequestHandlerInterface $failureHandler = null
     ) {
         $this->responseFactory = $responseFactory;
         $this->token = $token;
@@ -45,23 +44,17 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!$this->validateCsrfToken($request)) {
-            return $this->handleFailure();
+        if ($this->validateCsrfToken($request)) {
+            return $handler->handle($request);
         }
 
-        return $handler->handle($request);
-    }
-
-    private function handleFailure(): ResponseInterface
-    {
-        if (is_null($handler = $this->failureHandler)) {
-            $response = $this->responseFactory->createResponse(Status::UNPROCESSABLE_ENTITY);
-            $response->getBody()->write(Status::TEXTS[Status::UNPROCESSABLE_ENTITY]);
-            return $response;
+        if ($this->failureHandler !== null) {
+            return $this->failureHandler->handle($request);
         }
 
-        /** @var Closure():ResponseInterface $handler */
-        return $handler();
+        $response = $this->responseFactory->createResponse(Status::UNPROCESSABLE_ENTITY);
+        $response->getBody()->write(Status::TEXTS[Status::UNPROCESSABLE_ENTITY]);
+        return $response;
     }
 
     public function withParameterName(string $name): self
