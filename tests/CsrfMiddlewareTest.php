@@ -21,7 +21,9 @@ final class CsrfMiddlewareTest extends TestCase
 
     public function testGetParameterName(): void
     {
-        $middleware = $this->createMiddleware()->withParameterName('my-csrf');
+        $middleware = $this
+            ->createMiddleware()
+            ->withParameterName('my-csrf');
         $this->assertSame('my-csrf', $middleware->getParameterName());
     }
 
@@ -33,7 +35,9 @@ final class CsrfMiddlewareTest extends TestCase
 
     public function testGetHeaderName(): void
     {
-        $middleware = $this->createMiddleware()->withHeaderName('MY-CSRF');
+        $middleware = $this
+            ->createMiddleware()
+            ->withHeaderName('MY-CSRF');
         $this->assertSame('MY-CSRF', $middleware->getHeaderName());
     }
 
