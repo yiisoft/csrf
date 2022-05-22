@@ -105,7 +105,9 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $response = new Response(Status::BAD_REQUEST);
-                $response->getBody()->write(Status::TEXTS[Status::BAD_REQUEST]);
+                $response
+                    ->getBody()
+                    ->write(Status::TEXTS[Status::BAD_REQUEST]);
                 return $response;
             }
         };

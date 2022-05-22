@@ -53,7 +53,9 @@ final class CsrfMiddleware implements MiddlewareInterface
         }
 
         $response = $this->responseFactory->createResponse(Status::UNPROCESSABLE_ENTITY);
-        $response->getBody()->write(Status::TEXTS[Status::UNPROCESSABLE_ENTITY]);
+        $response
+            ->getBody()
+            ->write(Status::TEXTS[Status::UNPROCESSABLE_ENTITY]);
         return $response;
     }
 

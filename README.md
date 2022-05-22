@@ -93,7 +93,9 @@ $failureHandler = new class ($responseFactory) implements RequestHandlerInterfac
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $response = $this->responseFactory->createResponse(400);
-        $response->getBody()->write('Bad request.');
+        $response
+            ->getBody()
+            ->write('Bad request.');
         return $response;
     }
 };
