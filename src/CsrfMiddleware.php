@@ -28,7 +28,7 @@ final class CsrfMiddleware implements MiddlewareInterface
     private string $parameterName = self::PARAMETER_NAME;
     private string $headerName = self::HEADER_NAME;
 
-    public function __construct(private ResponseFactoryInterface $responseFactory, private CsrfTokenInterface $token, private ?\Psr\Http\Server\RequestHandlerInterface $failureHandler = null)
+    public function __construct(private ResponseFactoryInterface $responseFactory, private CsrfTokenInterface $token, private ?RequestHandlerInterface $failureHandler = null)
     {
     }
 
