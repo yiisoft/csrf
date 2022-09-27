@@ -11,11 +11,8 @@ use Yiisoft\Session\SessionInterface;
  */
 final class SessionCsrfTokenIdentityGenerator implements CsrfTokenIdentityGeneratorInterface
 {
-    private SessionInterface $session;
-
-    public function __construct(SessionInterface $session)
+    public function __construct(private SessionInterface $session)
     {
-        $this->session = $session;
     }
 
     public function generate(): string

@@ -14,11 +14,8 @@ use Yiisoft\Security\TokenMask;
  */
 final class MaskedCsrfToken implements CsrfTokenInterface
 {
-    private CsrfTokenInterface $token;
-
-    public function __construct(CsrfTokenInterface $token)
+    public function __construct(private CsrfTokenInterface $token)
     {
-        $this->token = $token;
     }
 
     public function getValue(): string
