@@ -37,7 +37,8 @@
         "phpunit/phpunit": "^9.5",
         "roave/infection-static-analysis-plugin": "^1.16",
         "spatie/phpunit-watcher": "^1.23",
-        "vimeo/psalm": "^4.30|^5.6"
+        "vimeo/psalm": "^4.30|^5.6",
+        "yiisoft/di": "^1.1"
     },
     "autoload": {
         "psr-4": {
@@ -55,7 +56,7 @@
         },
         "config-plugin": {
             "params": "params.php",
-            "web": "web.php"
+            "di-web": "di-web.php"
         }
     },
     "config": {

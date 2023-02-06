@@ -1,8 +1,8 @@
 # Yii CSRF Protection Library Change Log
 
-## 1.2.1 under development
+## 2.0.0 under development
 
-- no changes in this release.
+- Chg #43: Adapt configuration group names to Yii conventions (@vjik)
 
 ## 1.2.0 November 22, 2021
 
