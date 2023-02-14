@@ -1,5 +1,9 @@
 # Yii CSRF Protection Library Change Log
 
+## 2.0.1 under development
+
+- no changes in this release.
+
 ## 2.0.0 February 14, 2023
 
 - Chg #43: Adapt configuration group names to Yii conventions (@vjik)
