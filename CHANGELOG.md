@@ -3,6 +3,7 @@
 ## 2.0.0 under development
 
 - Chg #43: Adapt configuration group names to Yii conventions (@vjik)
+- Enh #44: Add support of `yiisoft/session` version `^2.0` (@vjik)
 
 ## 1.2.0 November 22, 2021
 
