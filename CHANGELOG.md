@@ -1,6 +1,6 @@
 # Yii CSRF Protection Library Change Log
 
-## 2.0.0 under development
+## 2.0.0 February 14, 2023
 
 - Chg #43: Adapt configuration group names to Yii conventions (@vjik)
 - Enh #44: Add support of `yiisoft/session` version `^2.0` (@vjik)
