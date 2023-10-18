@@ -8,8 +8,11 @@ use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
 
 final class MockCsrfTokenIdentityGenerator implements CsrfTokenIdentityGeneratorInterface
 {
-    public function __construct(private string $identity)
+    private string $identity;
+
+    public function __construct(string $identity)
     {
+        $this->identity = $identity;
     }
 
     public function generate(): string

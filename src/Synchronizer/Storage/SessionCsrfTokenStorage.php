@@ -16,10 +16,19 @@ class SessionCsrfTokenStorage implements CsrfTokenStorageInterface
     public const KEY = '_csrf';
 
     /**
+     * @var string Session key used to store data.
+     */
+    private string $key;
+
+    private SessionInterface $session;
+
+    /**
      * @param string $key Session key used to store data. Default is "_csrf".
      */
-    public function __construct(private SessionInterface $session, private string $key = self::KEY)
+    public function __construct(SessionInterface $session, string $key = self::KEY)
     {
+        $this->key = $key;
+        $this->session = $session;
     }
 
     public function get(): ?string

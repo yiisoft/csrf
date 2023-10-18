@@ -11,8 +11,11 @@ use Yiisoft\Security\Random;
  */
 final class RandomCsrfTokenGenerator implements CsrfTokenGeneratorInterface
 {
-    public function __construct(private int $length = 32)
+    private int $length;
+
+    public function __construct(int $length = 32)
     {
+        $this->length = $length;
     }
 
     public function generate(): string

@@ -24,21 +24,29 @@ use Yiisoft\Strings\StringHelper;
  */
 final class HmacCsrfToken implements CsrfTokenInterface
 {
+    private CsrfTokenIdentityGeneratorInterface $identityGenerator;
     private Mac $mac;
 
+    /**
+     * @var string Shared secret key used to generate the hash.
+     */
+    private string $secretKey;
+
+    /**
+     * @var int|null Number of seconds that the token is valid for.
+     */
+    private ?int $lifetime;
+
     public function __construct(
-        private CsrfTokenIdentityGeneratorInterface $identityGenerator,
-        /**
-         * @var string Shared secret key used to generate the hash.
-         */
-        private string $secretKey,
+        CsrfTokenIdentityGeneratorInterface $identityGenerator,
+        string $secretKey,
         string $algorithm = 'sha256',
-        /**
-         * @var int|null Number of seconds that the token is valid for.
-         */
-        private ?int $lifetime = null
+        ?int $lifetime = null
     ) {
+        $this->identityGenerator = $identityGenerator;
         $this->mac = new Mac($algorithm);
+        $this->secretKey = $secretKey;
+        $this->lifetime = $lifetime;
     }
 
     public function getValue(): string
@@ -83,7 +91,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
                 $this->secretKey,
                 true
             );
-        } catch (DataIsTamperedException) {
+        } catch (DataIsTamperedException $e) {
             return null;
         }
 

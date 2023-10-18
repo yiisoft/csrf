@@ -21,8 +21,15 @@ use Yiisoft\Csrf\Synchronizer\Storage\CsrfTokenStorageInterface;
  */
 final class SynchronizerCsrfToken implements CsrfTokenInterface
 {
-    public function __construct(private CsrfTokenGeneratorInterface $generator, private CsrfTokenStorageInterface $storage)
-    {
+    private CsrfTokenGeneratorInterface $generator;
+    private CsrfTokenStorageInterface $storage;
+
+    public function __construct(
+        CsrfTokenGeneratorInterface $generator,
+        CsrfTokenStorageInterface $storage
+    ) {
+        $this->generator = $generator;
+        $this->storage = $storage;
     }
 
     public function getValue(): string
