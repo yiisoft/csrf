@@ -16,8 +16,6 @@ interface CsrfTokenStorageInterface
 
     /**
      * Write CSRF token into a storage.
-     *
-     * @param string $token
      */
     public function set(string $token): void;
 
