@@ -20,7 +20,7 @@ The package provides [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware fo
 - It supports two algorithms out of the box:
     - Synchronizer CSRF token with customizable token generation and storage. By default, it uses random data and session.
     - HMAC based token with customizable identity generation. Uses session by default.
-- It has ability to apply masking to CSRF token string to make [BREACH attack](http://breachattack.com/) impossible.
+- It has ability to apply masking to CSRF token string to make [BREACH attack](https://breachattack.com/) impossible.
 
 ## Requirements
 
@@ -147,7 +147,7 @@ To learn more about HMAC based token pattern
 ### Masked CSRF token
 
 `MaskedCsrfToken` is a decorator for `CsrfTokenInterface` that applies masking to a token string.
-It makes [BREACH attack](http://breachattack.com/) impossible, so it is safe to use token in HTML to be later passed to
+It makes [BREACH attack](https://breachattack.com/) impossible, so it is safe to use token in HTML to be later passed to
 the next request either as a hidden form field or via JavaScript async request.
 
 It is recommended to always use this decorator.
