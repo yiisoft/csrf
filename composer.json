@@ -23,6 +23,7 @@
     },
     "require": {
         "php": "^7.4|^8.0",
+        "ext-hash": "*",
         "psr/http-factory": "^1.0",
         "psr/http-factory-implementation": "1.0",
         "psr/http-message": "^1.0",
