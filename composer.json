@@ -32,7 +32,7 @@
         "yiisoft/http": "^1.2",
         "yiisoft/security": "^1.0",
         "yiisoft/session": "^1.0|^2.0",
-        "yiisoft/strings": "^2.2"
+        "yiisoft/strings": "^2.0"
     },
     "require-dev": {
         "maglnet/composer-require-checker": "^3.8|^4.2",
