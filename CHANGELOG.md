@@ -2,7 +2,8 @@
 
 ## 2.0.1 under development
 
-- no changes in this release.
+- Bug #36: Explicitly add transitive dependencies `yiisoft/strings`, `psr/http-server-handler`
+  and `ext-hash` (@vjik, @xepozz)
 
 ## 2.0.0 February 14, 2023
 
