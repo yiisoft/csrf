@@ -2,6 +2,7 @@
 
 ## 2.0.1 under development
 
+- New #53: Add `StubCsrfToken` (@hacan359)
 - Bug #36: Explicitly add transitive dependencies `yiisoft/strings`, `psr/http-server-handler`
   and `ext-hash` (@vjik, @xepozz)
 
