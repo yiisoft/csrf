@@ -33,7 +33,6 @@ class SessionCsrfTokenStorage implements CsrfTokenStorageInterface
 
     public function get(): ?string
     {
-        /** @var mixed $value */
         $value = $this->session->get($this->key);
         return is_string($value) ? $value : null;
     }
