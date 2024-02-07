@@ -18,7 +18,8 @@
 The package provides [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware for CSRF protection:
 
 - It supports two algorithms out of the box:
-    - Synchronizer CSRF token with customizable token generation and storage. By default, it uses random data and session.
+    - Synchronizer CSRF token with customizable token generation and storage. By default, it uses random data and
+      session.
     - HMAC based token with customizable identity generation. Uses session by default.
 - It has ability to apply masking to CSRF token string to make [BREACH attack](https://breachattack.com/) impossible.
 
@@ -122,7 +123,7 @@ token that came from the form is compared against the token stored.
 Package provides `RandomCsrfTokenGenerator` that generates a random token and
 `SessionCsrfTokenStorage` that persists a token between requests in a user session.
 
-To learn more about the synchronizer token pattern, 
+To learn more about the synchronizer token pattern,
 [check OWASP CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern).
 
 ### HMAC based token
@@ -154,6 +155,9 @@ It is recommended to always use this decorator.
 
 ## Testing
 
+The `StubCsrfToken` class can be useful when mocking CSRF token behavior during unit testing or when providing
+placeholder functionality in temporary solutions.
+
 ### Unit testing
 
 The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
@@ -181,7 +185,8 @@ The code is statically analyzed with [Psalm](https://psalm.dev/). To run static 
 
 ## License
 
-The Yii CSRF Protection Library is free software. It is released under the terms of the BSD License. Please see [`LICENSE`](./LICENSE.md) for more information.
+The Yii CSRF Protection Library is free software. It is released under the terms of the BSD License. Please
+see [`LICENSE`](./LICENSE.md) for more information.
 
 Maintained by [Yii Software](https://www.yiiframework.com/).
 
