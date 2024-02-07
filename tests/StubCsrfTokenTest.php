@@ -6,23 +6,20 @@ namespace Yiisoft\Csrf\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\StubCsrfToken;
-use Yiisoft\Security\Random;
 
 final class StubCsrfTokenTest extends TestCase
 {
     public function testValue(): void
     {
-        $csrfToken = Random::string();
-        $stubToken = new StubCsrfToken($csrfToken);
-        $this->assertSame($csrfToken, $stubToken->getValue());
+        $stubToken = new StubCsrfToken('test');
+        $this->assertSame('test', $stubToken->getValue());
     }
 
     public function testValidate(): void
     {
-        $csrfToken = Random::string();
-        $stubToken = new StubCsrfToken($csrfToken);
-        $this->assertTrue($stubToken->validate($csrfToken));
-        $this->assertFalse($stubToken->validate(Random::string()));
+        $stubToken = new StubCsrfToken('test');
+        $this->assertTrue($stubToken->validate('test'));
+        $this->assertFalse($stubToken->validate('other'));
     }
 
     public function testEmptyToken(): void
