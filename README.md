@@ -147,7 +147,8 @@ To learn more about HMAC based token pattern
 
 ### Stub CSRF token
 
-The `StubCsrfToken` class can be useful when mocking CSRF token behavior during unit testing or when providing
+The `StubCsrfToken` simply stores and returns a token string. It does not perform any additional validation.
+This implementation can be useful when mocking CSRF token behavior during unit testing or when providing
 placeholder functionality in temporary solutions.
 
 ### Masked CSRF token
