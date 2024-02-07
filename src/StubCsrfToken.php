@@ -14,14 +14,14 @@ use Yiisoft\Security\Random;
  */
 final class StubCsrfToken implements CsrfTokenInterface
 {
-    private ?string $token;
+    private string $token;
 
     public function __construct(?string $token = null)
     {
-        $this->token = $token;
         if (null === $token) {
-            $this->token = Random::string();
+            $token = Random::string();
         }
+        $this->token = $token;
     }
 
     public function getValue(): string
