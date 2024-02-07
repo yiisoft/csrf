@@ -7,7 +7,7 @@ namespace Yiisoft\Csrf;
 use Yiisoft\Security\Random;
 
 /**
- * StubCsrfToken represents a simple implementation of CsrfTokenInterface.
+ * `StubCsrfToken` represents a simple implementation of `CsrfTokenInterface`.
  *
  * This implementation simply stores and returns a token string. It does not perform any additional validation.
  * It is primarily used for testing or as a placeholder implementation.

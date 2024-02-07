@@ -32,7 +32,7 @@ The package provides [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware fo
 The package could be installed with composer:
 
 ```shell
-composer require yiisoft/csrf --prefer-dist
+composer require yiisoft/csrf
 ```
 
 ## General usage
@@ -145,6 +145,11 @@ Parameters set via the `HmacCsrfToken` constructor are:
 To learn more about HMAC based token pattern
 [check OWASP CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern).
 
+### Stub CSRF token
+
+The `StubCsrfToken` class can be useful when mocking CSRF token behavior during unit testing or when providing
+placeholder functionality in temporary solutions.
+
 ### Masked CSRF token
 
 `MaskedCsrfToken` is a decorator for `CsrfTokenInterface` that applies masking to a token string.
@@ -154,9 +159,6 @@ the next request either as a hidden form field or via JavaScript async request.
 It is recommended to always use this decorator.
 
 ## Testing
-
-The `StubCsrfToken` class can be useful when mocking CSRF token behavior during unit testing or when providing
-placeholder functionality in temporary solutions.
 
 ### Unit testing
 
