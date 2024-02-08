@@ -1,5 +1,9 @@
 # Yii CSRF Protection Library Change Log
 
+## 2.1.1 under development
+
+- no changes in this release.
+
 ## 2.1.0 February 08, 2024
 
 - New #53: Add `StubCsrfToken` (@hacan359)
