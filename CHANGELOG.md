@@ -1,6 +1,6 @@
 # Yii CSRF Protection Library Change Log
 
-## 2.0.1 under development
+## 2.1.0 February 08, 2024
 
 - New #53: Add `StubCsrfToken` (@hacan359)
 - Bug #36: Explicitly add transitive dependencies `yiisoft/strings`, `psr/http-server-handler`
