@@ -18,8 +18,7 @@
 The package provides [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware for CSRF protection:
 
 - It supports two algorithms out of the box:
-  - Synchronizer CSRF token with customizable token generation and storage. By default, it uses random data and
-      session.
+  - Synchronizer CSRF token with customizable token generation and storage. By default, it uses random data and session.
   - HMAC based token with customizable identity generation. Uses session by default.
 - It has ability to apply masking to CSRF token string to make [BREACH attack](https://breachattack.com/) impossible.
 
@@ -163,10 +162,15 @@ It is recommended to always use this decorator.
 
 - [Internals](docs/internals.md)
 
-## Support
-
 If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/63) is a good place for that.
 You may also check out other [Yii Community Resources](https://www.yiiframework.com/community).
+
+## License
+
+The Yii CSRF Protection Library is free software. It is released under the terms of the BSD License.
+Please see [`LICENSE`](./LICENSE.md) for more information.
+
+Maintained by [Yii Software](https://www.yiiframework.com/).
 
 ## Support the project
 
@@ -179,10 +183,3 @@ You may also check out other [Yii Community Resources](https://www.yiiframework.
 [![Telegram](https://img.shields.io/badge/telegram-join-1DA1F2?style=flat&logo=telegram)](https://t.me/yii3en)
 [![Facebook](https://img.shields.io/badge/facebook-join-1DA1F2?style=flat&logo=facebook&logoColor=ffffff)](https://www.facebook.com/groups/yiitalk)
 [![Slack](https://img.shields.io/badge/slack-join-1DA1F2?style=flat&logo=slack)](https://yiiframework.com/go/slack)
-
-## License
-
-The Yii CSRF Protection Library is free software. It is released under the terms of the BSD License.
-Please see [`LICENSE`](./LICENSE.md) for more information.
-
-Maintained by [Yii Software](https://www.yiiframework.com/).
