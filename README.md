@@ -27,7 +27,7 @@ The package provides [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware fo
 
 ## Installation
 
-The package could be installed with composer:
+The package could be installed with [Composer](https://getcomposer.org):
 
 ```shell
 composer require yiisoft/csrf
