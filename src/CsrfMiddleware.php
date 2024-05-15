@@ -27,6 +27,7 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     private string $parameterName = self::PARAMETER_NAME;
     private string $headerName = self::HEADER_NAME;
+    private bool $parseBody = true;
 
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenInterface $token;
@@ -73,6 +74,13 @@ final class CsrfMiddleware implements MiddlewareInterface
         return $new;
     }
 
+    public function withParseBody(bool $parseBody): self
+    {
+        $new = clone $this;
+        $new->parseBody = $parseBody;
+        return $new;
+    }
+
     public function getParameterName(): string
     {
         return $this->parameterName;
@@ -81,6 +89,11 @@ final class CsrfMiddleware implements MiddlewareInterface
     public function getHeaderName(): string
     {
         return $this->headerName;
+    }
+
+    public function getParseBody(): bool
+    {
+        return $this->parseBody;
     }
 
     private function validateCsrfToken(ServerRequestInterface $request): bool
@@ -96,12 +109,12 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     private function getTokenFromRequest(ServerRequestInterface $request): ?string
     {
-        $parsedBody = $request->getParsedBody();
+        $headers = $request->getHeader($this->headerName);
+        $token = reset($headers);
 
-        $token = $parsedBody[$this->parameterName] ?? null;
-        if (empty($token)) {
-            $headers = $request->getHeader($this->headerName);
-            $token = reset($headers);
+        if (empty($token) && $this->parseBody) {
+            $parsedBody = $request->getParsedBody();
+            $token = $parsedBody[$this->parameterName] ?? null;
         }
 
         return is_string($token) ? $token : null;
