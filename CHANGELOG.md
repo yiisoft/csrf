@@ -1,6 +1,10 @@
 # Yii CSRF Protection Library Change Log
 
-## 2.1.1 under development
+## 2.1.2 under development
+
+- no changes in this release.
+
+## 2.1.1 May 08, 2024
 
 - Enh #55: Add support for `psr/http-message` version `^2.0` (@vjik)
 
