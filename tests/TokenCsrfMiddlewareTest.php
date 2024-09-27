@@ -130,6 +130,42 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
 
+    public function testUnsafeMethodPostRequestResultIn422(): void
+    {
+        $middleware = $this->createCsrfMiddleware();
+        $response = $middleware->process(
+            $this->createServerRequest(Method::POST),
+            $this->createRequestHandler()
+        );
+        $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
+        $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
+    }
+
+    public function testCustomSafeOptionsRequestResultIn200(): void
+    {
+        $middleware = $this
+            ->createCsrfMiddleware()
+            ->withSafeMethods([Method::OPTIONS]);
+        $response = $middleware->process(
+            $this->createServerRequest(Method::OPTIONS),
+            $this->createRequestHandler()
+        );
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testCustomUnsafeMethodGetRequestResultIn422(): void
+    {
+        $middleware = $this
+            ->createCsrfMiddleware()
+            ->withSafeMethods([Method::OPTIONS]);
+        $response = $middleware->process(
+            $this->createServerRequest(Method::GET),
+            $this->createRequestHandler()
+        );
+        $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
+        $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
+    }
+
     private function createServerRequest(
         string $method = Method::POST,
         array $bodyParams = [],
