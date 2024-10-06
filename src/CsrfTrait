@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Yiisoft\Csrf;
+
+ 
+
+/**
+ * CsrfTrait to share the parameter name bettewn middleware and view injection. 
+ */
+trait CsrfTrait
+{
+//    final const PARAMETER_NAME = '_csrf';
+//    final const HEADER_NAME = 'X-CSRF-Token';
+
+    protected string $formParameterName = '_csrf';
+    protected string $headerName = 'X-CSRF-Token';
+
+
+    public function withFormParameterName(string $name): self
+    {
+        $new = clone $this;
+        $new->formParameterName = $name;
+        return $new;
+    }
+
+    public function withHeaderName(string $name): self
+    {
+        $new = clone $this;
+        $new->headerName = $name;
+        return $new;
+    }
+
+    public function getFormParameterName(): string
+    {
+        return $this->formParameterName;
+    }
+
+    public function getHeaderName(): string
+    {
+        return $this->headerName;
+    }
+
+
+}
