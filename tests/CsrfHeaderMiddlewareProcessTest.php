@@ -32,7 +32,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
     {
         $middleware = $this
             ->createMiddleware()
-            ->withSafeMethods([Method::GET, Method::HEAD, Method::OPTIONS]);
+            ->withUnsafeMethods([Method::POST, Method::DELETE]);
         $response = $middleware->process(
             $this->createServerRequest(Method::GET),
             $this->createRequestHandler()
@@ -51,13 +51,13 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
 
-    public function testCustomUnsafeMethodPostRequestResultIn422(): void
+    public function testCustomUnsafeMethodDeleteRequestResultIn422(): void
     {
         $middleware = $this
             ->createMiddleware()
-            ->withSafeMethods([Method::GET, Method::HEAD, Method::OPTIONS]);
+            ->withUnsafeMethods([Method::POST, Method::DELETE]);
         $response = $middleware->process(
-            $this->createServerRequest(Method::POST),
+            $this->createServerRequest(Method::DELETE),
             $this->createRequestHandler()
         );
         $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
@@ -66,14 +66,14 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
 
     public function testValidCustomHeaderResultIn200(): void
     {
-        $headerName = 'X-MY-CSRF';
+        $headerName = 'X-JGURDA';
 
         $middleware = $this
             ->createMiddleware()
             ->withHeaderName($headerName)
-            ->withSafeMethods([Method::GET]);
+            ->withUnsafeMethods([Method::POST]);
         $response = $middleware->process(
-            $this->createServerRequest(Method::GET, [$headerName => Random::string()]),
+            $this->createServerRequest(Method::POST, [$headerName => Random::string()]),
             $this->createRequestHandler()
         );
         $this->assertEquals(200, $response->getStatusCode());
@@ -81,9 +81,11 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
 
     public function testEmptyTokenInRequestResultIn200(): void
     {
-        $middleware = $this->createMiddleware();
+        $middleware = $this
+            ->createMiddleware()
+            ->withUnsafeMethods([Method::POST]);
         $response = $middleware->process(
-            $this->createServerRequest(Method::GET, [CsrfHeaderMiddleware::HEADER_NAME => '']),
+            $this->createServerRequest(Method::POST, [CsrfHeaderMiddleware::HEADER_NAME => '']),
             $this->createRequestHandler()
         );
         $this->assertEquals(200, $response->getStatusCode());
@@ -93,7 +95,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
     {
         $middleware = $this->createMiddleware();
         $response = $middleware->process(
-            $this->createServerRequest(Method::POST, ['X-MY-CSRF' => '']),
+            $this->createServerRequest(Method::POST, ['X-JGURDA' => '']),
             $this->createRequestHandler()
         );
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
@@ -114,7 +116,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
         };
         $middleware = $this->createMiddleware($failureHandler);
         $response = $middleware->process(
-            $this->createServerRequest(Method::POST, ['X-MY-CSRF' => '']),
+            $this->createServerRequest(Method::POST, ['X-JGURDA' => '']),
             $this->createRequestHandler(),
         );
         $this->assertEquals(Status::BAD_REQUEST, $response->getStatusCode());

@@ -21,30 +21,30 @@ final class CsrfHeaderMiddlewareTest extends TestCase
     {
         $middleware = $this
             ->createMiddleware()
-            ->withHeaderName('X-MY-CSRF');
-        $this->assertSame('X-MY-CSRF', $middleware->getHeaderName());
+            ->withHeaderName('X-JGURDA');
+        $this->assertSame('X-JGURDA', $middleware->getHeaderName());
     }
 
     public function testImmutability(): void
     {
         $original = $this->createMiddleware();
-        $this->assertNotSame($original, $original->withHeaderName('X-MY-CSRF'));
-        $this->assertNotSame($original, $original->withSafeMethods([Method::HEAD]));
+        $this->assertNotSame($original, $original->withHeaderName('X-JGURDA'));
+        $this->assertNotSame($original, $original->withUnsafeMethods([Method::POST]));
     }
 
-    public function testDefaultSafeMethods(): void
+    public function testDefaultUnsafeMethods(): void
     {
         $middleware = $this->createMiddleware();
-        $this->assertSame([Method::OPTIONS], $middleware->getSafeMethods());
+        $this->assertSame([Method::GET, Method::HEAD, Method::POST], $middleware->getUnsafeMethods());
     }
 
-    public function testGetSafeMethods(): void
+    public function testGetUnsafeMethods(): void
     {
-        $methods = [Method::GET, Method::HEAD, Method::OPTIONS];
+        $methods = [Method::GET, Method::POST];
         $middleware = $this
             ->createMiddleware()
-            ->withSafeMethods($methods);
-        $this->assertSame($methods, $middleware->getSafeMethods());
+            ->withUnsafeMethods($methods);
+        $this->assertSame($methods, $middleware->getUnsafeMethods());
     }
 
     private function createMiddleware(): CsrfHeaderMiddleware
