@@ -375,7 +375,7 @@ Add `CsrfMiddleware` to the main middleware stack
 
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
-$middlewareDispatcher->withMiddlewares([
+$middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
     ErrorCatcher::class,
     SessionMiddleware::class,
     CsrfMiddleware::class, // <-- add this
