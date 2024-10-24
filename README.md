@@ -180,7 +180,7 @@ In this pattern, AJAX/SPA frontend appends a custom header to API requests that 
 The header can be any arbitrary key-value pair, as long as it does not conflict with existing headers. Empty value is also acceptable.
 
 ```
-X-CSRF-TOKEN=1
+X-CSRF-HEADER=1
 ```
 
 When handling the request, the API checks for the existence of this header. If the header does not exist, the backend rejects the request as potential forgery. Employing a custom header allows to reject [simple requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests) that browsers do not designate as "to be preflighted" and permit them to be sent to any origin.
@@ -238,7 +238,7 @@ The use of a custom request header for CSRF protection is based on the CORS Prot
 > `CsrfHeaderMiddleware` can be used to prevent forgery of same-origin requests and requests from the list of specific origins only.
 
 
-### Protecting same-origin only requests
+### Protecting same-origin requests
 
 In this scenario
 - AJAX/SPA frontend and API backend have the same origin.
@@ -256,7 +256,7 @@ Add `CsrfHeaderMiddleware` to the main middleware stack
 
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
-$middlewareDispatcher->withMiddlewares([
+$middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
     ErrorCatcher::class,
     CsrfHeaderMiddleware::class, // <-- add this
     Router::class,
@@ -281,7 +281,7 @@ On the frontend add to the `GET`, `HEAD`, `POST` requests a custom header define
 ```js
 let response = fetch('https://example.com/api/whoami', {
   headers: {
-    X-CSRF-HEADER: crypto.randomUUID()
+    "X-CSRF-HEADER": crypto.randomUUID()
   }
 });
 ```
@@ -310,7 +310,7 @@ Add `CsrfHeaderMiddleware` to the main middleware stack
 
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
-$middlewareDispatcher->withMiddlewares([
+$middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
     ErrorCatcher::class,
     CsrfHeaderMiddleware::class, // <-- add this
     Router::class,
@@ -335,7 +335,7 @@ On the frontend add to the `GET`, `HEAD`, `POST` requests a custom header define
 ```js
 let response = fetch('https://api.example.com/whoami', {
   headers: {
-    X-CSRF-HEADER: crypto.randomUUID()
+    "X-CSRF-HEADER": crypto.randomUUID()
   }
 });
 ```
@@ -439,7 +439,7 @@ Add to all requests a custom header defined in the `CsrfMiddleware` with acquire
 ```js
 let response = fetch('https://api.example.com/whoami', {
   headers: {
-    X-CSRF-TOKEN: csrfToken
+    "X-CSRF-TOKEN": csrfToken
   }
 });
 ```
