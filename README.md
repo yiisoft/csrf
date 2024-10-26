@@ -105,6 +105,9 @@ $middleware = new CsrfMiddleware($responseFactory, $csrfToken, $failureHandler);
 By default, `CsrfMiddleware` considers `GET`, `HEAD`, `OPTIONS` methods as safe operations and doesn't perform CSRF validation. You can change this behavior as follows:
 
 ```php
+use Yiisoft\Csrf\CsrfMiddleware;
+use Yiisoft\Http\Method;
+
 $csrfMiddleware = $container->get(CsrfMiddleware::class);
 
 // Returns a new instance with the specified list of safe methods.
@@ -112,6 +115,22 @@ $csrfMiddleware = $csrfMiddleware->withSafeMethods([Method::OPTIONS]);
 
 // Returns a new instance with the specified header name.
 $csrfMiddleware = $csrfMiddleware->withHeaderName('X-CSRF-PROTECTION');
+```
+
+or define the `CsrfMiddleware` configuration in the DI container
+
+`config/web/di/csrf.php`:
+
+```php
+use Yiisoft\Csrf\CsrfMiddleware;
+use Yiisoft\Http\Method;
+
+return [
+    CsrfMiddleware::class => [
+        'withSafeMethods()' => [[Method::OPTIONS]],
+        'withHeaderName()' => ['X-CSRF-PROTECTION'],
+    ],
+];
 ```
 
 ## CSRF Tokens
@@ -223,6 +242,9 @@ return [
 By default, `CsrfHeaderMiddleware` considers only `GET`, `HEAD`, `POST` methods as unsafe operations. Requests with other HTTP methods trigger CORS preflight and do not require CSRF header validation. You can change this behavior as follows:
 
 ```php
+use Yiisoft\Csrf\CsrfHeaderMiddleware;
+use Yiisoft\Http\Method;
+
 $csrfHeaderMiddleware = $container->get(CsrfHeaderMiddleware::class);
 
 // Returns a new instance with the specified list of unsafe methods.
@@ -230,6 +252,22 @@ $csrfHeaderMiddleware = $csrfHeaderMiddleware->withUnsafeMethods([Method::POST, 
 
 // Returns a new instance with the specified header name.
 $csrfHeaderMiddleware = $csrfHeaderMiddleware->withHeaderName('X-CSRF-PROTECTION');
+```
+
+or define the `CsrfHeaderMiddleware` configuration in the DI container
+
+`config/web/di/csrf.php`:
+
+```php
+use Yiisoft\Csrf\CsrfHeaderMiddleware;
+use Yiisoft\Http\Method;
+
+return [
+    CsrfHeaderMiddleware::class => [
+        'withUnsafeMethods()' => [[Method::POST, Method::DELETE]],
+        'withHeaderName()' => ['X-CSRF-PROTECTION'],
+    ],
+];
 ```
 
 The use of a custom request header for CSRF protection is based on the CORS Protocol. Thus, you **must** configure the CORS module to allow or deny cross-origin access to the backend API.
