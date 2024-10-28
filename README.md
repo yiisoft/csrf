@@ -264,7 +264,7 @@ use Yiisoft\Http\Method;
 
 return [
     CsrfHeaderMiddleware::class => [
-        'withUnsafeMethods()' => [[Method::POST, Method::DELETE]],
+        'withUnsafeMethods()' => [[Method::POST]],
         'withHeaderName()' => ['X-CSRF-PROTECTION'],
     ],
 ];
