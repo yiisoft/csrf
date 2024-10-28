@@ -248,7 +248,7 @@ use Yiisoft\Http\Method;
 $csrfHeaderMiddleware = $container->get(CsrfHeaderMiddleware::class);
 
 // Returns a new instance with the specified list of unsafe methods.
-$csrfHeaderMiddleware = $csrfHeaderMiddleware->withUnsafeMethods([Method::POST, Method::DELETE]);
+$csrfHeaderMiddleware = $csrfHeaderMiddleware->withUnsafeMethods([Method::POST]);
 
 // Returns a new instance with the specified header name.
 $csrfHeaderMiddleware = $csrfHeaderMiddleware->withHeaderName('X-CSRF-PROTECTION');
@@ -290,7 +290,7 @@ In this scenario
 
 #### Configure middlewares stack
 
-Add `CsrfHeaderMiddleware` to the main middleware stack
+Add `CsrfHeaderMiddleware` to the main middleware stack:
 
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
@@ -301,7 +301,7 @@ $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
 ]);
 ```
 
-or to the routes that must be protected.
+or to the routes that must be protected:
 
 ```php
 $collector = $container->get(RouteCollectorInterface::class);
@@ -344,7 +344,7 @@ Access-Control-Allow-Origin: https://example.com
 
 #### Configure middlewares stack
 
-Add `CsrfHeaderMiddleware` to the main middleware stack
+Add `CsrfHeaderMiddleware` to the main middleware stack:
 
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
@@ -355,7 +355,7 @@ $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
 ]);
 ```
 
-or to the routes that must be protected.
+or to the routes that must be protected:
 
 ```php
 $collector = $container->get(RouteCollectorInterface::class);
@@ -402,14 +402,14 @@ Access-Control-Allow-Origin: $frontendOrigin
 By default, `CsrfMiddleware` considers `GET`, `HEAD`, `OPTIONS` methods as safe operations and doesn't perform CSRF validation.
 In JavaScript-based apps, requests are made programmatically; therefore, to increase application protection, the only `OPTIONS` method can be considered safe and need not be appended with a CSRF token header.
 
-Configure `CsrfMiddleware` safe methods.
+Configure `CsrfMiddleware` safe methods:
 
 ```php
 $csrfMiddleware = $container->get(CsrfMiddleware::class);
 $csrfMiddleware = $csrfMiddleware->withSafeMethods([Method::OPTIONS]);
 ```
 
-Add `CsrfMiddleware` to the main middleware stack
+Add `CsrfMiddleware` to the main middleware stack:
 
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
@@ -421,7 +421,7 @@ $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
 ]);
 ```
 
-or to the routes that must be protected.
+or to the routes that must be protected:
 
 ```php
 $collector = $container->get(RouteCollectorInterface::class);
