@@ -15,7 +15,7 @@ use Yiisoft\Http\Status;
 use function in_array;
 
 /**
- * PSR-15 middleware that takes care of custom HTTP header validation.
+ * PSR-15 middleware that takes care of custom HTTP header CSRF validation.
  *
  * @link https://www.php-fig.org/psr/psr-15/
  * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#employing-custom-request-headers-for-ajaxapi

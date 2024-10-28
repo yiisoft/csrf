@@ -2,8 +2,8 @@
 
 ## 2.1.2 under development
 
-- New #68: Add the `CsrfHeaderMiddleware` middleware for employing custom HTTP header to prevent forgery of requests (@olegbaturin)
-- Enh #68: Add the `CsrfMiddleware::withSafeMethods()` method to configuure a custom safe HTTP methods list (@olegbaturin)
+- New #68: Add the `CsrfHeaderMiddleware` middleware to use custom HTTP header to prevent forgery of requests (@olegbaturin)
+- Enh #68: Add the `CsrfMiddleware::withSafeMethods()` method to configure a custom safe HTTP methods list (@olegbaturin)
 
 ## 2.1.1 May 08, 2024
 

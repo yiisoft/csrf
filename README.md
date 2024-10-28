@@ -117,9 +117,9 @@ $csrfMiddleware = $csrfMiddleware->withSafeMethods([Method::OPTIONS]);
 $csrfMiddleware = $csrfMiddleware->withHeaderName('X-CSRF-PROTECTION');
 ```
 
-or define the `CsrfMiddleware` configuration in the DI container
+or define the `CsrfMiddleware` configuration in the DI container:
 
-`config/web/di/csrf.php`:
+`config/web/di/csrf.php`
 
 ```php
 use Yiisoft\Csrf\CsrfMiddleware;
@@ -254,9 +254,9 @@ $csrfHeaderMiddleware = $csrfHeaderMiddleware->withUnsafeMethods([Method::POST, 
 $csrfHeaderMiddleware = $csrfHeaderMiddleware->withHeaderName('X-CSRF-PROTECTION');
 ```
 
-or define the `CsrfHeaderMiddleware` configuration in the DI container
+or define the `CsrfHeaderMiddleware` configuration in the DI container:
 
-`config/web/di/csrf.php`:
+`config/web/di/csrf.php`
 
 ```php
 use Yiisoft\Csrf\CsrfHeaderMiddleware;
@@ -283,12 +283,12 @@ In this scenario
 - Cross-origin requests to the API server are denied.
 - Simple CORS requests must be restricted.
 
-**Configure CORS module**
+#### Configure CORS module
 
 - Responses to a CORS preflight requests **must not** contain CORS headers.
 - Responses to an actual requests **must not** contain CORS headers.
 
-**Configure middlewares stack**
+#### Configure middlewares stack
 
 Add `CsrfHeaderMiddleware` to the main middleware stack
 
@@ -312,7 +312,7 @@ $collector->addGroup(
 );
 ```
 
-**Configure frontend requests**
+#### Configure frontend requests
 
 On the frontend add to the `GET`, `HEAD`, `POST` requests a custom header defined in the `CsrfHeaderMiddleware` with an empty or random value.
 
@@ -331,7 +331,7 @@ In this scenario:
 - Allow cross origin requests to the API server from the list of specific origins only.
 - Simple CORS requests must be restricted.
 
-**Configure CORS module**
+#### Configure CORS module
 
 - A successful responses to a CORS preflight requests **must** contain appropriate CORS headers.
 - Responses to an actual requests **must** contain appropriate CORS headers.
@@ -342,7 +342,7 @@ In this scenario:
 Access-Control-Allow-Origin: https://example.com
 ```
 
-**Configure middlewares stack**
+#### Configure middlewares stack
 
 Add `CsrfHeaderMiddleware` to the main middleware stack
 
@@ -366,7 +366,7 @@ $collector->addGroup(
 );
 ```
 
-**Configure frontend requests**
+#### Configure frontend requests
 
 On the frontend add to the `GET`, `HEAD`, `POST` requests a custom header defined in the `CsrfHeaderMiddleware` with an empty or random value.
 
@@ -385,7 +385,7 @@ In this scenario:
 - Allow cross origin requests to the API server from any origin.
 - All requests are considered unsafe and **must** be protected against CSRF with CSRF-token.
 
-**Configure CORS module**
+#### Configure CORS module
 
 - A successful responses to a CORS preflight requests **must** contain appropriate CORS headers.
 - Responses to an actual requests **must** contain appropriate CORS headers.
@@ -397,7 +397,7 @@ $frontendOrigin = $request->getOrigin();
 Access-Control-Allow-Origin: $frontendOrigin
 ```
 
-**Configure middlewares stack**
+#### Configure middlewares stack
 
 By default, `CsrfMiddleware` considers `GET`, `HEAD`, `OPTIONS` methods as safe operations and doesn't perform CSRF validation.
 In JavaScript-based apps, requests are made programmatically; therefore, to increase application protection, the only `OPTIONS` method can be considered safe and need not be appended with a CSRF token header.
@@ -432,7 +432,7 @@ $collector->addGroup(
 );
 ```
 
-**Configure routes**
+#### Configure routes
 
 Create a route for acquiring CSRF-tokens from the frontend application.
 
@@ -460,7 +460,7 @@ Route::options('/csrf-token')
     }),
 ```
 
-**Configure frontend requests**
+#### Configure frontend requests
 
 On the frontend first make a request to the configured endpoint and acquire a CSRF-token to use it in the subsequent requests.
 
