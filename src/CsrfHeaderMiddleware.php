@@ -74,11 +74,6 @@ final class CsrfHeaderMiddleware implements MiddlewareInterface
         return $this->headerName;
     }
 
-    public function getUnsafeMethods(): array
-    {
-        return $this->unsafeMethods;
-    }
-
     private function validateCsrfToken(ServerRequestInterface $request): bool
     {
         if (in_array($request->getMethod(), $this->unsafeMethods, true)) {

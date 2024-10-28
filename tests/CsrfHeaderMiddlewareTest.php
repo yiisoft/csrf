@@ -32,21 +32,6 @@ final class CsrfHeaderMiddlewareTest extends TestCase
         $this->assertNotSame($original, $original->withUnsafeMethods([Method::POST]));
     }
 
-    public function testDefaultUnsafeMethods(): void
-    {
-        $middleware = $this->createMiddleware();
-        $this->assertSame([Method::GET, Method::HEAD, Method::POST], $middleware->getUnsafeMethods());
-    }
-
-    public function testGetUnsafeMethods(): void
-    {
-        $methods = [Method::GET, Method::POST];
-        $middleware = $this
-            ->createMiddleware()
-            ->withUnsafeMethods($methods);
-        $this->assertSame($methods, $middleware->getUnsafeMethods());
-    }
-
     private function createMiddleware(): CsrfHeaderMiddleware
     {
         return new CsrfHeaderMiddleware(new Psr17Factory());

@@ -50,21 +50,6 @@ final class CsrfMiddlewareTest extends TestCase
         $this->assertNotSame($original, $original->withSafeMethods([Method::HEAD]));
     }
 
-    public function testDefaultSafeMethods(): void
-    {
-        $middleware = $this->createMiddleware();
-        $this->assertSame([Method::GET, Method::HEAD, Method::OPTIONS], $middleware->getSafeMethods());
-    }
-
-    public function testGetSafeMethods(): void
-    {
-        $methods = [Method::OPTIONS];
-        $middleware = $this
-            ->createMiddleware()
-            ->withSafeMethods($methods);
-        $this->assertSame($methods, $middleware->getSafeMethods());
-    }
-
     private function createMiddleware(): CsrfMiddleware
     {
         return new CsrfMiddleware(

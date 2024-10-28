@@ -51,6 +51,28 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
 
+    public function testUnsafeMethodHeadRequestResultIn422(): void
+    {
+        $middleware = $this->createMiddleware();
+        $response = $middleware->process(
+            $this->createServerRequest(Method::HEAD),
+            $this->createRequestHandler()
+        );
+        $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
+        $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
+    }
+
+    public function testUnsafeMethodPostRequestResultIn422(): void
+    {
+        $middleware = $this->createMiddleware();
+        $response = $middleware->process(
+            $this->createServerRequest(Method::POST),
+            $this->createRequestHandler()
+        );
+        $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
+        $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
+    }
+
     public function testCustomUnsafeMethodDeleteRequestResultIn422(): void
     {
         $middleware = $this

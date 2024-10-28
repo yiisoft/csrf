@@ -24,6 +24,27 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
 
     private string $token;
 
+    public function testGetIsAlwaysAllowed(): void
+    {
+        $middleware = $this->createCsrfMiddleware();
+        $response = $middleware->process($this->createServerRequest(Method::GET), $this->createRequestHandler());
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testHeadIsAlwaysAllowed(): void
+    {
+        $middleware = $this->createCsrfMiddleware();
+        $response = $middleware->process($this->createServerRequest(Method::HEAD), $this->createRequestHandler());
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testOptionsIsAlwaysAllowed(): void
+    {
+        $middleware = $this->createCsrfMiddleware();
+        $response = $middleware->process($this->createServerRequest(Method::OPTIONS), $this->createRequestHandler());
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
     public function testValidTokenInBodyPostRequestResultIn200(): void
     {
         $middleware = $this->createCsrfMiddleware();
@@ -76,13 +97,6 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
             $this->createRequestHandler()
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-    }
-
-    public function testGetIsAlwaysAllowed(): void
-    {
-        $middleware = $this->createCsrfMiddleware();
-        $response = $middleware->process($this->createServerRequest(Method::GET), $this->createRequestHandler());
         $this->assertEquals(200, $response->getStatusCode());
     }
 
