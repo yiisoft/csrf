@@ -11,14 +11,14 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Yiisoft\Csrf\CsrfTokenMiddleware;
+use Yiisoft\Csrf\CsrfMiddleware;
 use Yiisoft\Csrf\CsrfTokenInterface;
 use Yiisoft\Csrf\MaskedCsrfToken;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
 use Yiisoft\Security\Random;
 
-abstract class TokenCsrfMiddlewareTest extends TestCase
+abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
 {
     private const PARAM_NAME = 'csrf';
 
@@ -156,7 +156,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
 
     private function createPostServerRequestWithHeaderToken(
         string $token,
-        string $headerName = CsrfTokenMiddleware::HEADER_NAME
+        string $headerName = CsrfMiddleware::HEADER_NAME
     ): ServerRequestInterface {
         return $this->createServerRequest(Method::POST, [], [
             $headerName => $token,
@@ -183,11 +183,11 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
     protected function createCsrfMiddleware(
         ?CsrfTokenInterface $csrfToken = null,
         RequestHandlerInterface $failureHandler = null
-    ): CsrfTokenMiddleware {
+    ): CsrfMiddleware {
         $csrfToken = new MaskedCsrfToken($csrfToken ?? $this->createCsrfToken());
         $this->token = $csrfToken->getValue();
 
-        $middleware = new CsrfTokenMiddleware(new Psr17Factory(), $csrfToken, $failureHandler);
+        $middleware = new CsrfMiddleware(new Psr17Factory(), $csrfToken, $failureHandler);
 
         return $middleware->withParameterName(self::PARAM_NAME);
     }

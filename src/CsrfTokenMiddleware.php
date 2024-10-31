@@ -19,9 +19,8 @@ use function is_string;
  * PSR-15 middleware that takes care of token validation.
  *
  * @link https://www.php-fig.org/psr/psr-15/
- * @deprecated Use the {@see CsrfTokenMiddleware} class instead.
  */
-final class CsrfMiddleware implements MiddlewareInterface
+final class CsrfTokenMiddleware implements MiddlewareInterface
 {
     public const PARAMETER_NAME = '_csrf';
     public const HEADER_NAME = 'X-CSRF-Token';
