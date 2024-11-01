@@ -35,7 +35,7 @@ composer require yiisoft/csrf
 
 ## General usage
 
-In order to enable CSRF protection you need to add `CsrfMiddleware` to your main middleware stack.
+In order to enable CSRF protection you need to add `CsrfTokenMiddleware` to your main middleware stack.
 In Yii it is done by configuring `config/web/application.php`:
 
 ```php
@@ -48,7 +48,7 @@ return [
                         [
                             ErrorCatcher::class,
                             SessionMiddleware::class,
-                            CsrfMiddleware::class, // <-- add this
+                            CsrfTokenMiddleware::class, // <-- add this
                             Router::class,
                         ]
                     );
@@ -74,7 +74,7 @@ You can change this behavior by implementing your own request handler:
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Yiisoft\Csrf\CsrfMiddleware;
+use Yiisoft\Csrf\CsrfTokenMiddleware;
 
 /**
  * @var Psr\Http\Message\ResponseFactoryInterface $responseFactory
@@ -99,7 +99,7 @@ $failureHandler = new class ($responseFactory) implements RequestHandlerInterfac
     }
 };
 
-$middleware = new CsrfMiddleware($responseFactory, $csrfToken, $failureHandler);
+$middleware = new CsrfTokenMiddleware($responseFactory, $csrfToken, $failureHandler);
 ```
 
 ## CSRF Tokens

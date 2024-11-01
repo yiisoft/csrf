@@ -6,7 +6,7 @@ namespace Yiisoft\Csrf\Tests;
 
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Csrf\CsrfMiddleware;
+use Yiisoft\Csrf\CsrfTokenMiddleware;
 use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
 use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
@@ -16,7 +16,7 @@ final class CsrfMiddlewareTest extends TestCase
     public function testDefaultParameterName(): void
     {
         $middleware = $this->createMiddleware();
-        $this->assertSame(CsrfMiddleware::PARAMETER_NAME, $middleware->getParameterName());
+        $this->assertSame(CsrfTokenMiddleware::PARAMETER_NAME, $middleware->getParameterName());
     }
 
     public function testGetParameterName(): void
@@ -30,7 +30,7 @@ final class CsrfMiddlewareTest extends TestCase
     public function testDefaultHeaderName(): void
     {
         $middleware = $this->createMiddleware();
-        $this->assertSame(CsrfMiddleware::HEADER_NAME, $middleware->getHeaderName());
+        $this->assertSame(CsrfTokenMiddleware::HEADER_NAME, $middleware->getHeaderName());
     }
 
     public function testGetHeaderName(): void
@@ -48,9 +48,9 @@ final class CsrfMiddlewareTest extends TestCase
         $this->assertNotSame($original, $original->withParameterName('csrf'));
     }
 
-    private function createMiddleware(): CsrfMiddleware
+    private function createMiddleware(): CsrfTokenMiddleware
     {
-        return new CsrfMiddleware(
+        return new CsrfTokenMiddleware(
             new Psr17Factory(),
             new SynchronizerCsrfToken(
                 new RandomCsrfTokenGenerator(),

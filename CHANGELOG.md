@@ -2,7 +2,7 @@
 
 ## 2.1.2 under development
 
-- no changes in this release.
+- Chg #71: Deprecate `CsrfMiddleware` in favor of `CsrfTokenMiddleware` (@ev-gor)
 
 ## 2.1.1 May 08, 2024
 
