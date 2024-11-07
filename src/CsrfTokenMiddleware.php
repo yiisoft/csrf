@@ -19,16 +19,14 @@ use function is_string;
  * PSR-15 middleware that takes care of token validation.
  *
  * @link https://www.php-fig.org/psr/psr-15/
- * @deprecated Use the {@see CsrfTokenMiddleware} class instead.
  */
-final class CsrfMiddleware implements MiddlewareInterface
+final class CsrfTokenMiddleware implements MiddlewareInterface
 {
     public const PARAMETER_NAME = '_csrf';
     public const HEADER_NAME = 'X-CSRF-Token';
 
     private string $parameterName = self::PARAMETER_NAME;
     private string $headerName = self::HEADER_NAME;
-    private array $safeMethods = [Method::GET, Method::HEAD, Method::OPTIONS];
 
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenInterface $token;
@@ -75,13 +73,6 @@ final class CsrfMiddleware implements MiddlewareInterface
         return $new;
     }
 
-    public function withSafeMethods(array $methods): self
-    {
-        $new = clone $this;
-        $new->safeMethods = $methods;
-        return $new;
-    }
-
     public function getParameterName(): string
     {
         return $this->parameterName;
@@ -94,7 +85,7 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     private function validateCsrfToken(ServerRequestInterface $request): bool
     {
-        if (in_array($request->getMethod(), $this->safeMethods, true)) {
+        if (in_array($request->getMethod(), [Method::GET, Method::HEAD, Method::OPTIONS], true)) {
             return true;
         }
 
