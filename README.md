@@ -38,24 +38,30 @@ composer require yiisoft/csrf
 In order to enable CSRF protection you need to add `CsrfTokenMiddleware` to your main middleware stack.
 In Yii it is done by configuring `MiddlewareDispatcher`:
 
+>[yiisoft/middleware-dispatcher](https://github.com/yiisoft/middleware-dispatcher) configuration example
+```php
+$middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
+$middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
+    ErrorCatcher::class,
+    SessionMiddleware::class,
+    CsrfTokenMiddleware::class, // <-- add this
+    Router::class,
+]);
+```
+
+or define the `MiddlewareDispatcher` configuration in the DI container:
+
 >[yiisoft/di](https://github.com/yiisoft/di) configuration example
 ```php
 // config/web/di/application.php
 return [
-    Yiisoft\Yii\Http\Application::class => [
-        '__construct()' => [
-            'dispatcher' => DynamicReference::to(static function (Injector $injector) {
-                return ($injector->make(MiddlewareDispatcher::class))
-                    ->withMiddlewares(
-                        [
-                            ErrorCatcher::class,
-                            SessionMiddleware::class,
-                            CsrfTokenMiddleware::class, // <-- add this
-                            Router::class,
-                        ]
-                    );
-            }),
-        ],
+    MiddlewareDispatcher::class => [
+        'withMiddlewares()' => [[
+            ErrorCatcher::class,
+            SessionMiddleware::class,
+            CsrfTokenMiddleware::class, // <-- add this
+            Router::class,
+        ]]
     ],
 ];
 ```
@@ -208,28 +214,33 @@ When handling the request, the API checks for the existence of this header. If t
 
 In order to enable CSRF protection you need to add `CsrfHeaderMiddleware` to your `MiddlewareDispatcher` configuration:
 
+>[yiisoft/middleware-dispatcher](https://github.com/yiisoft/middleware-dispatcher) configuration example
+```php
+$middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
+$middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
+    ErrorCatcher::class,
+    CsrfHeaderMiddleware::class, // <-- add this
+    Router::class,
+]);
+```
+
+or in the DI container:
+
 >[yiisoft/di](https://github.com/yiisoft/di) configuration example
 ```php
 // config/web/di/application.php
 return [
-    Yiisoft\Yii\Http\Application::class => [
-        '__construct()' => [
-            'dispatcher' => DynamicReference::to(static function (Injector $injector) {
-                return ($injector->make(MiddlewareDispatcher::class))
-                    ->withMiddlewares(
-                        [
-                            ErrorCatcher::class,
-                            CsrfHeaderMiddleware::class, // <-- add this
-                            Router::class,
-                        ]
-                    );
-            }),
-        ],
+    MiddlewareDispatcher::class => [
+        'withMiddlewares()' => [[
+            ErrorCatcher::class,
+            CsrfHeaderMiddleware::class, // <-- add this
+            Router::class,
+        ]]
     ],
 ];
 ```
 
-or to the routes that must be protected:
+or add `CsrfHeaderMiddleware` to the routes that must be protected:
 
 >[yiisoft/di](https://github.com/yiisoft/di) configuration example
 ```php
@@ -300,6 +311,7 @@ In this scenario:
 
 Add `CsrfHeaderMiddleware` to the main middleware stack:
 
+>[yiisoft/middleware-dispatcher](https://github.com/yiisoft/middleware-dispatcher) configuration example
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
 $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
@@ -311,6 +323,7 @@ $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
 
 or to the routes that must be protected:
 
+>[yiisoft/router](https://github.com/yiisoft/router) configuration example
 ```php
 $collector = $container->get(RouteCollectorInterface::class);
 $collector->addGroup(
@@ -355,6 +368,7 @@ Access-Control-Allow-Origin: https://example.com
 
 Add `CsrfHeaderMiddleware` to the main middleware stack:
 
+>[yiisoft/middleware-dispatcher](https://github.com/yiisoft/middleware-dispatcher) configuration example
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
 $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
@@ -366,6 +380,7 @@ $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
 
 or to the routes that must be protected:
 
+>[yiisoft/router](https://github.com/yiisoft/router) configuration example
 ```php
 $collector = $container->get(RouteCollectorInterface::class);
 $collector->addGroup(
@@ -439,6 +454,7 @@ return [
 
 Add `CsrfTokenMiddleware` to the main middleware stack:
 
+>[yiisoft/middleware-dispatcher](https://github.com/yiisoft/middleware-dispatcher) configuration example
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
 $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
@@ -451,6 +467,7 @@ $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
 
 or to the routes that must be protected:
 
+>[yiisoft/router](https://github.com/yiisoft/router) configuration example
 ```php
 $collector = $container->get(RouteCollectorInterface::class);
 $collector->addGroup(
@@ -464,6 +481,7 @@ $collector->addGroup(
 
 Create a route for acquiring CSRF-tokens from the frontend application.
 
+>[yiisoft/router](https://github.com/yiisoft/router) configuration example
 ```php
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
