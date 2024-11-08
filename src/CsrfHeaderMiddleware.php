@@ -67,6 +67,10 @@ final class CsrfHeaderMiddleware implements MiddlewareInterface
         return $new;
     }
 
+    /**
+     * @param array $methods "unsafe" methods not triggered a CORS-preflight request
+     * @link https://fetch.spec.whatwg.org/#http-cors-protocol
+     */
     public function withUnsafeMethods(array $methods): self
     {
         $new = clone $this;

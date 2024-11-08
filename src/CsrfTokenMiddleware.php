@@ -79,6 +79,10 @@ final class CsrfTokenMiddleware implements MiddlewareInterface
         return $new;
     }
 
+    /**
+     * @param array $methods "safe" methods skipped on CSRF token validation
+     * @link https://datatracker.ietf.org/doc/html/rfc9110#name-safe-methods
+     */
     public function withSafeMethods(array $methods): self
     {
         $new = clone $this;

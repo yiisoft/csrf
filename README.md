@@ -274,6 +274,7 @@ return [
 The use of a custom request header for CSRF protection is based on the CORS Protocol. Thus, you **must** configure the CORS module to allow or deny cross-origin access to the backend API.
 
 >**Warning**  
+>
 >`CsrfHeaderMiddleware` can be used to prevent forgery of same-origin requests and requests from the list of specific origins only.
 
 
