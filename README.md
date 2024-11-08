@@ -39,6 +39,7 @@ In order to enable CSRF protection you need to add `CsrfTokenMiddleware` to your
 In Yii it is done by configuring `config/web/application.php`:
 
 ```php
+// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
 return [
     Yiisoft\Yii\Http\Application::class => [
         '__construct()' => [
@@ -119,9 +120,8 @@ $csrfMiddleware = $csrfMiddleware->withHeaderName('X-CSRF-PROTECTION');
 
 or define the `CsrfMiddleware` configuration in the DI container:
 
-`config/web/di/csrf.php`
-
 ```php
+// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
 use Yiisoft\Csrf\CsrfMiddleware;
 use Yiisoft\Http\Method;
 
@@ -135,7 +135,7 @@ return [
 
 ## CSRF Tokens
 
-In case Yii framework is used along with config plugin, the package is [configured](./config/web.php)
+In case Yii framework is used along with config plugin, the package is [configured](./config/di-web.php)
 automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
 ### Synchronizer CSRF token
@@ -204,9 +204,10 @@ X-CSRF-HEADER=1
 
 When handling the request, the API checks for the existence of this header. If the header does not exist, the backend rejects the request as potential forgery. Employing a custom header allows to reject [simple requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests) that browsers do not designate as "to be preflighted" and permit them to be sent to any origin.
 
-In order to enable CSRF protection you need to add `CsrfHeaderMiddleware` to your `RouteCollectorInterface` configuration
+In order to enable CSRF protection you need to add `CsrfHeaderMiddleware` to your `MiddlewareDispatcher` configuration:
 
 ```php
+// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
 return [
     Yiisoft\Yii\Http\Application::class => [
         '__construct()' => [
@@ -225,9 +226,10 @@ return [
 ];
 ```
 
-or to the routes that must be protected.
+or to the routes that must be protected:
 
 ```php
+// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
 return [
     RouteCollectionInterface::class => static function (RouteCollectorInterface $collector) use ($config) {
         $collector
@@ -256,9 +258,8 @@ $csrfHeaderMiddleware = $csrfHeaderMiddleware->withHeaderName('X-CSRF-PROTECTION
 
 or define the `CsrfHeaderMiddleware` configuration in the DI container:
 
-`config/web/di/csrf.php`
-
 ```php
+// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
 use Yiisoft\Csrf\CsrfHeaderMiddleware;
 use Yiisoft\Http\Method;
 
@@ -272,13 +273,14 @@ return [
 
 The use of a custom request header for CSRF protection is based on the CORS Protocol. Thus, you **must** configure the CORS module to allow or deny cross-origin access to the backend API.
 
-> [!IMPORTANT]
-> `CsrfHeaderMiddleware` can be used to prevent forgery of same-origin requests and requests from the list of specific origins only.
+> **Warning**
+>`CsrfHeaderMiddleware` can be used to prevent forgery of same-origin requests and requests from the list of specific origins only.
 
 
 ### Protecting same-origin requests
 
-In this scenario
+In this scenario:
+
 - AJAX/SPA frontend and API backend have the same origin.
 - Cross-origin requests to the API server are denied.
 - Simple CORS requests must be restricted.
@@ -327,6 +329,7 @@ let response = fetch('https://example.com/api/whoami', {
 ### Protecting requests from the list of specific origins
 
 In this scenario:
+
 - AJAX/SPA frontend and API backend have different origins.
 - Allow cross origin requests to the API server from the list of specific origins only.
 - Simple CORS requests must be restricted.
@@ -381,6 +384,7 @@ let response = fetch('https://api.example.com/whoami', {
 ### Protecting requests passed from any origin
 
 In this scenario:
+
 - AJAX/SPA frontend and API backend have different origins.
 - Allow cross origin requests to the API server from any origin.
 - All requests are considered unsafe and **must** be protected against CSRF with CSRF-token.
