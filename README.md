@@ -20,6 +20,7 @@ The package provides [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware fo
   - Synchronizer CSRF token with customizable token generation and storage. By default, it uses random data and session.
   - HMAC based token with customizable identity generation. Uses session by default.
 - It has ability to apply masking to CSRF token string to make [BREACH attack](https://breachattack.com/) impossible.
+- It supports CSRF protection by custom header for AJAX/SPA backend API.
 
 ## Requirements
 
