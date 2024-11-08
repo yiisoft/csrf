@@ -18,7 +18,7 @@ use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
 use Yiisoft\Security\Random;
 
-abstract class TokenCsrfMiddlewareTest extends TestCase
+abstract class CsrfTokenMiddlewareProcessTest extends TestCase
 {
     private const PARAM_NAME = 'csrf';
 
@@ -26,28 +26,28 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
 
     public function testGetIsAlwaysAllowed(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
         $response = $middleware->process($this->createServerRequest(Method::GET), $this->createRequestHandler());
         $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testHeadIsAlwaysAllowed(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
         $response = $middleware->process($this->createServerRequest(Method::HEAD), $this->createRequestHandler());
         $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testOptionsIsAlwaysAllowed(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
         $response = $middleware->process($this->createServerRequest(Method::OPTIONS), $this->createRequestHandler());
         $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testValidTokenInBodyPostRequestResultIn200(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
         $response = $middleware->process(
             $this->createPostServerRequestWithBodyToken($this->token),
             $this->createRequestHandler()
@@ -57,7 +57,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
 
     public function testValidTokenInBodyPutRequestResultIn200(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
         $response = $middleware->process(
             $this->createPutServerRequestWithBodyToken($this->token),
             $this->createRequestHandler()
@@ -67,7 +67,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
 
     public function testValidTokenInBodyDeleteRequestResultIn200(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
         $response = $middleware->process(
             $this->createDeleteServerRequestWithBodyToken($this->token),
             $this->createRequestHandler()
@@ -77,7 +77,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
 
     public function testValidTokenInHeaderResultIn200(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
         $response = $middleware->process(
             $this->createPostServerRequestWithHeaderToken($this->token),
             $this->createRequestHandler()
@@ -90,7 +90,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
         $headerName = 'CUSTOM-CSRF';
 
         $middleware = $this
-            ->createCsrfMiddleware()
+            ->createCsrfTokenMiddleware()
             ->withHeaderName($headerName);
         $response = $middleware->process(
             $this->createPostServerRequestWithHeaderToken($this->token, $headerName),
@@ -102,7 +102,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
 
     public function testInvalidTokenResultIn422(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
 
         $response = $middleware->process(
             $this->createPostServerRequestWithBodyToken(Random::string()),
@@ -126,7 +126,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
             }
         };
 
-        $middleware = $this->createCsrfMiddleware(null, $failureHandler);
+        $middleware = $this->createCsrfTokenMiddleware(null, $failureHandler);
 
         $response = $middleware->process(
             $this->createPostServerRequestWithBodyToken(Random::string()),
@@ -139,14 +139,14 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
 
     public function testEmptyTokenInRequestResultIn422(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
         $response = $middleware->process($this->createServerRequest(), $this->createRequestHandler());
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
 
     public function testUnsafeMethodPostRequestResultIn422(): void
     {
-        $middleware = $this->createCsrfMiddleware();
+        $middleware = $this->createCsrfTokenMiddleware();
         $response = $middleware->process(
             $this->createServerRequest(Method::POST),
             $this->createRequestHandler()
@@ -158,7 +158,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
     public function testCustomSafeOptionsRequestResultIn200(): void
     {
         $middleware = $this
-            ->createCsrfMiddleware()
+            ->createCsrfTokenMiddleware()
             ->withSafeMethods([Method::OPTIONS]);
         $response = $middleware->process(
             $this->createServerRequest(Method::OPTIONS),
@@ -170,7 +170,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
     public function testCustomUnsafeMethodGetRequestResultIn422(): void
     {
         $middleware = $this
-            ->createCsrfMiddleware()
+            ->createCsrfTokenMiddleware()
             ->withSafeMethods([Method::OPTIONS]);
         $response = $middleware->process(
             $this->createServerRequest(Method::GET),
@@ -230,7 +230,7 @@ abstract class TokenCsrfMiddlewareTest extends TestCase
         ];
     }
 
-    protected function createCsrfMiddleware(
+    protected function createCsrfTokenMiddleware(
         ?CsrfTokenInterface $csrfToken = null,
         RequestHandlerInterface $failureHandler = null
     ): CsrfTokenMiddleware {

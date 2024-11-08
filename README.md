@@ -103,30 +103,30 @@ $failureHandler = new class ($responseFactory) implements RequestHandlerInterfac
 $middleware = new CsrfTokenMiddleware($responseFactory, $csrfToken, $failureHandler);
 ```
 
-By default, `CsrfMiddleware` considers `GET`, `HEAD`, `OPTIONS` methods as safe operations and doesn't perform CSRF validation. You can change this behavior as follows:
+By default, `CsrfTokenMiddleware` considers `GET`, `HEAD`, `OPTIONS` methods as safe operations and doesn't perform CSRF validation. You can change this behavior as follows:
 
 ```php
-use Yiisoft\Csrf\CsrfMiddleware;
+use Yiisoft\Csrf\CsrfTokenMiddleware;
 use Yiisoft\Http\Method;
 
-$csrfMiddleware = $container->get(CsrfMiddleware::class);
+$csrfTokenMiddleware = $container->get(CsrfTokenMiddleware::class);
 
 // Returns a new instance with the specified list of safe methods.
-$csrfMiddleware = $csrfMiddleware->withSafeMethods([Method::OPTIONS]);
+$csrfTokenMiddleware = $csrfTokenMiddleware->withSafeMethods([Method::OPTIONS]);
 
 // Returns a new instance with the specified header name.
-$csrfMiddleware = $csrfMiddleware->withHeaderName('X-CSRF-PROTECTION');
+$csrfTokenMiddleware = $csrfTokenMiddleware->withHeaderName('X-CSRF-PROTECTION');
 ```
 
-or define the `CsrfMiddleware` configuration in the DI container:
+or define the `CsrfTokenMiddleware` configuration in the DI container:
 
 ```php
 // [yiisoft/di](https://github.com/yiisoft/di) configuration file example
-use Yiisoft\Csrf\CsrfMiddleware;
+use Yiisoft\Csrf\CsrfTokenMiddleware;
 use Yiisoft\Http\Method;
 
 return [
-    CsrfMiddleware::class => [
+    CsrfTokenMiddleware::class => [
         'withSafeMethods()' => [[Method::OPTIONS]],
         'withHeaderName()' => ['X-CSRF-PROTECTION'],
     ],
@@ -273,7 +273,7 @@ return [
 
 The use of a custom request header for CSRF protection is based on the CORS Protocol. Thus, you **must** configure the CORS module to allow or deny cross-origin access to the backend API.
 
-> **Warning**
+>**Warning**  
 >`CsrfHeaderMiddleware` can be used to prevent forgery of same-origin requests and requests from the list of specific origins only.
 
 
@@ -403,24 +403,24 @@ Access-Control-Allow-Origin: $frontendOrigin
 
 #### Configure middlewares stack
 
-By default, `CsrfMiddleware` considers `GET`, `HEAD`, `OPTIONS` methods as safe operations and doesn't perform CSRF validation.
+By default, `CsrfTokenMiddleware` considers `GET`, `HEAD`, `OPTIONS` methods as safe operations and doesn't perform CSRF validation.
 In JavaScript-based apps, requests are made programmatically; therefore, to increase application protection, the only `OPTIONS` method can be considered safe and need not be appended with a CSRF token header.
 
-Configure `CsrfMiddleware` safe methods:
+Configure `CsrfTokenMiddleware` safe methods:
 
 ```php
-$csrfMiddleware = $container->get(CsrfMiddleware::class);
-$csrfMiddleware = $csrfMiddleware->withSafeMethods([Method::OPTIONS]);
+$csrfTokenMiddleware = $container->get(CsrfTokenMiddleware::class);
+$csrfTokenMiddleware = $csrfTokenMiddleware->withSafeMethods([Method::OPTIONS]);
 ```
 
-Add `CsrfMiddleware` to the main middleware stack:
+Add `CsrfTokenMiddleware` to the main middleware stack:
 
 ```php
 $middlewareDispatcher = $injector->make(MiddlewareDispatcher::class);
 $middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
     ErrorCatcher::class,
     SessionMiddleware::class,
-    CsrfMiddleware::class, // <-- add this
+    CsrfTokenMiddleware::class, // <-- add this
     Router::class,
 ]);
 ```
@@ -431,7 +431,7 @@ or to the routes that must be protected:
 $collector = $container->get(RouteCollectorInterface::class);
 $collector->addGroup(
     Group::create('/api')
-        ->middleware(CsrfMiddleware::class) // <-- add this
+        ->middleware(CsrfTokenMiddleware::class) // <-- add this
         ->routes($routes)
 );
 ```
@@ -476,7 +476,7 @@ let csrfToken = await response.text();
 let csrfToken = response.headers.get('X-CSRF-TOKEN');
 ```
 
-Add to all requests a custom header defined in the `CsrfMiddleware` with acquired CSRF-token value.
+Add to all requests a custom header defined in the `CsrfTokenMiddleware` with acquired CSRF-token value.
 
 ```js
 let response = fetch('https://api.example.com/whoami', {

@@ -28,6 +28,12 @@ final class CsrfTokenMiddleware implements MiddlewareInterface
     private string $parameterName = self::PARAMETER_NAME;
     private string $headerName = self::HEADER_NAME;
 
+    /**
+     * @var array "safe" methods skipped on CSRF token validation
+     * @link https://datatracker.ietf.org/doc/html/rfc9110#name-safe-methods
+     */
+    private array $safeMethods = [Method::GET, Method::HEAD, Method::OPTIONS];
+
     private ResponseFactoryInterface $responseFactory;
     private CsrfTokenInterface $token;
     private ?RequestHandlerInterface $failureHandler;
@@ -73,6 +79,13 @@ final class CsrfTokenMiddleware implements MiddlewareInterface
         return $new;
     }
 
+    public function withSafeMethods(array $methods): self
+    {
+        $new = clone $this;
+        $new->safeMethods = $methods;
+        return $new;
+    }
+
     public function getParameterName(): string
     {
         return $this->parameterName;
@@ -85,7 +98,7 @@ final class CsrfTokenMiddleware implements MiddlewareInterface
 
     private function validateCsrfToken(ServerRequestInterface $request): bool
     {
-        if (in_array($request->getMethod(), [Method::GET, Method::HEAD, Method::OPTIONS], true)) {
+        if (in_array($request->getMethod(), $this->safeMethods, true)) {
             return true;
         }
 

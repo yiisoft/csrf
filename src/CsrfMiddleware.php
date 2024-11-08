@@ -28,6 +28,11 @@ final class CsrfMiddleware implements MiddlewareInterface
 
     private string $parameterName = self::PARAMETER_NAME;
     private string $headerName = self::HEADER_NAME;
+
+    /**
+     * @var array "safe" methods skipped on CSRF token validation
+     * @link https://datatracker.ietf.org/doc/html/rfc9110#name-safe-methods
+     */
     private array $safeMethods = [Method::GET, Method::HEAD, Method::OPTIONS];
 
     private ResponseFactoryInterface $responseFactory;

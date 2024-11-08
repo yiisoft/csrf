@@ -12,7 +12,7 @@ use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
 use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
 use Yiisoft\Http\Method;
 
-final class CsrfMiddlewareTest extends TestCase
+final class CsrfTokenMiddlewareTest extends TestCase
 {
     public function testDefaultParameterName(): void
     {

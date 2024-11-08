@@ -25,6 +25,11 @@ final class CsrfHeaderMiddleware implements MiddlewareInterface
     public const HEADER_NAME = 'X-CSRF-Header';
 
     private string $headerName = self::HEADER_NAME;
+
+    /**
+     * @var array "unsafe" methods not triggered a CORS-preflight request
+     * @link https://fetch.spec.whatwg.org/#http-cors-protocol
+     */
     private array $unsafeMethods = [Method::GET, Method::HEAD, Method::POST];
 
     private ResponseFactoryInterface $responseFactory;
