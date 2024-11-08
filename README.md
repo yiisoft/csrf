@@ -36,10 +36,11 @@ composer require yiisoft/csrf
 ## General usage
 
 In order to enable CSRF protection you need to add `CsrfTokenMiddleware` to your main middleware stack.
-In Yii it is done by configuring `config/web/application.php`:
+In Yii it is done by configuring `MiddlewareDispatcher`:
 
+>[yiisoft/di](https://github.com/yiisoft/di) configuration example
 ```php
-// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
+// config/web/di/application.php
 return [
     Yiisoft\Yii\Http\Application::class => [
         '__construct()' => [
@@ -120,8 +121,9 @@ $csrfTokenMiddleware = $csrfTokenMiddleware->withHeaderName('X-CSRF-PROTECTION')
 
 or define the `CsrfTokenMiddleware` configuration in the DI container:
 
+>[yiisoft/di](https://github.com/yiisoft/di) configuration example
 ```php
-// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
+// config/web/di/csrf-token.php
 use Yiisoft\Csrf\CsrfTokenMiddleware;
 use Yiisoft\Http\Method;
 
@@ -206,8 +208,9 @@ When handling the request, the API checks for the existence of this header. If t
 
 In order to enable CSRF protection you need to add `CsrfHeaderMiddleware` to your `MiddlewareDispatcher` configuration:
 
+>[yiisoft/di](https://github.com/yiisoft/di) configuration example
 ```php
-// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
+// config/web/di/application.php
 return [
     Yiisoft\Yii\Http\Application::class => [
         '__construct()' => [
@@ -228,8 +231,9 @@ return [
 
 or to the routes that must be protected:
 
+>[yiisoft/di](https://github.com/yiisoft/di) configuration example
 ```php
-// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
+// config/web/di/router.php
 return [
     RouteCollectionInterface::class => static function (RouteCollectorInterface $collector) use ($config) {
         $collector
@@ -258,8 +262,9 @@ $csrfHeaderMiddleware = $csrfHeaderMiddleware->withHeaderName('X-CSRF-PROTECTION
 
 or define the `CsrfHeaderMiddleware` configuration in the DI container:
 
+>[yiisoft/di](https://github.com/yiisoft/di) configuration example
 ```php
-// [yiisoft/di](https://github.com/yiisoft/di) configuration file example
+// config/web/di/csrf-header.php
 use Yiisoft\Csrf\CsrfHeaderMiddleware;
 use Yiisoft\Http\Method;
 
@@ -410,8 +415,26 @@ In JavaScript-based apps, requests are made programmatically; therefore, to incr
 Configure `CsrfTokenMiddleware` safe methods:
 
 ```php
+use Yiisoft\Csrf\CsrfTokenMiddleware;
+use Yiisoft\Http\Method;
+
 $csrfTokenMiddleware = $container->get(CsrfTokenMiddleware::class);
 $csrfTokenMiddleware = $csrfTokenMiddleware->withSafeMethods([Method::OPTIONS]);
+```
+
+or in the DI container:
+
+>[yiisoft/di](https://github.com/yiisoft/di) configuration example
+```php
+// config/web/di/csrf-token.php
+use Yiisoft\Csrf\CsrfTokenMiddleware;
+use Yiisoft\Http\Method;
+
+return [
+    CsrfTokenMiddleware::class => [
+        'withSafeMethods()' => [[Method::OPTIONS]],
+    ],
+];
 ```
 
 Add `CsrfTokenMiddleware` to the main middleware stack:
