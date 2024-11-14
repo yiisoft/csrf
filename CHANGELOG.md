@@ -1,10 +1,10 @@
 # Yii CSRF Protection Library Change Log
 
-## 2.1.2 under development
+## 2.2.0 November 14, 2024
 
 - New #68: Add the `CsrfHeaderMiddleware` middleware to use custom HTTP header to prevent forgery of requests (@olegbaturin)
-- Enh #68: Add the `CsrfMiddleware::withSafeMethods()` method to configure a custom safe HTTP methods list (@olegbaturin)
 - Chg #71: Deprecate `CsrfMiddleware` in favor of `CsrfTokenMiddleware` (@ev-gor)
+- Enh #68: Add the `CsrfMiddleware::withSafeMethods()` method to configure a custom safe HTTP methods list (@olegbaturin)
 
 ## 2.1.1 May 08, 2024
 
