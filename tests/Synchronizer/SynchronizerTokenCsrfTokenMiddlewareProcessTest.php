@@ -9,14 +9,14 @@ use Yiisoft\Csrf\Synchronizer\Storage\CsrfTokenStorageInterface;
 use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
 use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
-use Yiisoft\Csrf\Tests\TokenCsrfMiddlewareTest;
+use Yiisoft\Csrf\Tests\CsrfTokenMiddlewareProcessTest;
 use Yiisoft\Security\Random;
 
-final class SynchronizerTokenCsrfMiddlewareTest extends TokenCsrfMiddlewareTest
+final class SynchronizerTokenCsrfTokenMiddlewareProcessTest extends CsrfTokenMiddlewareProcessTest
 {
     public function testEmptyTokenInSessionResultIn422(): void
     {
-        $middleware = $this->createCsrfMiddleware(
+        $middleware = $this->createCsrfTokenMiddleware(
             new SynchronizerCsrfToken(
                 new RandomCsrfTokenGenerator(),
                 new MockCsrfTokenStorage()

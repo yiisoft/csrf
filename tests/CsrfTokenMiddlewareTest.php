@@ -10,8 +10,9 @@ use Yiisoft\Csrf\CsrfTokenMiddleware;
 use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
 use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
 use Yiisoft\Csrf\Tests\Synchronizer\Storage\MockCsrfTokenStorage;
+use Yiisoft\Http\Method;
 
-final class CsrfMiddlewareTest extends TestCase
+final class CsrfTokenMiddlewareTest extends TestCase
 {
     public function testDefaultParameterName(): void
     {
@@ -46,6 +47,7 @@ final class CsrfMiddlewareTest extends TestCase
         $original = $this->createMiddleware();
         $this->assertNotSame($original, $original->withHeaderName('csrf'));
         $this->assertNotSame($original, $original->withParameterName('csrf'));
+        $this->assertNotSame($original, $original->withSafeMethods([Method::HEAD]));
     }
 
     private function createMiddleware(): CsrfTokenMiddleware
