@@ -16,6 +16,9 @@ use function is_string;
  */
 class SessionCsrfTokenStorage implements CsrfTokenStorageInterface
 {
+    /**
+     * @psalm-suppress MissingClassConstType
+     */
     public const KEY = '_csrf';
 
     /**
