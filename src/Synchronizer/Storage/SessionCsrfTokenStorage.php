@@ -10,9 +10,15 @@ use function is_string;
 
 /**
  * Persists a token between requests in a user session.
+ *
+ * @psalm-suppress ClassMustBeFinal Class will be marked as final in the next major version.
+ * See https://github.com/yiisoft/csrf/issues/74
  */
 class SessionCsrfTokenStorage implements CsrfTokenStorageInterface
 {
+    /**
+     * @psalm-suppress MissingClassConstType
+     */
     public const KEY = '_csrf';
 
     /**
