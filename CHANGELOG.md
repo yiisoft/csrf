@@ -1,6 +1,6 @@
 # Yii CSRF Protection Library Change Log
 
-## 2.2.1 under development
+## 2.2.1 March 05, 2025
 
 - Chg #75: Change PHP constraint in `composer.json` to `~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0` (@vjik)
 - Enh #76: Add support of `yiisoft/session` version `^3.0` (@vjik)
