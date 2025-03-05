@@ -1,5 +1,9 @@
 # Yii CSRF Protection Library Change Log
 
+## 2.2.2 under development
+
+- no changes in this release.
+
 ## 2.2.1 March 05, 2025
 
 - Chg #75: Change PHP constraint in `composer.json` to `~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0` (@vjik)
