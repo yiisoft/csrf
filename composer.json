@@ -42,7 +42,7 @@
         "psr/http-server-middleware": "^1.0",
         "yiisoft/http": "^1.2",
         "yiisoft/security": "^1.0",
-        "yiisoft/session": "^1.0 || ^2.0",
+        "yiisoft/session": "^3.0.0",
         "yiisoft/strings": "^2.0"
     },
     "require-dev": {
