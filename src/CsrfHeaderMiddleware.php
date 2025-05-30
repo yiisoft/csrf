@@ -37,7 +37,7 @@ final class CsrfHeaderMiddleware implements MiddlewareInterface
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        RequestHandlerInterface $failureHandler = null
+        ?RequestHandlerInterface $failureHandler = null
     ) {
         $this->responseFactory = $responseFactory;
         $this->failureHandler = $failureHandler;

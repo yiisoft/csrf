@@ -232,7 +232,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
 
     protected function createCsrfMiddleware(
         ?CsrfTokenInterface $csrfToken = null,
-        RequestHandlerInterface $failureHandler = null
+        ?RequestHandlerInterface $failureHandler = null
     ): CsrfMiddleware {
         $csrfToken = new MaskedCsrfToken($csrfToken ?? $this->createCsrfToken());
         $this->token = $csrfToken->getValue();

@@ -19,7 +19,7 @@ final class MaskedCsrfTokenTest extends TestCase
         $this->assertSame('test_token', TokenMask::remove($csrfToken->getValue()));
     }
 
-    private function createCsrfToken(string $token = null): MaskedCsrfToken
+    private function createCsrfToken(?string $token = null): MaskedCsrfToken
     {
         $mock = $this->createMock(MockCsrfTokenStorage::class);
         if ($token !== null) {
