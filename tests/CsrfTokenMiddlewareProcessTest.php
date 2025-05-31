@@ -232,7 +232,7 @@ abstract class CsrfTokenMiddlewareProcessTest extends TestCase
 
     protected function createCsrfTokenMiddleware(
         ?CsrfTokenInterface $csrfToken = null,
-        RequestHandlerInterface $failureHandler = null
+        ?RequestHandlerInterface $failureHandler = null
     ): CsrfTokenMiddleware {
         $csrfToken = new MaskedCsrfToken($csrfToken ?? $this->createCsrfToken());
         $this->token = $csrfToken->getValue();

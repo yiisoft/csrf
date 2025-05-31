@@ -146,7 +146,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
     }
 
     private function createMiddleware(
-        RequestHandlerInterface $failureHandler = null
+        ?RequestHandlerInterface $failureHandler = null
     ): CsrfHeaderMiddleware {
         return new CsrfHeaderMiddleware(new Psr17Factory(), $failureHandler);
     }

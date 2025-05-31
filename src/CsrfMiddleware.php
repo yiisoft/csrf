@@ -42,7 +42,7 @@ final class CsrfMiddleware implements MiddlewareInterface
     public function __construct(
         ResponseFactoryInterface $responseFactory,
         CsrfTokenInterface $token,
-        RequestHandlerInterface $failureHandler = null
+        ?RequestHandlerInterface $failureHandler = null
     ) {
         $this->responseFactory = $responseFactory;
         $this->token = $token;
