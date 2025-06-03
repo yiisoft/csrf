@@ -1,6 +1,6 @@
 # Yii CSRF Protection Library Change Log
 
-## 2.2.2 under development
+## 2.2.2 June 03, 2025
 
 - Bug #79: Explicitly marking parameters as nullable (@Tigrov)
 
