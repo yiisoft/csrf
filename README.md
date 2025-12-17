@@ -24,7 +24,7 @@ The package provides [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware fo
 
 ## Requirements
 
-- PHP 7.4 or higher.
+- PHP 7.4 - 8.5.
 
 ## Installation
 

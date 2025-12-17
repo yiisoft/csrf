@@ -32,7 +32,7 @@
         }
     ],
     "require": {
-        "php": "~7.4.0 || 8.0 - 8.4",
+        "php": "~7.4.0 || 8.0 - 8.5",
         "ext-hash": "*",
         "psr/http-factory": "^1.0",
         "psr/http-factory-implementation": "1.0",
