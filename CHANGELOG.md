@@ -1,6 +1,6 @@
 # Yii CSRF Protection Library Change Log
 
-## 2.2.3 under development
+## 2.2.3 December 18, 2025
 
 - Enh #81: Add PHP 8.5 support (@vjik)
 
