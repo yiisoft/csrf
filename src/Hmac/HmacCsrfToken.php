@@ -9,6 +9,9 @@ use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
 use Yiisoft\Security\DataIsTamperedException;
 use Yiisoft\Security\Mac;
 use Yiisoft\Strings\StringHelper;
+use Yiisoft\Csrf\MaskedCsrfToken;
+
+use function count;
 
 /**
  * Stateless CSRF token that does not require any storage. The token is a hash from session ID and a timestamp
@@ -18,7 +21,7 @@ use Yiisoft\Strings\StringHelper;
  *
  * The algorithm is also known as "HMAC Based Token".
  *
- * Do not forget to decorate the token with {@see \Yiisoft\Csrf\MaskedCsrfToken} to prevent BREACH attack.
+ * Do not forget to decorate the token with {@see MaskedCsrfToken} to prevent BREACH attack.
  *
  * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern
  */
@@ -52,7 +55,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
     public function getValue(): string
     {
         return $this->generateToken(
-            $this->lifetime === null ? null : (time() + $this->lifetime)
+            $this->lifetime === null ? null : (time() + $this->lifetime),
         );
     }
 
@@ -76,10 +79,10 @@ final class HmacCsrfToken implements CsrfTokenInterface
     {
         return StringHelper::base64UrlEncode(
             $this->mac->sign(
-                (string)$expiration . '~' . $this->identityGenerator->generate(),
+                (string) $expiration . '~' . $this->identityGenerator->generate(),
                 $this->secretKey,
-                true
-            )
+                true,
+            ),
         );
     }
 
@@ -89,7 +92,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
             $raw = $this->mac->getMessage(
                 StringHelper::base64UrlDecode($token),
                 $this->secretKey,
-                true
+                true,
             );
         } catch (DataIsTamperedException $e) {
             return null;
@@ -103,8 +106,8 @@ final class HmacCsrfToken implements CsrfTokenInterface
         if ($chunks[0] === '') {
             $expiration = null;
         } else {
-            $expiration = (int)$chunks[0];
-            if ((string)$expiration !== $chunks[0]) {
+            $expiration = (int) $chunks[0];
+            if ((string) $expiration !== $chunks[0]) {
                 return null;
             }
         }

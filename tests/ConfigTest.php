@@ -14,6 +14,8 @@ use Yiisoft\Di\ContainerConfig;
 use Yiisoft\Session\NullSession;
 use Yiisoft\Session\SessionInterface;
 
+use function dirname;
+
 final class ConfigTest extends TestCase
 {
     public function testBase(): void
@@ -34,9 +36,8 @@ final class ConfigTest extends TestCase
         return new Container(
             ContainerConfig::create()->withDefinitions(
                 $this->getDiConfig($params)
-                +
-                [SessionInterface::class => NullSession::class]
-            )
+                + [SessionInterface::class => NullSession::class],
+            ),
         );
     }
 

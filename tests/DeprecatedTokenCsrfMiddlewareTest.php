@@ -50,7 +50,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
         $middleware = $this->createCsrfMiddleware();
         $response = $middleware->process(
             $this->createPostServerRequestWithBodyToken($this->token),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -60,7 +60,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
         $middleware = $this->createCsrfMiddleware();
         $response = $middleware->process(
             $this->createPutServerRequestWithBodyToken($this->token),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -70,7 +70,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
         $middleware = $this->createCsrfMiddleware();
         $response = $middleware->process(
             $this->createDeleteServerRequestWithBodyToken($this->token),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -80,7 +80,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
         $middleware = $this->createCsrfMiddleware();
         $response = $middleware->process(
             $this->createPostServerRequestWithHeaderToken($this->token),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -94,7 +94,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
             ->withHeaderName($headerName);
         $response = $middleware->process(
             $this->createPostServerRequestWithHeaderToken($this->token, $headerName),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -106,7 +106,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
 
         $response = $middleware->process(
             $this->createPostServerRequestWithBodyToken(Random::string()),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
 
         $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
@@ -115,7 +115,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
 
     public function testInvalidTokenResultWithCustomFailureHandler(): void
     {
-        $failureHandler = new class () implements RequestHandlerInterface {
+        $failureHandler = new class implements RequestHandlerInterface {
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $response = new Response(Status::BAD_REQUEST);
@@ -149,7 +149,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
         $middleware = $this->createCsrfMiddleware();
         $response = $middleware->process(
             $this->createServerRequest(Method::POST),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
@@ -162,7 +162,7 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
             ->withSafeMethods([Method::OPTIONS]);
         $response = $middleware->process(
             $this->createServerRequest(Method::OPTIONS),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -174,11 +174,40 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
             ->withSafeMethods([Method::OPTIONS]);
         $response = $middleware->process(
             $this->createServerRequest(Method::GET),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
+
+    protected function createPostServerRequestWithBodyToken(string $token): ServerRequestInterface
+    {
+        return $this->createServerRequest(Method::POST, $this->getBodyRequestParamsByToken($token));
+    }
+
+    protected function createRequestHandler(): RequestHandlerInterface
+    {
+        $requestHandler = $this->createMock(RequestHandlerInterface::class);
+        $requestHandler
+            ->method('handle')
+            ->willReturn(new Response(200));
+
+        return $requestHandler;
+    }
+
+    protected function createCsrfMiddleware(
+        ?CsrfTokenInterface $csrfToken = null,
+        ?RequestHandlerInterface $failureHandler = null
+    ): CsrfMiddleware {
+        $csrfToken = new MaskedCsrfToken($csrfToken ?? $this->createCsrfToken());
+        $this->token = $csrfToken->getValue();
+
+        $middleware = new CsrfMiddleware(new Psr17Factory(), $csrfToken, $failureHandler);
+
+        return $middleware->withParameterName(self::PARAM_NAME);
+    }
+
+    abstract protected function createCsrfToken(): CsrfTokenInterface;
 
     private function createServerRequest(
         string $method = Method::POST,
@@ -187,11 +216,6 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
     ): ServerRequestInterface {
         $request = new ServerRequest($method, '/', $headParams);
         return $request->withParsedBody($bodyParams);
-    }
-
-    protected function createPostServerRequestWithBodyToken(string $token): ServerRequestInterface
-    {
-        return $this->createServerRequest(Method::POST, $this->getBodyRequestParamsByToken($token));
     }
 
     private function createPutServerRequestWithBodyToken(string $token): ServerRequestInterface
@@ -213,34 +237,10 @@ abstract class DeprecatedTokenCsrfMiddlewareTest extends TestCase
         ]);
     }
 
-    protected function createRequestHandler(): RequestHandlerInterface
-    {
-        $requestHandler = $this->createMock(RequestHandlerInterface::class);
-        $requestHandler
-            ->method('handle')
-            ->willReturn(new Response(200));
-
-        return $requestHandler;
-    }
-
     private function getBodyRequestParamsByToken(string $token): array
     {
         return [
             self::PARAM_NAME => $token,
         ];
     }
-
-    protected function createCsrfMiddleware(
-        ?CsrfTokenInterface $csrfToken = null,
-        ?RequestHandlerInterface $failureHandler = null
-    ): CsrfMiddleware {
-        $csrfToken = new MaskedCsrfToken($csrfToken ?? $this->createCsrfToken());
-        $this->token = $csrfToken->getValue();
-
-        $middleware = new CsrfMiddleware(new Psr17Factory(), $csrfToken, $failureHandler);
-
-        return $middleware->withParameterName(self::PARAM_NAME);
-    }
-
-    abstract protected function createCsrfToken(): CsrfTokenInterface;
 }

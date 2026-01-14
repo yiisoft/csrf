@@ -20,6 +20,6 @@ final class SessionCsrfTokenIdentityGenerator implements CsrfTokenIdentityGenera
 
     public function generate(): string
     {
-        return (string)$this->session->getId();
+        return (string) $this->session->getId();
     }
 }

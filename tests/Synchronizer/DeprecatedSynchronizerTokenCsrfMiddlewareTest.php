@@ -19,13 +19,13 @@ final class DeprecatedSynchronizerTokenCsrfMiddlewareTest extends DeprecatedToke
         $middleware = $this->createCsrfMiddleware(
             new SynchronizerCsrfToken(
                 new RandomCsrfTokenGenerator(),
-                new MockCsrfTokenStorage()
-            )
+                new MockCsrfTokenStorage(),
+            ),
         );
 
         $response = $middleware->process(
             $this->createPostServerRequestWithBodyToken(Random::string()),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
 
         $this->assertEquals(422, $response->getStatusCode());
@@ -35,7 +35,7 @@ final class DeprecatedSynchronizerTokenCsrfMiddlewareTest extends DeprecatedToke
     {
         return new SynchronizerCsrfToken(
             new RandomCsrfTokenGenerator(),
-            $this->createStorageMock(Random::string())
+            $this->createStorageMock(Random::string()),
         );
     }
 

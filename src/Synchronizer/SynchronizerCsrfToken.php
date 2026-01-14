@@ -7,6 +7,7 @@ namespace Yiisoft\Csrf\Synchronizer;
 use Yiisoft\Csrf\CsrfTokenInterface;
 use Yiisoft\Csrf\Synchronizer\Generator\CsrfTokenGeneratorInterface;
 use Yiisoft\Csrf\Synchronizer\Storage\CsrfTokenStorageInterface;
+use Yiisoft\Csrf\MaskedCsrfToken;
 
 /**
  * Stateful CSRF token that is a unique random string. It is stored it in persistent storage available only for
@@ -15,7 +16,7 @@ use Yiisoft\Csrf\Synchronizer\Storage\CsrfTokenStorageInterface;
  *
  * The algorithm is also known as "Synchronizer Token".
  *
- * Do not forget to decorate the token with {@see \Yiisoft\Csrf\MaskedCsrfToken} to prevent BREACH attack.
+ * Do not forget to decorate the token with {@see MaskedCsrfToken} to prevent BREACH attack.
  *
  * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
  */

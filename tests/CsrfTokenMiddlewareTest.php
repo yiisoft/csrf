@@ -56,8 +56,8 @@ final class CsrfTokenMiddlewareTest extends TestCase
             new Psr17Factory(),
             new SynchronizerCsrfToken(
                 new RandomCsrfTokenGenerator(),
-                new MockCsrfTokenStorage()
-            )
+                new MockCsrfTokenStorage(),
+            ),
         );
     }
 }

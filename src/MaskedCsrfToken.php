@@ -24,14 +24,14 @@ final class MaskedCsrfToken implements CsrfTokenInterface
     public function getValue(): string
     {
         return TokenMask::apply(
-            $this->token->getValue()
+            $this->token->getValue(),
         );
     }
 
     public function validate(string $token): bool
     {
         return $this->token->validate(
-            TokenMask::remove($token)
+            TokenMask::remove($token),
         );
     }
 }
