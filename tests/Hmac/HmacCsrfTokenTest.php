@@ -30,7 +30,7 @@ final class HmacCsrfTokenTest extends TestCase
     {
         $csrfToken = new HmacCsrfToken(
             new MockCsrfTokenIdentityGenerator('user7'),
-            'mySecretKey'
+            'mySecretKey',
         );
 
         $token = $csrfToken->getValue();
@@ -46,7 +46,7 @@ final class HmacCsrfTokenTest extends TestCase
             new MockCsrfTokenIdentityGenerator('user7'),
             'mySecretKey',
             'sha256',
-            100
+            100,
         );
 
         $token = $csrfToken->getValue();
@@ -64,18 +64,18 @@ final class HmacCsrfTokenTest extends TestCase
     {
         $csrfToken = new HmacCsrfToken(
             new MockCsrfTokenIdentityGenerator('user7'),
-            'mySecretKey'
+            'mySecretKey',
         );
 
         $this->assertFalse($csrfToken->validate(Random::string()));
 
         $token = StringHelper::base64UrlEncode(
-            (new Mac('sha256'))->sign('a2~user1', 'mySecretKey', true)
+            (new Mac('sha256'))->sign('a2~user1', 'mySecretKey', true),
         );
         $this->assertFalse($csrfToken->validate($token));
 
         $token = StringHelper::base64UrlEncode(
-            (new Mac('sha256'))->sign('hello', 'mySecretKey', true)
+            (new Mac('sha256'))->sign('hello', 'mySecretKey', true),
         );
         $this->assertFalse($csrfToken->validate($token));
     }
@@ -84,7 +84,7 @@ final class HmacCsrfTokenTest extends TestCase
     {
         $csrfToken = new HmacCsrfToken(
             new MockCsrfTokenIdentityGenerator('user~7'),
-            'mySecretKey'
+            'mySecretKey',
         );
 
         $token = $csrfToken->getValue();
@@ -99,5 +99,5 @@ use Yiisoft\Csrf\Tests\Hmac\HmacCsrfTokenTest;
 
 function time(): int
 {
-    return HmacCsrfTokenTest::$timeResult ?? \time();
+    return HmacCsrfTokenTest::$timeResult ?? time();
 }

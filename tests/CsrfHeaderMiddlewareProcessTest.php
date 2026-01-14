@@ -23,7 +23,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
         $middleware = $this->createMiddleware();
         $response = $middleware->process(
             $this->createServerRequest(Method::OPTIONS),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -35,7 +35,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
             ->withUnsafeMethods([Method::POST, Method::DELETE]);
         $response = $middleware->process(
             $this->createServerRequest(Method::GET),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -45,7 +45,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
         $middleware = $this->createMiddleware();
         $response = $middleware->process(
             $this->createServerRequest(Method::GET),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
@@ -56,7 +56,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
         $middleware = $this->createMiddleware();
         $response = $middleware->process(
             $this->createServerRequest(Method::HEAD),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
@@ -67,7 +67,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
         $middleware = $this->createMiddleware();
         $response = $middleware->process(
             $this->createServerRequest(Method::POST),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
@@ -80,7 +80,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
             ->withUnsafeMethods([Method::POST, Method::DELETE]);
         $response = $middleware->process(
             $this->createServerRequest(Method::DELETE),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
@@ -96,7 +96,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
             ->withUnsafeMethods([Method::POST]);
         $response = $middleware->process(
             $this->createServerRequest(Method::POST, [$headerName => Random::string()]),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -108,7 +108,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
             ->withUnsafeMethods([Method::POST]);
         $response = $middleware->process(
             $this->createServerRequest(Method::POST, [CsrfHeaderMiddleware::HEADER_NAME => '']),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -118,7 +118,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
         $middleware = $this->createMiddleware();
         $response = $middleware->process(
             $this->createServerRequest(Method::POST, ['X-JGURDA' => '']),
-            $this->createRequestHandler()
+            $this->createRequestHandler(),
         );
         $this->assertEquals(Status::UNPROCESSABLE_ENTITY, $response->getStatusCode());
         $this->assertEquals(Status::TEXTS[Status::UNPROCESSABLE_ENTITY], $response->getBody());
@@ -126,7 +126,7 @@ final class CsrfHeaderMiddlewareProcessTest extends TestCase
 
     public function testInvalidHeaderResultWithCustomFailureHandler(): void
     {
-        $failureHandler = new class () implements RequestHandlerInterface {
+        $failureHandler = new class implements RequestHandlerInterface {
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $response = new Response(Status::BAD_REQUEST);

@@ -16,7 +16,7 @@ final class DeprecatedHmacTokenCsrfMiddlewareTest extends DeprecatedTokenCsrfMid
     {
         return new HmacCsrfToken(
             new MockCsrfTokenIdentityGenerator(Random::string()),
-            'secretKey'
+            'secretKey',
         );
     }
 }

@@ -7,6 +7,8 @@ namespace Yiisoft\Csrf\Tests\Synchronizer\Generator;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\Synchronizer\Generator\RandomCsrfTokenGenerator;
 
+use function strlen;
+
 final class RandomCsrfTokenGeneratorTest extends TestCase
 {
     public function testBase(): void

@@ -29,7 +29,7 @@ final class MaskedCsrfTokenTest extends TestCase
                 ->willReturn($token);
         }
         return new MaskedCsrfToken(
-            new SynchronizerCsrfToken(new RandomCsrfTokenGenerator(), $mock)
+            new SynchronizerCsrfToken(new RandomCsrfTokenGenerator(), $mock),
         );
     }
 }

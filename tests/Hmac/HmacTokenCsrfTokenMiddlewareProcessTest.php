@@ -16,7 +16,7 @@ final class HmacTokenCsrfTokenMiddlewareProcessTest extends CsrfTokenMiddlewareP
     {
         return new HmacCsrfToken(
             new MockCsrfTokenIdentityGenerator(Random::string()),
-            'secretKey'
+            'secretKey',
         );
     }
 }
