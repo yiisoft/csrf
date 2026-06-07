@@ -142,7 +142,43 @@ return [
 ## CSRF Tokens
 
 In case Yii framework is used along with config plugin, the package is [configured](./config/di-web.php)
-automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
+automatically to use HMAC based token and masked decorator. You can change that depending on your needs.
+
+HMAC token is the default because it is stateless and avoids session storage I/O on every protected request:
+
+| Factor | Synchronizer | HMAC |
+|--------|--------------|------|
+| I/O per request | Session read and write | No token storage I/O |
+| File based session GC | May scan session files | Not triggered by CSRF token storage |
+| Token storage growth | Depends on session storage | Nothing to store |
+| Token revocation | Possible by removing stored token | Not possible before token expiration |
+| Replay within lifetime | Prevented by storage policy | Possible until the token expires |
+
+Use HMAC when protected forms are available only to authenticated users, token revocation on logout is not required,
+and every environment has its own secret key. The default config reads the key from `YII_CSRF_SECRET_KEY`.
+Set it to a high-entropy value and keep `yiisoft/csrf` `hmacToken` `lifetime` short, typically a few minutes.
+
+Use synchronizer token instead when unauthenticated users submit sensitive forms such as payments, registration with
+personal data, or password reset, when guaranteed single-use or revocable tokens are required, or when the session I/O
+cost is acceptable for your application.
+
+To switch the config-plugin default back to synchronizer token:
+
+```php
+use Yiisoft\Csrf\CsrfTokenInterface;
+use Yiisoft\Csrf\MaskedCsrfToken;
+use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
+use Yiisoft\Definitions\Reference;
+
+return [
+    CsrfTokenInterface::class => [
+        'class' => MaskedCsrfToken::class,
+        '__construct()' => [
+            'token' => Reference::to(SynchronizerCsrfToken::class),
+        ],
+    ],
+];
+```
 
 ### Synchronizer CSRF token
 
@@ -176,6 +212,20 @@ Parameters set via the `HmacCsrfToken` constructor are:
 - `$secretKey` — shared secret key used to generate the hash;
 - `$algorithm` — hash algorithm for message authentication. `sha256`, `sha384` or `sha512` are recommended;
 - `$lifetime` — number of seconds that the token is valid for.
+
+With the config plugin, these constructor arguments are configured through parameters:
+
+```php
+return [
+    'yiisoft/csrf' => [
+        'hmacToken' => [
+            'secretKey' => (string) getenv('YII_CSRF_SECRET_KEY'),
+            'algorithm' => 'sha256',
+            'lifetime' => 300,
+        ],
+    ],
+];
+```
 
 To learn more about HMAC based token pattern
 [check OWASP CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern).
