@@ -144,8 +144,8 @@ return [
 In case Yii framework is used along with config plugin, the package is [configured](./config/di-web.php)
 automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
-Use synchronizer token when you need stateful, revocable validation and HMAC token when protected forms are
-authenticated-only and stateless validation with short-lived replay risk is acceptable.
+Use synchronizer token for sensitive anonymous forms or tokens that must be one-time or revocable; use HMAC token for
+authenticated-only forms when a short token replay window is acceptable.
 
 ```mermaid
 flowchart TD
