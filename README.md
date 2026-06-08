@@ -142,9 +142,9 @@ return [
 ## CSRF Tokens
 
 In case Yii framework is used along with config plugin, the package is [configured](./config/di-web.php)
-automatically to use HMAC based token and masked decorator. You can change that depending on your needs.
+automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
-HMAC token is the default because it is stateless and avoids session storage I/O on every protected request:
+HMAC token is stateless and avoids session storage I/O on every protected request:
 
 | Factor | Synchronizer | HMAC |
 |--------|--------------|------|
@@ -170,26 +170,26 @@ flowchart TD
 ```
 
 Use HMAC when protected forms are available only to authenticated users, token revocation on logout is not required,
-and every environment has its own secret key. The default config reads the key from `YII_CSRF_SECRET_KEY`.
-Set it to a high-entropy value and keep `yiisoft/csrf` `hmacToken` `lifetime` short, typically a few minutes.
+and every environment has its own secret key. Set it to a high-entropy value and keep `yiisoft/csrf` `hmacToken`
+`lifetime` short, typically a few minutes.
 
 Use synchronizer token instead when unauthenticated users submit sensitive forms such as payments, registration with
 personal data, or password reset, when guaranteed single-use or revocable tokens are required, or when the session I/O
 cost is acceptable for your application.
 
-To switch the config-plugin default back to synchronizer token:
+To switch the config-plugin token to HMAC:
 
 ```php
 use Yiisoft\Csrf\CsrfTokenInterface;
+use Yiisoft\Csrf\Hmac\HmacCsrfToken;
 use Yiisoft\Csrf\MaskedCsrfToken;
-use Yiisoft\Csrf\Synchronizer\SynchronizerCsrfToken;
 use Yiisoft\Definitions\Reference;
 
 return [
     CsrfTokenInterface::class => [
         'class' => MaskedCsrfToken::class,
         '__construct()' => [
-            'token' => Reference::to(SynchronizerCsrfToken::class),
+            'token' => Reference::to(HmacCsrfToken::class),
         ],
     ],
 ];
@@ -228,7 +228,7 @@ Parameters set via the `HmacCsrfToken` constructor are:
 - `$algorithm` — hash algorithm for message authentication. `sha256`, `sha384` or `sha512` are recommended;
 - `$lifetime` — number of seconds that the token is valid for.
 
-With the config plugin, these constructor arguments are configured through parameters:
+When using HMAC with the config plugin, configure these constructor arguments through parameters:
 
 ```php
 return [
