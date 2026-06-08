@@ -144,14 +144,14 @@ return [
 In case Yii framework is used along with config plugin, the package is [configured](./config/di-web.php)
 automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
-Use synchronizer token for sensitive anonymous forms or tokens that must be one-time or revocable; use HMAC token for
-authenticated-only forms when a short token replay window is acceptable.
+Use synchronizer token for sensitive anonymous forms; use HMAC token for authenticated-only forms when a submitted
+token may stay valid for a few minutes.
 
 ```mermaid
 flowchart TD
     A{Anonymous forms to protect?}
     A -- Yes --> S[Synchronizer]
-    A -- No --> B{Need one-time or revocable tokens?}
+    A -- No --> B{Old or repeated submits must fail?}
     B -- Yes --> S
     B -- No --> C{Per-environment secret key?}
     C -- No --> S
