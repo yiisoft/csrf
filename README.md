@@ -158,15 +158,15 @@ Use this decision graph to choose a token validation method:
 
 ```mermaid
 flowchart TD
-    A{Do unauthenticated users submit sensitive forms?}
-    A -- Yes --> S[Synchronizer token]
-    A -- No --> B{Need guaranteed single-use tokens or token revocation?}
+    A{Anon sensitive forms?}
+    A -- Yes --> S[Synchronizer]
+    A -- No --> B{Single-use or revocation?}
     B -- Yes --> S
-    B -- No --> C{Can every environment provide YII_CSRF_SECRET_KEY?}
+    B -- No --> C{Env secret?}
     C -- No --> S
-    C -- Yes --> D{Is replay within a short lifetime acceptable?}
+    C -- Yes --> D{Short replay OK?}
     D -- No --> S
-    D -- Yes --> H[HMAC token]
+    D -- Yes --> H[HMAC]
 ```
 
 Use HMAC when protected forms are available only to authenticated users, token revocation on logout is not required,
