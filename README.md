@@ -154,6 +154,21 @@ HMAC token is the default because it is stateless and avoids session storage I/O
 | Token revocation | Possible by removing stored token | Not possible before token expiration |
 | Replay within lifetime | Prevented by storage policy | Possible until the token expires |
 
+Use this decision graph to choose a token validation method:
+
+```mermaid
+flowchart TD
+    A{Do unauthenticated users submit sensitive forms?}
+    A -- Yes --> S[Synchronizer token]
+    A -- No --> B{Need guaranteed single-use tokens or token revocation?}
+    B -- Yes --> S
+    B -- No --> C{Can every environment provide YII_CSRF_SECRET_KEY?}
+    C -- No --> S
+    C -- Yes --> D{Is replay within a short lifetime acceptable?}
+    D -- No --> S
+    D -- Yes --> H[HMAC token]
+```
+
 Use HMAC when protected forms are available only to authenticated users, token revocation on logout is not required,
 and every environment has its own secret key. The default config reads the key from `YII_CSRF_SECRET_KEY`.
 Set it to a high-entropy value and keep `yiisoft/csrf` `hmacToken` `lifetime` short, typically a few minutes.
