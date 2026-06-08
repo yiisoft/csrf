@@ -158,13 +158,13 @@ Use this decision graph to choose a token validation method:
 
 ```mermaid
 flowchart TD
-    A{Anon sensitive forms?}
+    A{Anonymous sensitive forms?}
     A -- Yes --> S[Synchronizer]
-    A -- No --> B{Single-use or revocation?}
+    A -- No --> B{Need one-time or revocable tokens?}
     B -- Yes --> S
-    B -- No --> C{Env secret?}
+    B -- No --> C{Per-environment secret key?}
     C -- No --> S
-    C -- Yes --> D{Short replay OK?}
+    C -- Yes --> D{Token replay within lifetime OK?}
     D -- No --> S
     D -- Yes --> H[HMAC]
 ```
