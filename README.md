@@ -149,7 +149,7 @@ authenticated-only forms when a short token replay window is acceptable.
 
 ```mermaid
 flowchart TD
-    A{Anonymous sensitive forms?}
+    A{Anonymous forms to protect?}
     A -- Yes --> S[Synchronizer]
     A -- No --> B{Need one-time or revocable tokens?}
     B -- Yes --> S
@@ -170,7 +170,7 @@ Detailed comparison:
 | Token revocation | Possible by removing stored token | Not possible before token expiration |
 | Replay within lifetime | Prevented by storage policy | Possible until the token expires |
 
-To switch the config-plugin token to HMAC:
+To switch token to HMAC:
 
 ```php
 use Yiisoft\Csrf\CsrfTokenInterface;
