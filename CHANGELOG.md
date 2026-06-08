@@ -2,6 +2,7 @@
 
 ## 2.2.4 under development
 
+- Bug #32: Stop exposing CSRF HMAC token identity in token payload and update OWASP documentation link (@samdark)
 - Enh #82: Explicitly import classes and functions in "use" section (@mspirkov)
 - Enh #83: Remove unnecessary files from Composer package (@mspirkov)
 

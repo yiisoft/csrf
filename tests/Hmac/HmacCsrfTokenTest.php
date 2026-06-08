@@ -38,6 +38,30 @@ final class HmacCsrfTokenTest extends TestCase
         $this->assertTrue($csrfToken->validate($token));
     }
 
+    public function testTokenValueChanges(): void
+    {
+        $csrfToken = new HmacCsrfToken(
+            new MockCsrfTokenIdentityGenerator('user7'),
+            'mySecretKey',
+        );
+
+        $this->assertNotSame($csrfToken->getValue(), $csrfToken->getValue());
+    }
+
+    public function testTokenDoesNotExposeIdentity(): void
+    {
+        $identity = 'session-id-that-must-not-be-in-token';
+        $csrfToken = new HmacCsrfToken(
+            new MockCsrfTokenIdentityGenerator($identity),
+            'mySecretKey',
+        );
+
+        $token = $csrfToken->getValue();
+
+        $this->assertStringNotContainsString($identity, StringHelper::base64UrlDecode($token));
+        $this->assertTrue($csrfToken->validate($token));
+    }
+
     public function testExpiration(): void
     {
         self::$timeResult = 300;

@@ -144,8 +144,8 @@ return [
 In case Yii framework is used along with config plugin, the package is [configured](./config/di-web.php)
 automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
-Use synchronizer token for sensitive anonymous forms; use HMAC token for authenticated-only forms when a submitted
-token may stay valid for a few minutes.
+Use synchronizer token for sensitive anonymous forms; use HMAC token for authenticated-only forms when it is acceptable
+for a submitted token to stay valid until it expires.
 
 ```mermaid
 flowchart TD
@@ -168,7 +168,7 @@ Detailed comparison:
 | File based session GC | May scan session files | Not triggered by CSRF token storage |
 | Token storage growth | Depends on session storage | Nothing to store |
 | Token revocation | Possible by removing stored token | Not possible before token expiration |
-| Replay within lifetime | Prevented by storage policy | Possible until the token expires |
+| Replay within lifetime | Prevented by storage policy | Possible until expiration |
 
 To switch token to HMAC:
 
@@ -205,12 +205,12 @@ Package provides `RandomCsrfTokenGenerator` that generates a random token and
 To learn more about the synchronizer token pattern,
 [check OWASP CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern).
 
-### HMAC based token
+### HMAC signed token
 
-HMAC based token is a stateless CSRF token that does not require any storage. The token is a hash from session ID and
-a timestamp used to prevent replay attacks. The token is added to a form. When the form is submitted, we re-generate
-the token from the current session ID and a timestamp from the original token. If two hashes match, we check that the
-timestamp is less than the token lifetime.
+HMAC signed token is a stateless CSRF token that does not require any storage. The token contains expiration timestamp
+and random value, and its signature is bound to the current session ID. The token is added to a form. When the form is
+submitted, we verify the token signature, check that it belongs to the current session ID, and check that it has not
+expired.
 
 `HmacCsrfToken` requires implementation of `CsrfTokenIdentityGeneratorInterface` for generating an identity.
 The package provides `SessionCsrfTokenIdentityGenerator` that is using session ID thus making the session a token scope.
@@ -235,8 +235,8 @@ return [
 ];
 ```
 
-To learn more about HMAC based token pattern
-[check OWASP CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern).
+To learn more about employing HMAC CSRF tokens, check the
+[OWASP CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#employing-hmac-csrf-tokens).
 
 ### Stub CSRF token
 
