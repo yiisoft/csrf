@@ -144,17 +144,8 @@ return [
 In case Yii framework is used along with config plugin, the package is [configured](./config/di-web.php)
 automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
-HMAC token is stateless and avoids session storage I/O on every protected request:
-
-| Factor | Synchronizer | HMAC |
-|--------|--------------|------|
-| I/O per request | Session read and write | No token storage I/O |
-| File based session GC | May scan session files | Not triggered by CSRF token storage |
-| Token storage growth | Depends on session storage | Nothing to store |
-| Token revocation | Possible by removing stored token | Not possible before token expiration |
-| Replay within lifetime | Prevented by storage policy | Possible until the token expires |
-
-Use this decision graph to choose a token validation method:
+Use synchronizer token when you need stateful, revocable validation and HMAC token when protected forms are
+authenticated-only and stateless validation with short-lived replay risk is acceptable.
 
 ```mermaid
 flowchart TD
@@ -169,13 +160,15 @@ flowchart TD
     D -- Yes --> H[HMAC]
 ```
 
-Use HMAC when protected forms are available only to authenticated users, token revocation on logout is not required,
-and every environment has its own secret key. Set it to a high-entropy value and keep `yiisoft/csrf` `hmacToken`
-`lifetime` short, typically a few minutes.
+Detailed comparison:
 
-Use synchronizer token instead when unauthenticated users submit sensitive forms such as payments, registration with
-personal data, or password reset, when guaranteed single-use or revocable tokens are required, or when the session I/O
-cost is acceptable for your application.
+| Factor | Synchronizer | HMAC |
+|--------|--------------|------|
+| I/O per request | Session read and write | No token storage I/O |
+| File based session GC | May scan session files | Not triggered by CSRF token storage |
+| Token storage growth | Depends on session storage | Nothing to store |
+| Token revocation | Possible by removing stored token | Not possible before token expiration |
+| Replay within lifetime | Prevented by storage policy | Possible until the token expires |
 
 To switch the config-plugin token to HMAC:
 
