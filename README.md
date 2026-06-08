@@ -144,6 +144,50 @@ return [
 In case Yii framework is used along with config plugin, the package is [configured](./config/di-web.php)
 automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
+Use synchronizer token for sensitive anonymous forms; use HMAC token for authenticated-only forms when a submitted
+token may stay valid for a few minutes.
+
+```mermaid
+flowchart TD
+    A{Anonymous forms to protect?}
+    A -- Yes --> S[Synchronizer]
+    A -- No --> B{Old or repeated submits must fail?}
+    B -- Yes --> S
+    B -- No --> C{Per-environment secret key?}
+    C -- No --> S
+    C -- Yes --> D{Token replay within lifetime OK?}
+    D -- No --> S
+    D -- Yes --> H[HMAC]
+```
+
+Detailed comparison:
+
+| Factor | Synchronizer | HMAC |
+|--------|--------------|------|
+| I/O per request | Session read and write | No token storage I/O |
+| File based session GC | May scan session files | Not triggered by CSRF token storage |
+| Token storage growth | Depends on session storage | Nothing to store |
+| Token revocation | Possible by removing stored token | Not possible before token expiration |
+| Replay within lifetime | Prevented by storage policy | Possible until the token expires |
+
+To switch token to HMAC:
+
+```php
+use Yiisoft\Csrf\CsrfTokenInterface;
+use Yiisoft\Csrf\Hmac\HmacCsrfToken;
+use Yiisoft\Csrf\MaskedCsrfToken;
+use Yiisoft\Definitions\Reference;
+
+return [
+    CsrfTokenInterface::class => [
+        'class' => MaskedCsrfToken::class,
+        '__construct()' => [
+            'token' => Reference::to(HmacCsrfToken::class),
+        ],
+    ],
+];
+```
+
 ### Synchronizer CSRF token
 
 Synchronizer CSRF token is a stateful CSRF token that is a unique random string. It is saved in persistent storage
@@ -176,6 +220,20 @@ Parameters set via the `HmacCsrfToken` constructor are:
 - `$secretKey` — shared secret key used to generate the hash;
 - `$algorithm` — hash algorithm for message authentication. `sha256`, `sha384` or `sha512` are recommended;
 - `$lifetime` — number of seconds that the token is valid for.
+
+When using HMAC with the config plugin, configure these constructor arguments through parameters:
+
+```php
+return [
+    'yiisoft/csrf' => [
+        'hmacToken' => [
+            'secretKey' => (string) getenv('YII_CSRF_SECRET_KEY'),
+            'algorithm' => 'sha256',
+            'lifetime' => 300,
+        ],
+    ],
+];
+```
 
 To learn more about HMAC based token pattern
 [check OWASP CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern).
