@@ -93,7 +93,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
 
     private function generateToken(?int $expiration): string
     {
-        $message = (string) $expiration . '~' . Random::string(32);
+        $message = ($expiration ?? '') . '~' . Random::string(32);
 
         return StringHelper::base64UrlEncode($this->generateHash($message) . $message);
     }
@@ -106,10 +106,6 @@ final class HmacCsrfToken implements CsrfTokenInterface
         try {
             $payload = StringHelper::base64UrlDecode($token);
         } catch (InvalidArgumentException $e) {
-            return null;
-        }
-
-        if (StringHelper::byteLength($payload) <= $this->hashLength) {
             return null;
         }
 
