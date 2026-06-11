@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Csrf\Hmac;
 
+use InvalidArgumentException;
 use RuntimeException;
 use Yiisoft\Csrf\CsrfTokenInterface;
 use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
@@ -39,6 +40,11 @@ final class HmacCsrfToken implements CsrfTokenInterface
     private string $algorithm;
 
     /**
+     * @var int Hash length in bytes.
+     */
+    private int $hashLength;
+
+    /**
      * @var int|null Number of seconds that the token is valid for.
      */
     private ?int $lifetime;
@@ -52,6 +58,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
         $this->identityGenerator = $identityGenerator;
         $this->secretKey = $secretKey;
         $this->algorithm = $algorithm;
+        $this->hashLength = $this->generateHashLength();
         $this->lifetime = $lifetime;
     }
 
@@ -71,9 +78,8 @@ final class HmacCsrfToken implements CsrfTokenInterface
 
         [$expiration, $payload] = $data;
 
-        $hashLength = $this->getHashLength();
-        $hash = StringHelper::byteSubstring($payload, 0, $hashLength);
-        $message = StringHelper::byteSubstring($payload, $hashLength, null);
+        $hash = StringHelper::byteSubstring($payload, 0, $this->hashLength);
+        $message = StringHelper::byteSubstring($payload, $this->hashLength, null);
 
         if (!hash_equals($hash, $this->generateHash($message))) {
             return false;
@@ -97,14 +103,17 @@ final class HmacCsrfToken implements CsrfTokenInterface
      */
     private function extractData(string $token): ?array
     {
-        $payload = StringHelper::base64UrlDecode($token);
-        $hashLength = $this->getHashLength();
-
-        if (StringHelper::byteLength($payload) <= $hashLength) {
+        try {
+            $payload = StringHelper::base64UrlDecode($token);
+        } catch (InvalidArgumentException $e) {
             return null;
         }
 
-        $message = StringHelper::byteSubstring($payload, $hashLength, null);
+        if (StringHelper::byteLength($payload) <= $this->hashLength) {
+            return null;
+        }
+
+        $message = StringHelper::byteSubstring($payload, $this->hashLength, null);
         $chunks = explode('~', $message, 2);
         if (count($chunks) !== 2) {
             return null;
@@ -133,8 +142,12 @@ final class HmacCsrfToken implements CsrfTokenInterface
         return $hash;
     }
 
-    private function getHashLength(): int
+    private function generateHashLength(): int
     {
-        return StringHelper::byteLength($this->generateHash(''));
+        $hash = hash_hmac($this->algorithm, '', '', true);
+        if (!$hash) {
+            throw new RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
+        }
+        return StringHelper::byteLength($hash);
     }
 }

@@ -6,6 +6,7 @@ namespace Yiisoft\Csrf\Tests\Hmac;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\Hmac\HmacCsrfToken;
+use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
 use Yiisoft\Csrf\Tests\Hmac\IdentityGenerator\MockCsrfTokenIdentityGenerator;
 use Yiisoft\Security\Mac;
 use Yiisoft\Security\Random;
@@ -92,6 +93,7 @@ final class HmacCsrfTokenTest extends TestCase
         );
 
         $this->assertFalse($csrfToken->validate(Random::string()));
+        $this->assertFalse($csrfToken->validate('*'));
 
         $token = StringHelper::base64UrlEncode(
             (new Mac('sha256'))->sign('a2~user1', 'mySecretKey', true),
@@ -102,6 +104,23 @@ final class HmacCsrfTokenTest extends TestCase
             (new Mac('sha256'))->sign('hello', 'mySecretKey', true),
         );
         $this->assertFalse($csrfToken->validate($token));
+    }
+
+    public function testInvalidTokenParsingDoesNotGenerateIdentity(): void
+    {
+        $identityGenerator = new class implements CsrfTokenIdentityGeneratorInterface {
+            public int $calls = 0;
+
+            public function generate(): string
+            {
+                $this->calls++;
+                return 'user7';
+            }
+        };
+        $csrfToken = new HmacCsrfToken($identityGenerator, 'mySecretKey');
+
+        $this->assertFalse($csrfToken->validate(StringHelper::base64UrlEncode('short')));
+        $this->assertSame(0, $identityGenerator->calls);
     }
 
     public function testIdentityWithTilda(): void
