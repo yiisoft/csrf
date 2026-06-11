@@ -78,6 +78,10 @@ final class HmacCsrfToken implements CsrfTokenInterface
 
         [$expiration, $payload] = $data;
 
+        if ($expiration !== null && time() > $expiration) {
+            return false;
+        }
+
         $hash = StringHelper::byteSubstring($payload, 0, $this->hashLength);
         $message = StringHelper::byteSubstring($payload, $this->hashLength, null);
 
@@ -85,9 +89,6 @@ final class HmacCsrfToken implements CsrfTokenInterface
             return false;
         }
 
-        if ($expiration !== null && time() > $expiration) {
-            return false;
-        }
         return true;
     }
 

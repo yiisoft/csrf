@@ -166,6 +166,25 @@ final class HmacCsrfTokenTest extends TestCase
         $this->assertSame(0, $identityGenerator->calls);
     }
 
+    public function testExpiredTokenDoesNotGenerateIdentity(): void
+    {
+        self::$timeResult = 300;
+
+        $identityGenerator = new class implements CsrfTokenIdentityGeneratorInterface {
+            public int $calls = 0;
+
+            public function generate(): string
+            {
+                $this->calls++;
+                return 'user7';
+            }
+        };
+        $csrfToken = new HmacCsrfToken($identityGenerator, 'mySecretKey');
+
+        $this->assertFalse($csrfToken->validate($this->createToken('user7', '299~random-value')));
+        $this->assertSame(0, $identityGenerator->calls);
+    }
+
     public function testIdentityWithTilda(): void
     {
         $csrfToken = new HmacCsrfToken(

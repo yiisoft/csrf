@@ -144,8 +144,8 @@ return [
 In case Yii framework is used along with config plugin, the package is [configured](./config/di-web.php)
 automatically to use synchronizer token and masked decorator. You can change that depending on your needs.
 
-Use synchronizer token for sensitive anonymous forms; use HMAC token for authenticated-only forms when it is acceptable
-for a submitted token to stay valid until it expires.
+Use synchronizer token for sensitive anonymous forms; use HMAC signed token for authenticated-only forms when it is
+acceptable for a submitted token to stay valid until it expires.
 
 ```mermaid
 flowchart TD
@@ -162,7 +162,7 @@ flowchart TD
 
 Detailed comparison:
 
-| Factor | Synchronizer | HMAC |
+| Factor | Synchronizer | HMAC signed |
 |--------|--------------|------|
 | I/O per request | Session read and write | No token storage I/O |
 | File based session GC | May scan session files | Not triggered by CSRF token storage |
@@ -170,7 +170,7 @@ Detailed comparison:
 | Token revocation | Possible by removing stored token | Not possible before token expiration |
 | Replay within lifetime | Prevented by storage policy | Possible until expiration |
 
-To switch token to HMAC:
+To switch to HMAC signed token:
 
 ```php
 use Yiisoft\Csrf\CsrfTokenInterface;
