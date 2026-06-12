@@ -51,7 +51,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
         CsrfTokenIdentityGeneratorInterface $identityGenerator,
         string $secretKey,
         string $algorithm = 'sha256',
-        ?int $lifetime = null,
+        ?int $lifetime = null
     ) {
         $this->identityGenerator = $identityGenerator;
         $this->secretKey = $secretKey;
@@ -129,12 +129,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
     {
         $identity = $this->identityGenerator->generate();
         $message = StringHelper::byteLength($identity) . '~' . $identity . '~' . $message;
-        $hash = hash_hmac(
-            $this->algorithm,
-            $message,
-            $this->secretKey,
-            true,
-        );
+        $hash = hash_hmac($this->algorithm, $message, $this->secretKey, true);
         if (!$hash) {
             throw new RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
         }
