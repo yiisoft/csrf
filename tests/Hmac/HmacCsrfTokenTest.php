@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\Hmac\HmacCsrfToken;
 use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
 use Yiisoft\Csrf\Tests\Hmac\IdentityGenerator\MockCsrfTokenIdentityGenerator;
-use Yiisoft\Security\Mac;
 use Yiisoft\Security\Random;
 use Yiisoft\Strings\StringHelper;
 
@@ -39,16 +38,6 @@ final class HmacCsrfTokenTest extends TestCase
         $this->assertTrue($csrfToken->validate($token));
     }
 
-    public function testTokenValueChanges(): void
-    {
-        $csrfToken = new HmacCsrfToken(
-            new MockCsrfTokenIdentityGenerator('user7'),
-            'mySecretKey',
-        );
-
-        $this->assertNotSame($csrfToken->getValue(), $csrfToken->getValue());
-    }
-
     public function testTokenDoesNotExposeIdentity(): void
     {
         $identity = 'session-id-that-must-not-be-in-token';
@@ -63,7 +52,7 @@ final class HmacCsrfTokenTest extends TestCase
         $this->assertTrue($csrfToken->validate($token));
     }
 
-    public function testTokenPayloadContainsExpirationAndRandomValue(): void
+    public function testTokenPayloadContainsExpiration(): void
     {
         self::$timeResult = 300;
 
@@ -77,7 +66,7 @@ final class HmacCsrfTokenTest extends TestCase
         $payload = StringHelper::base64UrlDecode($csrfToken->getValue());
         $message = StringHelper::byteSubstring($payload, $this->getHashLength(), null);
 
-        $this->assertMatchesRegularExpression('/^400~[A-Za-z0-9_-]{32}$/', $message);
+        $this->assertSame('400', $message);
     }
 
     public function testExpiration(): void
@@ -112,18 +101,14 @@ final class HmacCsrfTokenTest extends TestCase
         $this->assertFalse($csrfToken->validate(Random::string()));
         $this->assertFalse($csrfToken->validate('*'));
 
-        $token = StringHelper::base64UrlEncode(
-            (new Mac('sha256'))->sign('a2~user1', 'mySecretKey', true),
-        );
+        $token = $this->createToken('user7', 'a2');
         $this->assertFalse($csrfToken->validate($token));
 
-        $token = StringHelper::base64UrlEncode(
-            (new Mac('sha256'))->sign('hello', 'mySecretKey', true),
-        );
+        $token = $this->createToken('user7', 'hello');
         $this->assertFalse($csrfToken->validate($token));
     }
 
-    public function testValidatesTokenSignedWithCurrentIdentityAndMessage(): void
+    public function testValidatesTokenSignedWithCurrentIdentity(): void
     {
         self::$timeResult = 300;
 
@@ -132,7 +117,7 @@ final class HmacCsrfTokenTest extends TestCase
             'mySecretKey',
         );
 
-        $this->assertTrue($csrfToken->validate($this->createToken('user7', '500~random-value-with~delimiter')));
+        $this->assertTrue($csrfToken->validate($this->createToken('user7', '500')));
     }
 
     public function testRejectsSignedTokenWithMalformedMessage(): void
@@ -144,9 +129,9 @@ final class HmacCsrfTokenTest extends TestCase
             'mySecretKey',
         );
 
-        $this->assertFalse($csrfToken->validate($this->createToken('user7', '500')));
-        $this->assertFalse($csrfToken->validate($this->createToken('user7', '0500~random-value')));
-        $this->assertFalse($csrfToken->validate($this->createToken('user7', 'not-a-timestamp~random-value')));
+        $this->assertFalse($csrfToken->validate($this->createToken('user7', '0500')));
+        $this->assertFalse($csrfToken->validate($this->createToken('user7', 'not-a-timestamp')));
+        $this->assertFalse($csrfToken->validate($this->createToken('user7', '500~extra')));
     }
 
     public function testInvalidTokenParsingDoesNotGenerateIdentity(): void
@@ -181,7 +166,7 @@ final class HmacCsrfTokenTest extends TestCase
         };
         $csrfToken = new HmacCsrfToken($identityGenerator, 'mySecretKey');
 
-        $this->assertFalse($csrfToken->validate($this->createToken('user7', '299~random-value')));
+        $this->assertFalse($csrfToken->validate($this->createToken('user7', '299')));
         $this->assertSame(0, $identityGenerator->calls);
     }
 
@@ -200,8 +185,12 @@ final class HmacCsrfTokenTest extends TestCase
     private function createToken(string $identity, string $message): string
     {
         $signedMessage = StringHelper::byteLength($identity) . '~' . $identity . '~' . $message;
+        $hash = hash_hmac('sha256', $signedMessage, 'mySecretKey', true);
+        if (!$hash) {
+            self::fail('Failed to generate HMAC.');
+        }
 
-        return StringHelper::base64UrlEncode(hash_hmac('sha256', $signedMessage, 'mySecretKey', true) . $message);
+        return StringHelper::base64UrlEncode($hash . $message);
     }
 
     private function getHashLength(): int

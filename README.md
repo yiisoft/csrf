@@ -157,7 +157,7 @@ flowchart TD
     C -- No --> S
     C -- Yes --> D{Token replay within lifetime OK?}
     D -- No --> S
-    D -- Yes --> H[HMAC]
+    D -- Yes --> H[HMAC signed]
 ```
 
 Detailed comparison:
@@ -208,9 +208,8 @@ To learn more about the synchronizer token pattern,
 ### HMAC signed token
 
 HMAC signed token is a stateless CSRF token that does not require any storage. The token contains expiration timestamp
-and random value, and its signature is bound to the current session ID. The token is added to a form. When the form is
-submitted, we verify the token signature, check that it belongs to the current session ID, and check that it has not
-expired.
+and its signature is bound to the current identity. The token is added to a form. When the form is submitted, we verify
+the token signature, check that it belongs to the current identity, and check that it has not expired.
 
 `HmacCsrfToken` requires implementation of `CsrfTokenIdentityGeneratorInterface` for generating an identity.
 The package provides `SessionCsrfTokenIdentityGenerator` that is using session ID thus making the session a token scope.

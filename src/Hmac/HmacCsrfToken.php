@@ -9,17 +9,15 @@ use RuntimeException;
 use Yiisoft\Csrf\CsrfTokenInterface;
 use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
 use Yiisoft\Csrf\MaskedCsrfToken;
-use Yiisoft\Security\Random;
 use Yiisoft\Strings\StringHelper;
 
-use function count;
 use function hash_equals;
 use function hash_hmac;
 
 /**
- * Stateless CSRF token that does not require any storage. The token contains expiration timestamp and random value,
- * and is signed with a session-bound identity. It is added to forms. When the form is submitted, we verify the token
- * signature, check that it belongs to the current session identity, and check that it has not expired.
+ * Stateless CSRF token that does not require any storage. The token contains an expiration timestamp and is signed with
+ * an identity-bound key. It is added to forms. When the form is submitted, we verify the token signature, check that it
+ * belongs to the current identity, and check that it has not expired.
  *
  * Do not forget to decorate the token with {@see MaskedCsrfToken} to prevent BREACH attack.
  *
@@ -53,12 +51,12 @@ final class HmacCsrfToken implements CsrfTokenInterface
         CsrfTokenIdentityGeneratorInterface $identityGenerator,
         string $secretKey,
         string $algorithm = 'sha256',
-        ?int $lifetime = null
+        ?int $lifetime = null,
     ) {
         $this->identityGenerator = $identityGenerator;
         $this->secretKey = $secretKey;
         $this->algorithm = $algorithm;
-        $this->hashLength = $this->generateHashLength();
+        $this->hashLength = $this->calcHashLength();
         $this->lifetime = $lifetime;
     }
 
@@ -94,7 +92,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
 
     private function generateToken(?int $expiration): string
     {
-        $message = ($expiration ?? '') . '~' . Random::string(32);
+        $message = (string) $expiration;
 
         return StringHelper::base64UrlEncode($this->generateHash($message) . $message);
     }
@@ -110,17 +108,16 @@ final class HmacCsrfToken implements CsrfTokenInterface
             return null;
         }
 
-        $message = StringHelper::byteSubstring($payload, $this->hashLength, null);
-        $chunks = explode('~', $message, 2);
-        if (count($chunks) !== 2) {
+        if (StringHelper::byteLength($payload) < $this->hashLength) {
             return null;
         }
 
-        if ($chunks[0] === '') {
+        $message = StringHelper::byteSubstring($payload, $this->hashLength, null);
+        if ($message === '') {
             $expiration = null;
         } else {
-            $expiration = (int) $chunks[0];
-            if ((string) $expiration !== $chunks[0]) {
+            $expiration = (int) $message;
+            if ((string) $expiration !== $message) {
                 return null;
             }
         }
@@ -132,14 +129,19 @@ final class HmacCsrfToken implements CsrfTokenInterface
     {
         $identity = $this->identityGenerator->generate();
         $message = StringHelper::byteLength($identity) . '~' . $identity . '~' . $message;
-        $hash = hash_hmac($this->algorithm, $message, $this->secretKey, true);
+        $hash = hash_hmac(
+            $this->algorithm,
+            $message,
+            $this->secretKey,
+            true,
+        );
         if (!$hash) {
             throw new RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
         }
         return $hash;
     }
 
-    private function generateHashLength(): int
+    private function calcHashLength(): int
     {
         $hash = hash_hmac($this->algorithm, '', '', true);
         if (!$hash) {
