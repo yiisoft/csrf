@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Yiisoft\Csrf\Hmac;
 
 use InvalidArgumentException;
-use RuntimeException;
 use Yiisoft\Csrf\CsrfTokenInterface;
 use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
 use Yiisoft\Csrf\MaskedCsrfToken;
+use Yiisoft\Security\DataIsTamperedException;
+use Yiisoft\Security\Mac;
 use Yiisoft\Strings\StringHelper;
-
-use function hash_equals;
-use function hash_hmac;
 
 /**
  * Stateless CSRF token that does not require any storage. The token contains an expiration timestamp and is signed with
@@ -27,15 +25,12 @@ final class HmacCsrfToken implements CsrfTokenInterface
 {
     private CsrfTokenIdentityGeneratorInterface $identityGenerator;
 
-    /**
-     * @var string Shared secret key used to generate the hash.
-     */
-    private string $secretKey;
+    private Mac $mac;
 
     /**
-     * @var string Hash algorithm for message authentication.
+     * @var string Shared secret key used to sign the token.
      */
-    private string $algorithm;
+    private string $secretKey;
 
     /**
      * @var int Hash length in bytes.
@@ -54,8 +49,8 @@ final class HmacCsrfToken implements CsrfTokenInterface
         ?int $lifetime = null
     ) {
         $this->identityGenerator = $identityGenerator;
+        $this->mac = new Mac($algorithm);
         $this->secretKey = $secretKey;
-        $this->algorithm = $algorithm;
         $this->hashLength = $this->calcHashLength();
         $this->lifetime = $lifetime;
     }
@@ -69,79 +64,68 @@ final class HmacCsrfToken implements CsrfTokenInterface
 
     public function validate(string $token): bool
     {
-        $data = $this->extractData($token);
-        if ($data === null) {
+        $raw = $this->decode($token);
+        if ($raw === null) {
             return false;
         }
 
-        [$expiration, $payload] = $data;
-
-        if ($expiration !== null && time() > $expiration) {
+        $message = $this->extractMessage($raw);
+        if ($message === null) {
             return false;
         }
 
-        $hash = StringHelper::byteSubstring($payload, 0, $this->hashLength);
-        $message = StringHelper::byteSubstring($payload, $this->hashLength, null);
-
-        if (!hash_equals($hash, $this->generateHash($message))) {
-            return false;
+        if ($message !== '') {
+            $expiration = (int) $message;
+            if ((string) $expiration !== $message || time() > $expiration) {
+                return false;
+            }
         }
 
-        return true;
+        try {
+            $this->mac->getMessage($raw, $this->generateActualSecretKey(), true);
+            return true;
+        } catch (DataIsTamperedException $e) {
+            return false;
+        }
     }
 
     private function generateToken(?int $expiration): string
     {
-        $message = (string) $expiration;
-
-        return StringHelper::base64UrlEncode($this->generateHash($message) . $message);
+        return StringHelper::base64UrlEncode(
+            $this->mac->sign(
+                (string) $expiration,
+                $this->generateActualSecretKey(),
+                true,
+            ),
+        );
     }
 
-    /**
-     * @return array{0: int|null, 1: string}|null
-     */
-    private function extractData(string $token): ?array
+    private function decode(string $token): ?string
     {
         try {
-            $payload = StringHelper::base64UrlDecode($token);
+            return StringHelper::base64UrlDecode($token);
         } catch (InvalidArgumentException $e) {
             return null;
         }
+    }
 
-        if (StringHelper::byteLength($payload) < $this->hashLength) {
+    private function extractMessage(string $raw): ?string
+    {
+        if (StringHelper::byteLength($raw) < $this->hashLength) {
             return null;
         }
 
-        $message = StringHelper::byteSubstring($payload, $this->hashLength, null);
-        if ($message === '') {
-            $expiration = null;
-        } else {
-            $expiration = (int) $message;
-            if ((string) $expiration !== $message) {
-                return null;
-            }
-        }
-
-        return [$expiration, $payload];
+        return StringHelper::byteSubstring($raw, $this->hashLength, null);
     }
 
-    private function generateHash(string $message): string
+    private function generateActualSecretKey(): string
     {
         $identity = $this->identityGenerator->generate();
-        $message = StringHelper::byteLength($identity) . '~' . $identity . '~' . $message;
-        $hash = hash_hmac($this->algorithm, $message, $this->secretKey, true);
-        if (!$hash) {
-            throw new RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
-        }
-        return $hash;
+        return $this->secretKey . '~' . $identity;
     }
 
     private function calcHashLength(): int
     {
-        $hash = hash_hmac($this->algorithm, '', '', true);
-        if (!$hash) {
-            throw new RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
-        }
-        return StringHelper::byteLength($hash);
+        return StringHelper::byteLength($this->mac->sign('', '', true));
     }
 }

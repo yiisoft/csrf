@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Csrf\Hmac\HmacCsrfToken;
 use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
 use Yiisoft\Csrf\Tests\Hmac\IdentityGenerator\MockCsrfTokenIdentityGenerator;
+use Yiisoft\Security\Mac;
 use Yiisoft\Security\Random;
 use Yiisoft\Strings\StringHelper;
 
@@ -184,18 +185,12 @@ final class HmacCsrfTokenTest extends TestCase
 
     private function createToken(string $identity, string $message): string
     {
-        $signedMessage = StringHelper::byteLength($identity) . '~' . $identity . '~' . $message;
-        $hash = hash_hmac('sha256', $signedMessage, 'mySecretKey', true);
-        if (!$hash) {
-            self::fail('Failed to generate HMAC.');
-        }
-
-        return StringHelper::base64UrlEncode($hash . $message);
+        return StringHelper::base64UrlEncode((new Mac())->sign($message, 'mySecretKey~' . $identity, true));
     }
 
     private function getHashLength(): int
     {
-        return StringHelper::byteLength(hash_hmac('sha256', '', '', true));
+        return StringHelper::byteLength((new Mac())->sign('', '', true));
     }
 }
 
