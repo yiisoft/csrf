@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Csrf\Hmac;
 
-use InvalidArgumentException;
 use Yiisoft\Csrf\CsrfTokenInterface;
 use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
 use Yiisoft\Csrf\MaskedCsrfToken;
@@ -65,9 +64,6 @@ final class HmacCsrfToken implements CsrfTokenInterface
     public function validate(string $token): bool
     {
         $raw = $this->decode($token);
-        if ($raw === null) {
-            return false;
-        }
 
         $message = $this->extractMessage($raw);
         if ($message === null) {
@@ -100,13 +96,9 @@ final class HmacCsrfToken implements CsrfTokenInterface
         );
     }
 
-    private function decode(string $token): ?string
+    private function decode(string $token): string
     {
-        try {
-            return StringHelper::base64UrlDecode($token);
-        } catch (InvalidArgumentException $e) {
-            return null;
-        }
+        return StringHelper::base64UrlDecode($token);
     }
 
     private function extractMessage(string $raw): ?string

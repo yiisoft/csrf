@@ -121,6 +121,18 @@ final class HmacCsrfTokenTest extends TestCase
         $this->assertTrue($csrfToken->validate($this->createToken('user7', '500')));
     }
 
+    public function testRejectsTokenSignedWithDifferentIdentity(): void
+    {
+        self::$timeResult = 300;
+
+        $csrfToken = new HmacCsrfToken(
+            new MockCsrfTokenIdentityGenerator('user7'),
+            'mySecretKey',
+        );
+
+        $this->assertFalse($csrfToken->validate($this->createToken('user8', '500')));
+    }
+
     public function testRejectsSignedTokenWithMalformedMessage(): void
     {
         self::$timeResult = 300;
