@@ -6,34 +6,35 @@ namespace Yiisoft\Csrf\Hmac;
 
 use Yiisoft\Csrf\CsrfTokenInterface;
 use Yiisoft\Csrf\Hmac\IdentityGenerator\CsrfTokenIdentityGeneratorInterface;
+use Yiisoft\Csrf\MaskedCsrfToken;
 use Yiisoft\Security\DataIsTamperedException;
 use Yiisoft\Security\Mac;
 use Yiisoft\Strings\StringHelper;
-use Yiisoft\Csrf\MaskedCsrfToken;
-
-use function count;
 
 /**
- * Stateless CSRF token that does not require any storage. The token is a hash from session ID and a timestamp
- * (to prevent replay attacks). It is added to forms. When the form is submitted, we re-generate the token from
- * the current session ID and a timestamp from the original token. If two hashes match, we check that timestamp is
- * less than {@see HmacCsrfToken::$lifetime}.
- *
- * The algorithm is also known as "HMAC Based Token".
+ * Stateless CSRF token that does not require any storage. The token contains an expiration timestamp and is signed with
+ * an identity-bound key. It is added to forms. When the form is submitted, we verify the token signature, check that it
+ * belongs to the current identity, and check that it has not expired.
  *
  * Do not forget to decorate the token with {@see MaskedCsrfToken} to prevent BREACH attack.
  *
- * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#hmac-based-token-pattern
+ * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#employing-hmac-csrf-tokens
  */
 final class HmacCsrfToken implements CsrfTokenInterface
 {
     private CsrfTokenIdentityGeneratorInterface $identityGenerator;
+
     private Mac $mac;
 
     /**
-     * @var string Shared secret key used to generate the hash.
+     * @var string Shared secret key used to sign the token.
      */
     private string $secretKey;
+
+    /**
+     * @var int Hash length in bytes.
+     */
+    private int $hashLength;
 
     /**
      * @var int|null Number of seconds that the token is valid for.
@@ -49,6 +50,7 @@ final class HmacCsrfToken implements CsrfTokenInterface
         $this->identityGenerator = $identityGenerator;
         $this->mac = new Mac($algorithm);
         $this->secretKey = $secretKey;
+        $this->hashLength = $this->calcHashLength();
         $this->lifetime = $lifetime;
     }
 
@@ -61,59 +63,61 @@ final class HmacCsrfToken implements CsrfTokenInterface
 
     public function validate(string $token): bool
     {
-        $data = $this->extractData($token);
-        if ($data === null) {
+        $raw = $this->decode($token);
+
+        $message = $this->extractMessage($raw);
+        if ($message === null) {
             return false;
         }
 
-        [$expiration, $identity] = $data;
-
-        if ($expiration !== null && time() > $expiration) {
-            return false;
+        if ($message !== '') {
+            $expiration = (int) $message;
+            if ((string) $expiration !== $message || time() > $expiration) {
+                return false;
+            }
         }
 
-        return $identity === $this->identityGenerator->generate();
+        try {
+            $this->mac->getMessage($raw, $this->generateActualSecretKey(), true);
+            return true;
+        } catch (DataIsTamperedException $e) {
+            return false;
+        }
     }
 
     private function generateToken(?int $expiration): string
     {
         return StringHelper::base64UrlEncode(
             $this->mac->sign(
-                (string) $expiration . '~' . $this->identityGenerator->generate(),
-                $this->secretKey,
+                (string) $expiration,
+                $this->generateActualSecretKey(),
                 true,
             ),
         );
     }
 
-    private function extractData(string $token): ?array
+    private function decode(string $token): string
     {
-        try {
-            $raw = $this->mac->getMessage(
-                StringHelper::base64UrlDecode($token),
-                $this->secretKey,
-                true,
-            );
-        } catch (DataIsTamperedException $e) {
+        return StringHelper::base64UrlDecode($token);
+    }
+
+    private function extractMessage(string $raw): ?string
+    {
+        if (StringHelper::byteLength($raw) < $this->hashLength) {
             return null;
         }
 
-        $chunks = explode('~', $raw, 2);
-        if (count($chunks) !== 2) {
-            return null;
-        }
+        return StringHelper::byteSubstring($raw, $this->hashLength, null);
+    }
 
-        if ($chunks[0] === '') {
-            $expiration = null;
-        } else {
-            $expiration = (int) $chunks[0];
-            if ((string) $expiration !== $chunks[0]) {
-                return null;
-            }
-        }
+    private function generateActualSecretKey(): string
+    {
+        $identity = $this->identityGenerator->generate();
+        return $this->secretKey . '~' . $identity;
+    }
 
-        $identity = $chunks[1];
-
-        return [$expiration, $identity];
+    private function calcHashLength(): int
+    {
+        return StringHelper::byteLength($this->mac->sign('', '', true));
     }
 }
