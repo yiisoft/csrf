@@ -14,22 +14,32 @@ use Yiisoft\Csrf\CsrfTokenCookieMiddleware;
 use Yiisoft\Csrf\StubCsrfToken;
 use Yiisoft\Http\Method;
 
+use function sprintf;
+
 final class CsrfTokenCookieMiddlewareTest extends TestCase
 {
-    public function testInvalidCookieName(): void
+    /**
+     * @dataProvider dataInvalidCookieName
+     */
+    public function testInvalidCookieName(string $cookieName): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The cookie name "X=SRF" contains invalid characters or is empty.');
+        $this->expectExceptionMessage(
+            sprintf('The cookie name "%s" contains invalid characters or is empty.', $cookieName),
+        );
 
-        new CsrfTokenCookieMiddleware(new StubCsrfToken(), 'X=SRF');
+        new CsrfTokenCookieMiddleware(new StubCsrfToken(), $cookieName);
     }
 
-    public function testEmptyCookieName(): void
+    public function dataInvalidCookieName(): array
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The cookie name "" contains invalid characters or is empty.');
-
-        new CsrfTokenCookieMiddleware(new StubCsrfToken(), '');
+        return [
+            'empty' => [''],
+            'equals sign' => ['X=SRF'],
+            'space' => ['X SRF'],
+            'semicolon' => ['XSRF;Secure'],
+            'trailing newline' => ["XSRF-TOKEN\n"],
+        ];
     }
 
     public function testInvalidPath(): void

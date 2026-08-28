@@ -39,10 +39,12 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
     public const SAME_SITE_NONE = 'None';
 
     /**
+     * A cookie name is an RFC 2616 token: one or more characters, none of them a control character or a separator.
+     *
      * @link https://datatracker.ietf.org/doc/html/rfc6265#section-4.1.1
      * @link https://datatracker.ietf.org/doc/html/rfc2616#section-2.2
      */
-    private const PATTERN_COOKIE_NAME = '/^[a-zA-Z0-9!#$%&\' * +\- .^_`|~]+$/';
+    private const PATTERN_COOKIE_NAME = '/\A[a-zA-Z0-9!#$%&\'*+\-.^_`|~]+\z/';
 
     /**
      * Control characters and the `;` attribute separator, which would allow injecting extra cookie attributes.
