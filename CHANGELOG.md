@@ -2,6 +2,8 @@
 
 ## 2.2.4 under development
 
+- New #100: Add `CsrfTokenCookieMiddleware` that publishes the current CSRF token in a JavaScript-readable
+  response cookie for the cookie-to-header pattern (@vjik)
 - Enh #82: Explicitly import classes and functions in "use" section (@mspirkov)
 - Enh #83: Remove unnecessary files from Composer package (@mspirkov)
 

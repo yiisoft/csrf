@@ -572,6 +572,70 @@ let response = fetch('https://api.example.com/whoami', {
 });
 ```
 
+#### Publishing the CSRF token in a cookie
+
+Instead of a dedicated endpoint, `CsrfTokenCookieMiddleware` publishes the current token in a JavaScript-readable cookie
+on every response. SPA HTTP clients such as [Axios](https://axios-http.com/docs/req_config) and [Inertia](https://inertiajs.com/csrf-protection)
+read this cookie automatically and send it back in a request header.
+
+The middleware only writes the cookie. Token validation stays the responsibility of `CsrfTokenMiddleware`, and the token
+from the request cookie is never trusted as proof — the submitted value is always taken from the request header or body
+parameter.
+
+Add `CsrfTokenCookieMiddleware` middleware to stack after `CsrfTokenMiddleware`.
+
+Every cookie attribute is set through the constructor. By default, the cookie is named `XSRF-TOKEN`, is available for
+the `/` path, has no `Domain`, and is marked `Secure` and `SameSite=Lax`. It is **not** `HttpOnly`, so that the frontend
+can read it.
+
+```php
+$middleware = new CsrfTokenCookieMiddleware(
+    $csrfToken,
+    'XSRF-TOKEN',
+    '/',
+    null,
+    true,
+    CsrfTokenCookieMiddleware::SAME_SITE_LAX,
+);
+```
+
+For example, Axios and Inertia send the token back in the `X-XSRF-TOKEN` header, so set the same name 
+on `CsrfTokenMiddleware`:
+
+```php
+$csrfTokenMiddleware = $csrfTokenMiddleware->withHeaderName('X-XSRF-TOKEN');
+```
+
+In a Yii application, add both middlewares to the [`MiddlewareDispatcher`](https://github.com/yiisoft/middleware-dispatcher)
+configuration, using array definitions to configure them:
+
+```php
+use Yiisoft\Csrf\CsrfTokenCookieMiddleware;
+use Yiisoft\Csrf\CsrfTokenMiddleware;
+
+$middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
+    ErrorCatcher::class,
+    SessionMiddleware::class,
+    [
+        'class' => CsrfTokenMiddleware::class,
+        'withHeaderName()' => ['X-XSRF-TOKEN'],
+    ],
+    CsrfTokenCookieMiddleware::class,
+    // or
+    [
+        'class' => ,
+        '__construct()' => [
+            'cookieName' => 'XSRF-TOKEN',
+            'path' => '/',
+            'domain' => null,
+            'secure' => true,
+            'sameSite' => CsrfTokenCookieMiddleware::SAME_SITE_LAX,
+        ],
+    ],
+    Router::class,
+]);
+```
+
 ## Documentation
 
 - [Internals](docs/internals.md)
