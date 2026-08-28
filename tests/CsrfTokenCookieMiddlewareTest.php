@@ -118,6 +118,24 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
         );
     }
 
+    public function testCookieIsPublishedOnFailureResponse(): void
+    {
+        $middleware = new CsrfTokenCookieMiddleware(new StubCsrfToken('test-token'));
+
+        $requestHandler = $this->createMock(RequestHandlerInterface::class);
+        $requestHandler
+            ->method('handle')
+            ->willReturn(new Response(422));
+
+        $response = $middleware->process($this->createServerRequest(Method::POST), $requestHandler);
+
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertSame(
+            ['XSRF-TOKEN=test-token; Path=/; Secure; SameSite=Lax'],
+            $response->getHeader('Set-Cookie'),
+        );
+    }
+
     public function testExistingResponseCookiesArePreserved(): void
     {
         $middleware = new CsrfTokenCookieMiddleware(new StubCsrfToken('test-token'));

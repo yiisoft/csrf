@@ -24,7 +24,8 @@ use function sprintf;
  * `X-XSRF-TOKEN` header.
  *
  * The middleware only writes the cookie. Token validation stays the responsibility of {@see CsrfTokenMiddleware},
- * which reads the submitted token from a header or a body parameter.
+ * which reads the submitted token from a header or a body parameter. Place this middleware before
+ * {@see CsrfTokenMiddleware} in the stack, so the cookie is published even on a rejected request.
  *
  * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#alternative-using-a-double-submit-cookie-pattern
  */
