@@ -18,9 +18,7 @@ final class StubCsrfToken implements CsrfTokenInterface
 
     public function __construct(?string $token = null)
     {
-        if (null === $token) {
-            $token = Random::string();
-        }
+        $token ??= Random::string();
         $this->token = $token;
     }
 
