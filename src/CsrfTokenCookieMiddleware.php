@@ -13,8 +13,8 @@ use Yiisoft\Http\Header;
 
 use function implode;
 use function in_array;
+use function rawurlencode;
 use function sprintf;
-use function urlencode;
 
 /**
  * PSR-15 middleware that publishes the current CSRF token in a JavaScript-readable response cookie.
@@ -91,7 +91,7 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
 
     private function buildCookieHeaderValue(): string
     {
-        $parts = [$this->cookieName . '=' . urlencode($this->token->getValue())];
+        $parts = [$this->cookieName . '=' . rawurlencode($this->token->getValue())];
 
         if ($this->domain !== null) {
             $parts[] = 'Domain=' . $this->domain;

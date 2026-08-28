@@ -60,7 +60,7 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
         $response = $middleware->process($this->createServerRequest(), $this->createRequestHandler());
 
         $this->assertSame(
-            ['XSRF-TOKEN=a+b%2Bc%2Fd%3D; Path=/; Secure; SameSite=Lax'],
+            ['XSRF-TOKEN=a%20b%2Bc%2Fd%3D; Path=/; Secure; SameSite=Lax'],
             $response->getHeader('Set-Cookie'),
         );
     }
