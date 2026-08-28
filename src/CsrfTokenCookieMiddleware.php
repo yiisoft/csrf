@@ -39,17 +39,11 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
     public const SAME_SITE_NONE = 'None';
 
     /**
-     * A cookie name is an RFC 2616 token: one or more characters, none of them a control character or a separator.
-     *
-     * @link https://datatracker.ietf.org/doc/html/rfc6265#section-4.1.1
-     * @link https://datatracker.ietf.org/doc/html/rfc2616#section-2.2
+     * Control characters (including CR and LF) and the `;` attribute separator. These would let a configured
+     * cookie name, path or domain inject extra attributes or split the response header. Whether the values are
+     * otherwise well-formed is left to the caller.
      */
-    private const PATTERN_COOKIE_NAME = '/\A[a-zA-Z0-9!#$%&\'*+\-.^_`|~]+\z/';
-
-    /**
-     * Control characters and the `;` attribute separator, which would allow injecting extra cookie attributes.
-     */
-    private const PATTERN_INVALID_ATTRIBUTE_VALUE = '/[\x00-\x1F\x7F\x3B]/';
+    private const PATTERN_HEADER_INJECTION = '/[\x00-\x1F\x7F\x3B]/';
 
     private CsrfTokenInterface $token;
     private string $cookieName;
@@ -59,11 +53,13 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
     private ?string $sameSite;
 
     /**
+     * The cookie name, path and domain are checked only for control characters and `;` to prevent response header
+     * injection; making sure they are otherwise valid is up to the caller.
+     *
      * @param CsrfTokenInterface $token The CSRF token to publish.
      * @param string $cookieName The name of the cookie holding the token.
-     * @param string $path The path attribute of the cookie. Must not contain control characters or `;`.
-     * @param string|null $domain The domain attribute of the cookie, or `null` to omit it. Must not contain control
-     * characters or `;`.
+     * @param string $path The `Path` attribute of the cookie.
+     * @param string|null $domain The `Domain` attribute of the cookie, or `null` to omit it.
      * @param bool $secure Whether the cookie should only be sent over HTTPS.
      * @param string|null $sameSite The `SameSite` attribute of the cookie: one of `self::SAME_SITE_LAX`,
      * `self::SAME_SITE_STRICT`, `self::SAME_SITE_NONE`, or `null` to omit it. When `self::SAME_SITE_NONE` is used,
@@ -79,19 +75,19 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
         bool $secure = true,
         ?string $sameSite = self::SAME_SITE_LAX
     ) {
-        if (!preg_match(self::PATTERN_COOKIE_NAME, $cookieName)) {
+        if (preg_match(self::PATTERN_HEADER_INJECTION, $cookieName)) {
             throw new InvalidArgumentException(
-                sprintf('The cookie name "%s" contains invalid characters or is empty.', $cookieName),
+                sprintf('The cookie name "%s" contains invalid characters.', $cookieName),
             );
         }
 
-        if (preg_match(self::PATTERN_INVALID_ATTRIBUTE_VALUE, $path)) {
+        if (preg_match(self::PATTERN_HEADER_INJECTION, $path)) {
             throw new InvalidArgumentException(
                 sprintf('The cookie path "%s" contains invalid characters.', $path),
             );
         }
 
-        if ($domain !== null && preg_match(self::PATTERN_INVALID_ATTRIBUTE_VALUE, $domain)) {
+        if ($domain !== null && preg_match(self::PATTERN_HEADER_INJECTION, $domain)) {
             throw new InvalidArgumentException(
                 sprintf('The cookie domain "%s" contains invalid characters.', $domain),
             );

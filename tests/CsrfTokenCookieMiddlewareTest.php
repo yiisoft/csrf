@@ -19,43 +19,52 @@ use function sprintf;
 final class CsrfTokenCookieMiddlewareTest extends TestCase
 {
     /**
-     * @dataProvider dataInvalidCookieName
+     * @dataProvider dataHeaderInjection
      */
-    public function testInvalidCookieName(string $cookieName): void
+    public function testCookieNameWithHeaderInjection(string $cookieName): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            sprintf('The cookie name "%s" contains invalid characters or is empty.', $cookieName),
+            sprintf('The cookie name "%s" contains invalid characters.', $cookieName),
         );
 
         new CsrfTokenCookieMiddleware(new StubCsrfToken(), $cookieName);
     }
 
-    public function dataInvalidCookieName(): array
+    /**
+     * @dataProvider dataHeaderInjection
+     */
+    public function testCookiePathWithHeaderInjection(string $path): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            sprintf('The cookie path "%s" contains invalid characters.', $path),
+        );
+
+        new CsrfTokenCookieMiddleware(new StubCsrfToken(), 'XSRF-TOKEN', $path);
+    }
+
+    /**
+     * @dataProvider dataHeaderInjection
+     */
+    public function testCookieDomainWithHeaderInjection(string $domain): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            sprintf('The cookie domain "%s" contains invalid characters.', $domain),
+        );
+
+        new CsrfTokenCookieMiddleware(new StubCsrfToken(), 'XSRF-TOKEN', '/', $domain);
+    }
+
+    public function dataHeaderInjection(): array
     {
         return [
-            'empty' => [''],
-            'equals sign' => ['X=SRF'],
-            'space' => ['X SRF'],
-            'semicolon' => ['XSRF;Secure'],
-            'trailing newline' => ["XSRF-TOKEN\n"],
+            'semicolon' => ['a; Secure'],
+            'newline' => ["a\nSet-Cookie: b=c"],
+            'carriage return' => ["a\rb"],
+            'null byte' => ["a\x00b"],
         ];
-    }
-
-    public function testInvalidPath(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The cookie path "/; HttpOnly" contains invalid characters.');
-
-        new CsrfTokenCookieMiddleware(new StubCsrfToken(), 'XSRF-TOKEN', '/; HttpOnly');
-    }
-
-    public function testInvalidDomain(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The cookie domain "example.com; Secure" contains invalid characters.');
-
-        new CsrfTokenCookieMiddleware(new StubCsrfToken(), 'XSRF-TOKEN', '/', 'example.com; Secure');
     }
 
     public function testInvalidSameSite(): void
