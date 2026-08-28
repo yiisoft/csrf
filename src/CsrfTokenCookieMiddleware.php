@@ -13,6 +13,7 @@ use Yiisoft\Http\Header;
 
 use function implode;
 use function in_array;
+use function preg_match;
 use function rawurlencode;
 use function sprintf;
 
@@ -37,6 +38,17 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
     public const SAME_SITE_STRICT = 'Strict';
     public const SAME_SITE_NONE = 'None';
 
+    /**
+     * @link https://datatracker.ietf.org/doc/html/rfc6265#section-4.1.1
+     * @link https://datatracker.ietf.org/doc/html/rfc2616#section-2.2
+     */
+    private const PATTERN_COOKIE_NAME = '/^[a-zA-Z0-9!#$%&\' * +\- .^_`|~]+$/';
+
+    /**
+     * Control characters and the `;` attribute separator, which would allow injecting extra cookie attributes.
+     */
+    private const PATTERN_INVALID_ATTRIBUTE_VALUE = '/[\x00-\x1F\x7F\x3B]/';
+
     private CsrfTokenInterface $token;
     private string $cookieName;
     private string $path;
@@ -47,12 +59,15 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
     /**
      * @param CsrfTokenInterface $token The CSRF token to publish.
      * @param string $cookieName The name of the cookie holding the token.
-     * @param string $path The path attribute of the cookie.
-     * @param string|null $domain The domain attribute of the cookie, or `null` to omit it.
+     * @param string $path The path attribute of the cookie. Must not contain control characters or `;`.
+     * @param string|null $domain The domain attribute of the cookie, or `null` to omit it. Must not contain control
+     * characters or `;`.
      * @param bool $secure Whether the cookie should only be sent over HTTPS.
      * @param string|null $sameSite The `SameSite` attribute of the cookie: one of `self::SAME_SITE_LAX`,
      * `self::SAME_SITE_STRICT`, `self::SAME_SITE_NONE`, or `null` to omit it. When `self::SAME_SITE_NONE` is used,
      * `$secure` must be `true`.
+     *
+     * @throws InvalidArgumentException When a cookie attribute is not valid.
      */
     public function __construct(
         CsrfTokenInterface $token,
@@ -62,6 +77,24 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
         bool $secure = true,
         ?string $sameSite = self::SAME_SITE_LAX
     ) {
+        if (!preg_match(self::PATTERN_COOKIE_NAME, $cookieName)) {
+            throw new InvalidArgumentException(
+                sprintf('The cookie name "%s" contains invalid characters or is empty.', $cookieName),
+            );
+        }
+
+        if (preg_match(self::PATTERN_INVALID_ATTRIBUTE_VALUE, $path)) {
+            throw new InvalidArgumentException(
+                sprintf('The cookie path "%s" contains invalid characters.', $path),
+            );
+        }
+
+        if ($domain !== null && preg_match(self::PATTERN_INVALID_ATTRIBUTE_VALUE, $domain)) {
+            throw new InvalidArgumentException(
+                sprintf('The cookie domain "%s" contains invalid characters.', $domain),
+            );
+        }
+
         $allowedSameSite = [self::SAME_SITE_LAX, self::SAME_SITE_STRICT, self::SAME_SITE_NONE];
         if ($sameSite !== null && !in_array($sameSite, $allowedSameSite, true)) {
             throw new InvalidArgumentException(

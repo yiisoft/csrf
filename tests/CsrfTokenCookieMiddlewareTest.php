@@ -16,6 +16,38 @@ use Yiisoft\Http\Method;
 
 final class CsrfTokenCookieMiddlewareTest extends TestCase
 {
+    public function testInvalidCookieName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The cookie name "X=SRF" contains invalid characters or is empty.');
+
+        new CsrfTokenCookieMiddleware(new StubCsrfToken(), 'X=SRF');
+    }
+
+    public function testEmptyCookieName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The cookie name "" contains invalid characters or is empty.');
+
+        new CsrfTokenCookieMiddleware(new StubCsrfToken(), '');
+    }
+
+    public function testInvalidPath(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The cookie path "/; HttpOnly" contains invalid characters.');
+
+        new CsrfTokenCookieMiddleware(new StubCsrfToken(), 'XSRF-TOKEN', '/; HttpOnly');
+    }
+
+    public function testInvalidDomain(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The cookie domain "example.com; Secure" contains invalid characters.');
+
+        new CsrfTokenCookieMiddleware(new StubCsrfToken(), 'XSRF-TOKEN', '/', 'example.com; Secure');
+    }
+
     public function testInvalidSameSite(): void
     {
         $this->expectException(InvalidArgumentException::class);
