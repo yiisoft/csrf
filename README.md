@@ -572,6 +572,89 @@ let response = fetch('https://api.example.com/whoami', {
 });
 ```
 
+#### Publishing the CSRF token in a cookie
+
+Instead of a dedicated endpoint, `CsrfTokenCookieMiddleware` publishes the current token in a JavaScript-readable cookie
+on every response. SPA HTTP clients such as [Axios](https://axios-http.com/docs/req_config) and [Inertia](https://inertiajs.com/csrf-protection)
+read this cookie automatically and send it back in a request header.
+
+The middleware only writes the cookie. Token validation stays the responsibility of `CsrfTokenMiddleware`, and the token
+from the request cookie is never trusted as proof — the submitted value is always taken from the request header or body
+parameter.
+
+Add `CsrfTokenCookieMiddleware` to the stack before `CsrfTokenMiddleware`. It decorates the response returned by
+the inner handlers, so this placement lets it publish the token even when `CsrfTokenMiddleware` rejects the request
+with `422 Unprocessable Entity` and a stale SPA can recover with the fresh value.
+
+Every cookie attribute is set through the constructor. By default, the cookie is named `XSRF-TOKEN`, is available for
+the `/` path, has no `Domain`, and is marked `SameSite=Lax`. The `Secure` attribute defaults to `null`, which means it
+is resolved per request from the request URI scheme (`Secure` is added when the scheme is `https`). It is **not**
+`HttpOnly`, so that the frontend can read it.
+
+```php
+$middleware = new CsrfTokenCookieMiddleware(
+    $csrfToken,
+    'XSRF-TOKEN',
+    '/',
+    null,
+    null,
+    CsrfTokenCookieMiddleware::SAME_SITE_LAX,
+    true,
+);
+```
+
+A `Set-Cookie` header does not by itself prevent a response from being cached
+([RFC 9111 section 7.3](https://www.rfc-editor.org/rfc/rfc9111#section-7.3)), so a response that publishes the token
+may be cached and later replay a stale token, or end up in a shared (proxy or CDN) cache and hand one user's token to
+another. The last constructor argument controls the `Cache-Control` response header:
+
+- `true` (default) — set `Cache-Control` to `no-store`, replacing any existing value (the middleware makes the
+  response user-specific, so a previously cacheable `Cache-Control` is no longer safe);
+- `false` — leave the header untouched (use this when the application already manages caching for these responses);
+- a string — set `Cache-Control` to that exact value, for example `'private'`.
+
+For example, Axios and Inertia send the token back in the `X-XSRF-TOKEN` header, so set the same name
+on `CsrfTokenMiddleware`:
+
+```php
+$csrfTokenMiddleware = $csrfTokenMiddleware->withHeaderName('X-XSRF-TOKEN');
+```
+
+In a Yii application, add both middlewares to the [`MiddlewareDispatcher`](https://github.com/yiisoft/middleware-dispatcher)
+configuration:
+
+```php
+use Yiisoft\Csrf\CsrfTokenCookieMiddleware;
+use Yiisoft\Csrf\CsrfTokenMiddleware;
+
+$middlewareDispatcher = $middlewareDispatcher->withMiddlewares([
+    ErrorCatcher::class,
+    SessionMiddleware::class,
+    CsrfTokenCookieMiddleware::class, // <-- add this (uses the default cookie settings)
+    [
+        'class' => CsrfTokenMiddleware::class,
+        'withHeaderName()' => ['X-XSRF-TOKEN'],
+    ],
+    Router::class,
+]);
+```
+
+To customize the cookie, replace `CsrfTokenCookieMiddleware::class` with an array definition:
+
+```php
+[
+    'class' => CsrfTokenCookieMiddleware::class,
+    '__construct()' => [
+        'cookieName' => 'XSRF-TOKEN',
+        'path' => '/',
+        'domain' => null,
+        'secure' => null,
+        'sameSite' => CsrfTokenCookieMiddleware::SAME_SITE_LAX,
+        'cacheControl' => true,
+    ],
+],
+```
+
 ## Documentation
 
 - [Internals](docs/internals.md)
