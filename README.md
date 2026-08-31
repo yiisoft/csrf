@@ -587,8 +587,9 @@ the inner handlers, so this placement lets it publish the token even when `CsrfT
 with `422 Unprocessable Entity` and a stale SPA can recover with the fresh value.
 
 Every cookie attribute is set through the constructor. By default, the cookie is named `XSRF-TOKEN`, is available for
-the `/` path, has no `Domain`, and is marked `Secure` and `SameSite=Lax`. It is **not** `HttpOnly`, so that the frontend
-can read it.
+the `/` path, has no `Domain`, and is marked `SameSite=Lax`. The `Secure` attribute defaults to `null`, which means it
+is resolved per request from the request URI scheme (`Secure` is added when the scheme is `https`). It is **not**
+`HttpOnly`, so that the frontend can read it.
 
 ```php
 $middleware = new CsrfTokenCookieMiddleware(
@@ -596,7 +597,7 @@ $middleware = new CsrfTokenCookieMiddleware(
     'XSRF-TOKEN',
     '/',
     null,
-    true,
+    null,
     CsrfTokenCookieMiddleware::SAME_SITE_LAX,
 );
 ```
@@ -636,7 +637,7 @@ To customize the cookie, replace `CsrfTokenCookieMiddleware::class` with an arra
         'cookieName' => 'XSRF-TOKEN',
         'path' => '/',
         'domain' => null,
-        'secure' => true,
+        'secure' => null,
         'sameSite' => CsrfTokenCookieMiddleware::SAME_SITE_LAX,
     ],
 ],

@@ -49,7 +49,7 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
     private string $cookieName;
     private string $path;
     private ?string $domain;
-    private bool $secure;
+    private ?bool $secure;
     private ?string $sameSite;
 
     /**
@@ -60,10 +60,11 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
      * @param string $cookieName The name of the cookie holding the token.
      * @param string $path The `Path` attribute of the cookie.
      * @param string|null $domain The `Domain` attribute of the cookie, or `null` to omit it.
-     * @param bool $secure Whether the cookie should only be sent over HTTPS.
+     * @param bool|null $secure Whether the cookie should only be sent over HTTPS. When `null`, the value is resolved
+     * per request from the request URI scheme (`true` when the scheme is `https`).
      * @param string|null $sameSite The `SameSite` attribute of the cookie: one of `self::SAME_SITE_LAX`,
      * `self::SAME_SITE_STRICT`, `self::SAME_SITE_NONE`, or `null` to omit it. When `self::SAME_SITE_NONE` is used,
-     * `$secure` must be `true`.
+     * `$secure` must not be `false`.
      *
      * @throws InvalidArgumentException When a cookie attribute is not valid.
      */
@@ -72,7 +73,7 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
         string $cookieName = self::COOKIE_NAME,
         string $path = '/',
         ?string $domain = null,
-        bool $secure = true,
+        ?bool $secure = null,
         ?string $sameSite = self::SAME_SITE_LAX
     ) {
         if (preg_match(self::PATTERN_HEADER_INJECTION, $cookieName)) {
@@ -100,7 +101,7 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
             );
         }
 
-        if ($sameSite === self::SAME_SITE_NONE && !$secure) {
+        if ($sameSite === self::SAME_SITE_NONE && $secure === false) {
             throw new InvalidArgumentException(
                 'The "secure" flag is required for cookies with "SameSite" attribute set to "None".',
             );
@@ -118,10 +119,12 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
-        return $response->withAddedHeader(Header::SET_COOKIE, $this->buildCookieHeaderValue());
+        $secure = $this->secure ?? $request->getUri()->getScheme() === 'https';
+
+        return $response->withAddedHeader(Header::SET_COOKIE, $this->buildCookieHeaderValue($secure));
     }
 
-    private function buildCookieHeaderValue(): string
+    private function buildCookieHeaderValue(bool $secure): string
     {
         $parts = [$this->cookieName . '=' . rawurlencode($this->token->getValue())];
 
@@ -131,7 +134,7 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
 
         $parts[] = 'Path=' . $this->path;
 
-        if ($this->secure) {
+        if ($secure) {
             $parts[] = 'Secure';
         }
 

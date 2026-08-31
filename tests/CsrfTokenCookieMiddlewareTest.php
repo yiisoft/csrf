@@ -104,6 +104,72 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
         );
     }
 
+    public function testSameSiteNoneWithNullSecureIsAllowed(): void
+    {
+        $middleware = new CsrfTokenCookieMiddleware(
+            new StubCsrfToken('test-token'),
+            'XSRF-TOKEN',
+            '/',
+            null,
+            null,
+            CsrfTokenCookieMiddleware::SAME_SITE_NONE,
+        );
+
+        $response = $middleware->process(
+            $this->createServerRequest(Method::GET, 'https://example.com/'),
+            $this->createRequestHandler(),
+        );
+
+        $this->assertSame(
+            ['XSRF-TOKEN=test-token; Path=/; Secure; SameSite=None'],
+            $response->getHeader('Set-Cookie'),
+        );
+    }
+
+    public function dataSecureIsResolvedFromRequestScheme(): array
+    {
+        return [
+            'https' => ['https://example.com/', 'XSRF-TOKEN=test-token; Path=/; Secure; SameSite=Lax'],
+            'http' => ['http://example.com/', 'XSRF-TOKEN=test-token; Path=/; SameSite=Lax'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataSecureIsResolvedFromRequestScheme
+     */
+    public function testSecureIsResolvedFromRequestScheme(string $uri, string $expectedCookie): void
+    {
+        $middleware = new CsrfTokenCookieMiddleware(new StubCsrfToken('test-token'));
+
+        $response = $middleware->process(
+            $this->createServerRequest(Method::GET, $uri),
+            $this->createRequestHandler(),
+        );
+
+        $this->assertSame([$expectedCookie], $response->getHeader('Set-Cookie'));
+    }
+
+    public function testExplicitSecureTakesPrecedenceOverRequestScheme(): void
+    {
+        $middleware = new CsrfTokenCookieMiddleware(
+            new StubCsrfToken('test-token'),
+            'XSRF-TOKEN',
+            '/',
+            null,
+            true,
+        );
+
+        $response = $middleware->process(
+            $this->createServerRequest(Method::GET, 'http://example.com/'),
+            $this->createRequestHandler(),
+        );
+
+        $this->assertSame(
+            ['XSRF-TOKEN=test-token; Path=/; Secure; SameSite=Lax'],
+            $response->getHeader('Set-Cookie'),
+        );
+    }
+
     public function testTokenValueIsUrlEncoded(): void
     {
         $middleware = new CsrfTokenCookieMiddleware(new StubCsrfToken('a b+c/d='));
@@ -217,8 +283,10 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
         return $requestHandler;
     }
 
-    private function createServerRequest(string $method = Method::GET): ServerRequestInterface
-    {
-        return new ServerRequest($method, '/');
+    private function createServerRequest(
+        string $method = Method::GET,
+        string $uri = 'https://example.com/'
+    ): ServerRequestInterface {
+        return new ServerRequest($method, $uri);
     }
 }
