@@ -33,8 +33,8 @@ use function sprintf;
  *
  * A `Set-Cookie` header does not by itself prevent a response from being cached (RFC 9111 section 7.3). A cached
  * response may replay a stale token, or reach a shared (proxy or CDN) cache and hand one user's token to another. By
- * default the middleware guards against this by sending `Cache-Control: no-store` for responses that carry no
- * `Cache-Control` of their own; see the `$cacheControl` constructor parameter to change or disable this.
+ * default the middleware guards against this by setting `Cache-Control: no-store` on every response it touches; see
+ * the `$cacheControl` constructor parameter to change or disable this.
  *
  * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#alternative-using-a-double-submit-cookie-pattern
  * @link https://www.rfc-editor.org/rfc/rfc9111#section-7.3
@@ -80,9 +80,9 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
      * @param string|null $sameSite The `SameSite` attribute of the cookie: one of `self::SAME_SITE_LAX`,
      * `self::SAME_SITE_STRICT`, `self::SAME_SITE_NONE`, or `null` to omit it. When `self::SAME_SITE_NONE` is used,
      * `$secure` must not be `false`.
-     * @param bool|string $cacheControl How to handle the `Cache-Control` response header: `true` to send
-     * `Cache-Control: no-store` when the response has no `Cache-Control` of its own (keeping the published token out
-     * of any cache), `false` to leave the header untouched, or a string to set it to that exact value.
+     * @param bool|string $cacheControl How to handle the `Cache-Control` response header: `true` to set it to
+     * `no-store` (keeping the published token out of any cache), `false` to leave the header untouched, or a string
+     * to set it to that exact value. `true` and a string value replace an existing `Cache-Control`.
      *
      * @throws InvalidArgumentException When a cookie attribute or the `$cacheControl` argument is not valid.
      */
@@ -187,12 +187,9 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
             return $response;
         }
 
-        if ($this->cacheControl === true) {
-            return $response->hasHeader(Header::CACHE_CONTROL)
-                ? $response
-                : $response->withHeader(Header::CACHE_CONTROL, 'no-store');
-        }
-
-        return $response->withHeader(Header::CACHE_CONTROL, $this->cacheControl);
+        return $response->withHeader(
+            Header::CACHE_CONTROL,
+            $this->cacheControl === true ? 'no-store' : $this->cacheControl,
+        );
     }
 }

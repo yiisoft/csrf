@@ -190,7 +190,7 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
         $this->assertSame(['no-store'], $response->getHeader('Cache-Control'));
     }
 
-    public function testExistingCacheControlIsKeptByDefault(): void
+    public function testExistingCacheControlIsReplacedByDefault(): void
     {
         $middleware = new CsrfTokenCookieMiddleware(new StubCsrfToken('test-token'));
 
@@ -201,7 +201,7 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
 
         $response = $middleware->process($this->createServerRequest(), $requestHandler);
 
-        $this->assertSame(['public, max-age=3600'], $response->getHeader('Cache-Control'));
+        $this->assertSame(['no-store'], $response->getHeader('Cache-Control'));
     }
 
     public function testCacheControlIsNotTouchedWhenDisabled(): void

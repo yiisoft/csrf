@@ -608,7 +608,8 @@ A `Set-Cookie` header does not by itself prevent a response from being cached
 may be cached and later replay a stale token, or end up in a shared (proxy or CDN) cache and hand one user's token to
 another. The last constructor argument controls the `Cache-Control` response header:
 
-- `true` (default) — send `Cache-Control: no-store` when the response has no `Cache-Control` of its own;
+- `true` (default) — set `Cache-Control` to `no-store`, replacing any existing value (the middleware makes the
+  response user-specific, so a previously cacheable `Cache-Control` is no longer safe);
 - `false` — leave the header untouched (use this when the application already manages caching for these responses);
 - a string — set `Cache-Control` to that exact value, for example `'private'`.
 
