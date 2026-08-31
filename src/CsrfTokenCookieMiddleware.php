@@ -75,7 +75,8 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
      * @param string $path The `Path` attribute of the cookie.
      * @param string|null $domain The `Domain` attribute of the cookie, or `null` to omit it.
      * @param bool|null $secure Whether the cookie should only be sent over HTTPS. When `null`, the value is resolved
-     * per request from the request URI scheme (`true` when the scheme is `https`).
+     * per request: `true` for `self::SAME_SITE_NONE` (browsers require `Secure` for such cookies), otherwise from the
+     * request URI scheme (`true` when the scheme is `https`).
      * @param string|null $sameSite The `SameSite` attribute of the cookie: one of `self::SAME_SITE_LAX`,
      * `self::SAME_SITE_STRICT`, `self::SAME_SITE_NONE`, or `null` to omit it. When `self::SAME_SITE_NONE` is used,
      * `$secure` must not be `false`.
@@ -151,7 +152,10 @@ final class CsrfTokenCookieMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
-        $secure = $this->secure ?? $request->getUri()->getScheme() === 'https';
+        // An explicit `$secure` wins; when it is `null`, `SameSite=None` forces `Secure`, otherwise the request
+        // URI scheme decides.
+        $secure = $this->secure
+            ?? ($this->sameSite === self::SAME_SITE_NONE || $request->getUri()->getScheme() === 'https');
         $response = $response->withAddedHeader(Header::SET_COOKIE, $this->buildCookieHeaderValue($secure));
 
         return $this->applyCacheControl($response);

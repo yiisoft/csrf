@@ -104,7 +104,10 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
         );
     }
 
-    public function testSameSiteNoneWithNullSecureIsAllowed(): void
+    /**
+     * @dataProvider dataSameSiteNoneAlwaysGetsSecure
+     */
+    public function testSameSiteNoneAlwaysGetsSecure(string $uri): void
     {
         $middleware = new CsrfTokenCookieMiddleware(
             new StubCsrfToken('test-token'),
@@ -116,7 +119,7 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
         );
 
         $response = $middleware->process(
-            $this->createServerRequest(Method::GET, 'https://example.com/'),
+            $this->createServerRequest(Method::GET, $uri),
             $this->createRequestHandler(),
         );
 
@@ -124,6 +127,14 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
             ['XSRF-TOKEN=test-token; Path=/; Secure; SameSite=None'],
             $response->getHeader('Set-Cookie'),
         );
+    }
+
+    public function dataSameSiteNoneAlwaysGetsSecure(): array
+    {
+        return [
+            'https' => ['https://example.com/'],
+            'http' => ['http://example.com/'],
+        ];
     }
 
     public function dataSecureIsResolvedFromRequestScheme(): array
