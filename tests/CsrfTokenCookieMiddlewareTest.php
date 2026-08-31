@@ -170,6 +170,84 @@ final class CsrfTokenCookieMiddlewareTest extends TestCase
         );
     }
 
+    public function testCacheControlNoStoreIsAddedByDefault(): void
+    {
+        $middleware = new CsrfTokenCookieMiddleware(new StubCsrfToken('test-token'));
+
+        $response = $middleware->process($this->createServerRequest(), $this->createRequestHandler());
+
+        $this->assertSame(['no-store'], $response->getHeader('Cache-Control'));
+    }
+
+    public function testExistingCacheControlIsKeptByDefault(): void
+    {
+        $middleware = new CsrfTokenCookieMiddleware(new StubCsrfToken('test-token'));
+
+        $requestHandler = $this->createMock(RequestHandlerInterface::class);
+        $requestHandler
+            ->method('handle')
+            ->willReturn((new Response())->withHeader('Cache-Control', 'public, max-age=3600'));
+
+        $response = $middleware->process($this->createServerRequest(), $requestHandler);
+
+        $this->assertSame(['public, max-age=3600'], $response->getHeader('Cache-Control'));
+    }
+
+    public function testCacheControlIsNotTouchedWhenDisabled(): void
+    {
+        $middleware = new CsrfTokenCookieMiddleware(
+            new StubCsrfToken('test-token'),
+            'XSRF-TOKEN',
+            '/',
+            null,
+            null,
+            CsrfTokenCookieMiddleware::SAME_SITE_LAX,
+            false,
+        );
+
+        $response = $middleware->process($this->createServerRequest(), $this->createRequestHandler());
+
+        $this->assertFalse($response->hasHeader('Cache-Control'));
+    }
+
+    public function testCacheControlIsSetToExplicitValue(): void
+    {
+        $middleware = new CsrfTokenCookieMiddleware(
+            new StubCsrfToken('test-token'),
+            'XSRF-TOKEN',
+            '/',
+            null,
+            null,
+            CsrfTokenCookieMiddleware::SAME_SITE_LAX,
+            'private',
+        );
+
+        $requestHandler = $this->createMock(RequestHandlerInterface::class);
+        $requestHandler
+            ->method('handle')
+            ->willReturn((new Response())->withHeader('Cache-Control', 'public'));
+
+        $response = $middleware->process($this->createServerRequest(), $requestHandler);
+
+        $this->assertSame(['private'], $response->getHeader('Cache-Control'));
+    }
+
+    public function testInvalidCacheControl(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "cacheControl" argument must be a bool or a string, "integer" given.');
+
+        new CsrfTokenCookieMiddleware(
+            new StubCsrfToken(),
+            'XSRF-TOKEN',
+            '/',
+            null,
+            null,
+            CsrfTokenCookieMiddleware::SAME_SITE_LAX,
+            123,
+        );
+    }
+
     public function testTokenValueIsUrlEncoded(): void
     {
         $middleware = new CsrfTokenCookieMiddleware(new StubCsrfToken('a b+c/d='));

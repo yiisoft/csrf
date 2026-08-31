@@ -599,8 +599,18 @@ $middleware = new CsrfTokenCookieMiddleware(
     null,
     null,
     CsrfTokenCookieMiddleware::SAME_SITE_LAX,
+    true,
 );
 ```
+
+A `Set-Cookie` header does not by itself prevent a response from being cached
+([RFC 9111 section 7.3](https://www.rfc-editor.org/rfc/rfc9111#section-7.3)), so a response that publishes the token
+may be cached and later replay a stale token, or end up in a shared (proxy or CDN) cache and hand one user's token to
+another. The last constructor argument controls the `Cache-Control` response header:
+
+- `true` (default) — send `Cache-Control: no-store` when the response has no `Cache-Control` of its own;
+- `false` — leave the header untouched (use this when the application already manages caching for these responses);
+- a string — set `Cache-Control` to that exact value, for example `'private'`.
 
 For example, Axios and Inertia send the token back in the `X-XSRF-TOKEN` header, so set the same name
 on `CsrfTokenMiddleware`:
@@ -639,6 +649,7 @@ To customize the cookie, replace `CsrfTokenCookieMiddleware::class` with an arra
         'domain' => null,
         'secure' => null,
         'sameSite' => CsrfTokenCookieMiddleware::SAME_SITE_LAX,
+        'cacheControl' => true,
     ],
 ],
 ```
