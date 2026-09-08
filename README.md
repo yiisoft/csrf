@@ -109,6 +109,23 @@ $failureHandler = new class ($responseFactory) implements RequestHandlerInterfac
 $middleware = new CsrfTokenMiddleware($responseFactory, $csrfToken, $failureHandler);
 ```
 
+or define the `CsrfTokenMiddleware` configuration in the [DI container](https://github.com/yiisoft/di), using
+your own `RequestHandlerInterface` implementation as a regular service instead of the anonymous class above:
+
+```php
+// config/web/di/csrf-token.php
+use Yiisoft\Csrf\CsrfTokenMiddleware;
+use Yiisoft\Definitions\Reference;
+
+return [
+    CsrfTokenMiddleware::class => [
+        '__construct()' => [
+            'failureHandler' => Reference::to(MyFailureHandler::class),
+        ],
+    ],
+];
+```
+
 By default, `CsrfTokenMiddleware` considers `GET`, `HEAD`, `OPTIONS` methods as safe operations and doesn't perform CSRF validation. You can change this behavior as follows:
 
 ```php
