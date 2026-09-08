@@ -133,6 +133,26 @@ final class HmacCsrfTokenTest extends TestCase
         $this->assertFalse($csrfToken->validate($this->createToken('user8', '500')));
     }
 
+    public function testRejectsIdentityDifferingByTrailingNullByte(): void
+    {
+        $csrfToken = new HmacCsrfToken(
+            new MockCsrfTokenIdentityGenerator('user7'),
+            'mySecretKey',
+        );
+        $csrfTokenWithNullByte = new HmacCsrfToken(
+            new MockCsrfTokenIdentityGenerator("user7\0"),
+            'mySecretKey',
+        );
+
+        $token = $csrfToken->getValue();
+        $tokenWithNullByte = $csrfTokenWithNullByte->getValue();
+
+        $this->assertTrue($csrfToken->validate($token));
+        $this->assertTrue($csrfTokenWithNullByte->validate($tokenWithNullByte));
+        $this->assertFalse($csrfToken->validate($tokenWithNullByte));
+        $this->assertFalse($csrfTokenWithNullByte->validate($token));
+    }
+
     public function testRejectsSignedTokenWithMalformedMessage(): void
     {
         self::$timeResult = 300;
@@ -197,7 +217,8 @@ final class HmacCsrfTokenTest extends TestCase
 
     private function createToken(string $identity, string $message): string
     {
-        return StringHelper::base64UrlEncode((new Mac())->sign($message, 'mySecretKey~' . $identity, true));
+        $key = hash_hmac('sha256', $identity, 'mySecretKey', true);
+        return StringHelper::base64UrlEncode((new Mac())->sign($message, $key, true));
     }
 
     private function getHashLength(): int

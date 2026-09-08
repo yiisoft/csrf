@@ -113,7 +113,11 @@ final class HmacCsrfToken implements CsrfTokenInterface
     private function generateActualSecretKey(): string
     {
         $identity = $this->identityGenerator->generate();
-        return $this->secretKey . '~' . $identity;
+        return StringHelper::byteSubstring(
+            $this->mac->sign($identity, $this->secretKey, true),
+            0,
+            $this->hashLength,
+        );
     }
 
     private function calcHashLength(): int
