@@ -47,10 +47,10 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.92.5",
+        "infection/infection": "^0.26.6 || ^0.27.10 || ^0.29.8 || ^0.35.8",
         "nyholm/psr7": "^1.8.2",
         "phpunit/phpunit": "^9.6.23",
         "rector/rector": "^2.0.16",
-        "roave/infection-static-analysis-plugin": "^1.18",
         "shipmonk/composer-dependency-analyser": "^1.8",
         "spatie/phpunit-watcher": "^1.23.6",
         "vimeo/psalm": "^4.30 || ^5.26.1 || ^6.20.5",
