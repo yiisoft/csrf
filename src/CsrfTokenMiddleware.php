@@ -108,6 +108,11 @@ final class CsrfTokenMiddleware implements MiddlewareInterface
 
         $token = $this->getTokenFromRequest($request);
 
+        /**
+         * `empty()` is used intentionally to treat any empty value as a missing token.
+         *
+         * @psalm-suppress RiskyTruthyFalsyComparison
+         */
         return !empty($token) && $this->token->validate($token);
     }
 
@@ -116,6 +121,11 @@ final class CsrfTokenMiddleware implements MiddlewareInterface
         $parsedBody = $request->getParsedBody();
 
         $token = $parsedBody[$this->parameterName] ?? null;
+        /**
+         * `empty()` is used intentionally to treat any empty value as a missing token.
+         *
+         * @psalm-suppress RiskyTruthyFalsyComparison
+         */
         if (empty($token)) {
             $headers = $request->getHeader($this->headerName);
             $token = reset($headers);
