@@ -36,6 +36,11 @@ final class SynchronizerCsrfToken implements CsrfTokenInterface
     public function getValue(): string
     {
         $token = $this->storage->get();
+        /**
+         * `empty()` is used intentionally to treat any empty value as a missing token.
+         *
+         * @psalm-suppress RiskyTruthyFalsyComparison
+         */
         if (empty($token)) {
             $token = $this->generator->generate();
             $this->storage->set($token);
